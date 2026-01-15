@@ -11,7 +11,7 @@ export default function EncuestaPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [form, setForm] = useState({ rating: 0, comment: "", contact_email: "" });
+  const [form, setForm] = useState({ rating: 0, comment: "", contact_email: "", comuna: "", edad: "" });
   const [hoverRating, setHoverRating] = useState(0);
 
   useEffect(() => {
@@ -58,10 +58,12 @@ export default function EncuestaPage() {
         rating: form.rating,
         comment: form.comment,
         contact_email: form.contact_email,
+        comuna: form.comuna,
+        edad: form.edad,
         timestamp: Timestamp.now(),
       });
       setSuccess(true);
-      setForm({ rating: 0, comment: "", contact_email: "" });
+      setForm({ rating: 0, comment: "", contact_email: "", comuna: "", edad: "" });
     } catch (err) {
       setError("Error al enviar. Intenta de nuevo.");
     }
@@ -180,6 +182,38 @@ export default function EncuestaPage() {
               value={form.comment}
               onChange={handleChange}
             />
+          </div>
+
+          {/* Comuna y Edad */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Comuna
+              </label>
+              <input
+                name="comuna"
+                type="text"
+                className="w-full border border-gray-200 rounded-xl p-4 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                placeholder="Ej: Providencia"
+                value={form.comuna}
+                onChange={handleChange}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Edad
+              </label>
+              <input
+                name="edad"
+                type="number"
+                min="1"
+                max="120"
+                className="w-full border border-gray-200 rounded-xl p-4 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                placeholder="Ej: 25"
+                value={form.edad}
+                onChange={handleChange}
+              />
+            </div>
           </div>
 
           {/* Email */}

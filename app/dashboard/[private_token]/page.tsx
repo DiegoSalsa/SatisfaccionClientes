@@ -9,6 +9,8 @@ interface Review {
   rating: number;
   comment?: string;
   contact_email?: string;
+  comuna?: string;
+  edad?: string;
   timestamp?: any;
 }
 
@@ -284,6 +286,12 @@ export default function DashboardPage() {
                       {r.contact_email && (
                         <p className="text-sm text-gray-500 mt-2 flex items-center gap-1">
                           <span>📧</span> {r.contact_email}
+                        </p>
+                      )}
+                      {(r.comuna || r.edad) && (
+                        <p className="text-sm text-gray-500 mt-1 flex items-center gap-3">
+                          {r.comuna && <span>📍 {r.comuna}</span>}
+                          {r.edad && <span>🎂 {r.edad} años</span>}
                         </p>
                       )}
                     </div>
