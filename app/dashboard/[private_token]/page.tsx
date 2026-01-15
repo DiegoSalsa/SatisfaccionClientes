@@ -64,10 +64,10 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center transition-colors">
+      <div className="min-h-screen bg-gray-50 dark:bg-black flex items-center justify-center transition-colors">
         <div className="animate-pulse flex flex-col items-center gap-4">
           <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-gray-500 dark:text-gray-400">Cargando dashboard...</p>
+          <p className="text-gray-500 dark:text-zinc-400">Cargando dashboard...</p>
         </div>
       </div>
     );
@@ -75,13 +75,13 @@ export default function DashboardPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center px-4 transition-colors">
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 text-center max-w-md">
+      <div className="min-h-screen bg-gray-50 dark:bg-black flex items-center justify-center px-4 transition-colors">
+        <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-lg p-8 text-center max-w-md border dark:border-zinc-800">
           <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
             <span className="text-3xl">🔒</span>
           </div>
           <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">Acceso denegado</h2>
-          <p className="text-gray-600 dark:text-gray-400">El enlace no es válido o ha expirado.</p>
+          <p className="text-gray-600 dark:text-zinc-400">El enlace no es válido o ha expirado.</p>
         </div>
       </div>
     );
@@ -98,13 +98,13 @@ export default function DashboardPage() {
   }));
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
+    <div className="min-h-screen bg-gray-50 dark:bg-black transition-colors">
       {/* Theme Toggle */}
       <div className="fixed top-4 right-4 z-50">
         <ThemeToggle />
       </div>
       {/* Header */}
-      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+      <header className="bg-white dark:bg-zinc-900 border-b border-gray-200 dark:border-zinc-800">
         <div className="max-w-5xl mx-auto px-4 py-6">
           <div className="flex items-center gap-4">
             <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
@@ -116,7 +116,7 @@ export default function DashboardPage() {
             </div>
             <div>
               <h1 className="text-2xl font-bold text-gray-800 dark:text-white">{business.name}</h1>
-              <p className="text-gray-500 dark:text-gray-400 text-sm">Dashboard de satisfacción</p>
+              <p className="text-gray-500 dark:text-zinc-400 text-sm">Dashboard de satisfacción</p>
             </div>
           </div>
         </div>
@@ -126,8 +126,8 @@ export default function DashboardPage() {
         {/* Stats Grid */}
         <div className="grid md:grid-cols-3 gap-6 mb-8">
           {/* Average Rating Card */}
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-6 border border-gray-100 dark:border-gray-700">
-            <p className="text-gray-500 dark:text-gray-400 text-sm mb-2">Calificación promedio</p>
+          <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm p-6 border border-gray-100 dark:border-zinc-800">
+            <p className="text-gray-500 dark:text-zinc-400 text-sm mb-2">Calificación promedio</p>
             <div className="flex items-baseline gap-2">
               <span className="text-4xl font-bold text-gray-800 dark:text-white">{avg}</span>
               <span className="text-yellow-400 text-2xl">★</span>
@@ -136,7 +136,7 @@ export default function DashboardPage() {
               {[1, 2, 3, 4, 5].map((star) => (
                 <span
                   key={star}
-                  className={`text-xl ${parseFloat(avg) >= star ? "text-yellow-400" : "text-gray-200 dark:text-gray-600"}`}
+                  className={`text-xl ${parseFloat(avg) >= star ? "text-yellow-400" : "text-gray-200 dark:text-zinc-700"}`}
                 >
                   ★
                 </span>
@@ -145,11 +145,11 @@ export default function DashboardPage() {
           </div>
 
           {/* Total Reviews Card */}
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-6 border border-gray-100 dark:border-gray-700">
-            <p className="text-gray-500 dark:text-gray-400 text-sm mb-2">Total de opiniones</p>
+          <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm p-6 border border-gray-100 dark:border-zinc-800">
+            <p className="text-gray-500 dark:text-zinc-400 text-sm mb-2">Total de opiniones</p>
             <div className="flex items-baseline gap-2">
               <span className="text-4xl font-bold text-gray-800 dark:text-white">{reviews.length}</span>
-              <span className="text-gray-400 dark:text-gray-500">reviews</span>
+              <span className="text-gray-400 dark:text-zinc-500">reviews</span>
             </div>
             <p className="text-green-600 dark:text-green-400 text-sm mt-2 flex items-center gap-1">
               <span>📈</span> Sigue compartiendo tu enlace
@@ -185,9 +185,9 @@ export default function DashboardPage() {
         {/* QR Modal */}
         {showQR && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowQR(false)}>
-            <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 max-w-sm w-full" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-white dark:bg-zinc-900 rounded-2xl p-8 max-w-sm w-full border dark:border-zinc-800" onClick={(e) => e.stopPropagation()}>
               <h3 className="text-xl font-bold text-gray-800 dark:text-white text-center mb-2">{business.name}</h3>
-              <p className="text-gray-500 dark:text-gray-400 text-center text-sm mb-6">Escanea para dejar tu opinión</p>
+              <p className="text-gray-500 dark:text-zinc-400 text-center text-sm mb-6">Escanea para dejar tu opinión</p>
               <div ref={qrRef} className="flex justify-center mb-6 bg-white p-4 rounded-xl">
                 <QRCodeSVG
                   value={`${typeof window !== 'undefined' ? window.location.origin : ''}/encuesta/${business.slug}`}
@@ -223,7 +223,7 @@ export default function DashboardPage() {
                 </button>
                 <button
                   onClick={() => setShowQR(false)}
-                  className="flex-1 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 py-3 rounded-xl font-medium transition-colors"
+                  className="flex-1 bg-gray-100 dark:bg-zinc-800 hover:bg-gray-200 dark:hover:bg-zinc-700 text-gray-700 dark:text-zinc-200 py-3 rounded-xl font-medium transition-colors"
                 >
                   Cerrar
                 </button>
@@ -233,41 +233,41 @@ export default function DashboardPage() {
         )}
 
         {/* Rating Distribution */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-6 border border-gray-100 dark:border-gray-700 mb-8">
+        <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm p-6 border border-gray-100 dark:border-zinc-800 mb-8">
           <h3 className="font-semibold text-gray-800 dark:text-white mb-4">Distribución de calificaciones</h3>
           <div className="space-y-3">
             {ratingCounts.map(({ star, count, percent }) => (
               <div key={star} className="flex items-center gap-3">
-                <span className="text-sm text-gray-600 dark:text-gray-400 w-6">{star}★</span>
-                <div className="flex-1 h-4 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                <span className="text-sm text-gray-600 dark:text-zinc-400 w-6">{star}★</span>
+                <div className="flex-1 h-4 bg-gray-100 dark:bg-zinc-800 rounded-full overflow-hidden">
                   <div
                     className="h-full bg-yellow-400 rounded-full transition-all duration-500"
                     style={{ width: `${percent}%` }}
                   ></div>
                 </div>
-                <span className="text-sm text-gray-500 dark:text-gray-400 w-10 text-right">{count}</span>
+                <span className="text-sm text-gray-500 dark:text-zinc-400 w-10 text-right">{count}</span>
               </div>
             ))}
           </div>
         </div>
 
         {/* Reviews List */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
-          <div className="p-6 border-b border-gray-100 dark:border-gray-700">
+        <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800">
+          <div className="p-6 border-b border-gray-100 dark:border-zinc-800">
             <h3 className="font-semibold text-gray-800 dark:text-white">Comentarios recientes</h3>
           </div>
-          <div className="divide-y divide-gray-100 dark:divide-gray-700">
+          <div className="divide-y divide-gray-100 dark:divide-zinc-800">
             {reviews.length === 0 ? (
               <div className="p-12 text-center">
-                <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-gray-100 dark:bg-zinc-800 rounded-full flex items-center justify-center mx-auto mb-4">
                   <span className="text-3xl">💬</span>
                 </div>
                 <h4 className="font-medium text-gray-800 dark:text-white mb-1">Sin comentarios aún</h4>
-                <p className="text-gray-500 dark:text-gray-400 text-sm">Comparte tu enlace de encuesta para recibir opiniones</p>
+                <p className="text-gray-500 dark:text-zinc-400 text-sm">Comparte tu enlace de encuesta para recibir opiniones</p>
               </div>
             ) : (
               reviews.slice(0, 20).map((r, i) => (
-                <div key={i} className="p-6 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                <div key={i} className="p-6 hover:bg-gray-50 dark:hover:bg-zinc-800/50 transition-colors">
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
@@ -275,33 +275,33 @@ export default function DashboardPage() {
                           {[1, 2, 3, 4, 5].map((star) => (
                             <span
                               key={star}
-                              className={`text-lg ${r.rating >= star ? "text-yellow-400" : "text-gray-200 dark:text-gray-600"}`}
+                              className={`text-lg ${r.rating >= star ? "text-yellow-400" : "text-gray-200 dark:text-zinc-700"}`}
                             >
                               ★
                             </span>
                           ))}
                         </div>
-                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{r.rating}/5</span>
+                        <span className="text-sm font-medium text-gray-700 dark:text-zinc-300">{r.rating}/5</span>
                       </div>
                       {r.comment ? (
-                        <p className="text-gray-700 dark:text-gray-200">{r.comment}</p>
+                        <p className="text-gray-700 dark:text-zinc-200">{r.comment}</p>
                       ) : (
-                        <p className="text-gray-400 dark:text-gray-500 italic text-sm">Sin comentario</p>
+                        <p className="text-gray-400 dark:text-zinc-500 italic text-sm">Sin comentario</p>
                       )}
                       {r.contact_email && (
-                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-2 flex items-center gap-1">
+                        <p className="text-sm text-gray-500 dark:text-zinc-400 mt-2 flex items-center gap-1">
                           <span>📧</span> {r.contact_email}
                         </p>
                       )}
                       {(r.comuna || r.edad) && (
-                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 flex items-center gap-3">
+                        <p className="text-sm text-gray-500 dark:text-zinc-400 mt-1 flex items-center gap-3">
                           {r.comuna && <span>📍 {r.comuna}</span>}
                           {r.edad && <span>🎂 {r.edad} años</span>}
                         </p>
                       )}
                     </div>
                     <div className="text-right">
-                      <p className="text-xs text-gray-400 dark:text-gray-500">
+                      <p className="text-xs text-gray-400 dark:text-zinc-500">
                         {r.timestamp?.toDate
                           ? new Date(r.timestamp.toDate()).toLocaleDateString("es-ES", {
                               day: "numeric",
@@ -320,7 +320,7 @@ export default function DashboardPage() {
       </main>
 
       {/* Footer */}
-      <footer className="text-center py-8 text-gray-400 dark:text-gray-500 text-sm">
+      <footer className="text-center py-8 text-gray-400 dark:text-zinc-500 text-sm">
         <p>Powered by <span className="font-medium">Satisfacción</span> ⭐</p>
       </footer>
     </div>

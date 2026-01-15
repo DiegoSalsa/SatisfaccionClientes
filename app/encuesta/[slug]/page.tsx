@@ -73,11 +73,13 @@ export default function EncuestaPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center">
-        <ThemeToggle />
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-black dark:via-zinc-900 dark:to-black flex items-center justify-center transition-colors">
+        <div className="fixed top-4 right-4 z-50">
+          <ThemeToggle />
+        </div>
         <div className="animate-pulse flex flex-col items-center gap-4">
           <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-gray-500 dark:text-gray-400">Cargando...</p>
+          <p className="text-gray-500 dark:text-zinc-400">Cargando...</p>
         </div>
       </div>
     );
@@ -85,14 +87,16 @@ export default function EncuestaPage() {
 
   if (error && !business) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center px-4">
-        <ThemeToggle />
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 text-center max-w-md">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-black dark:via-zinc-900 dark:to-black flex items-center justify-center px-4 transition-colors">
+        <div className="fixed top-4 right-4 z-50">
+          <ThemeToggle />
+        </div>
+        <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-lg p-8 text-center max-w-md border dark:border-zinc-800">
           <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
             <span className="text-3xl">😕</span>
           </div>
           <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">Negocio no encontrado</h2>
-          <p className="text-gray-600 dark:text-gray-400">El enlace que usaste no corresponde a ningún negocio registrado.</p>
+          <p className="text-gray-600 dark:text-zinc-400">El enlace que usaste no corresponde a ningún negocio registrado.</p>
         </div>
       </div>
     );
@@ -100,14 +104,16 @@ export default function EncuestaPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center px-4">
-        <ThemeToggle />
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 text-center max-w-md">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-black dark:via-zinc-900 dark:to-black flex items-center justify-center px-4 transition-colors">
+        <div className="fixed top-4 right-4 z-50">
+          <ThemeToggle />
+        </div>
+        <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-lg p-8 text-center max-w-md border dark:border-zinc-800">
           <div className="w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
             <span className="text-4xl">🎉</span>
           </div>
           <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">¡Gracias por tu opinión!</h2>
-          <p className="text-gray-600 dark:text-gray-400 mb-6">Tu feedback nos ayuda a mejorar cada día.</p>
+          <p className="text-gray-600 dark:text-zinc-400 mb-6">Tu feedback nos ayuda a mejorar cada día.</p>
           <button
             onClick={() => setSuccess(false)}
             className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
@@ -120,7 +126,7 @@ export default function EncuestaPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-8 px-4 transition-colors">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-black dark:via-zinc-900 dark:to-black py-8 px-4 transition-colors">
       {/* Theme Toggle */}
       <div className="fixed top-4 right-4 z-50">
         <ThemeToggle />
@@ -128,7 +134,7 @@ export default function EncuestaPage() {
       <main className="max-w-lg mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="w-20 h-20 bg-white dark:bg-gray-700 rounded-2xl shadow-md flex items-center justify-center mx-auto mb-4">
+          <div className="w-20 h-20 bg-white dark:bg-zinc-800 rounded-2xl shadow-md flex items-center justify-center mx-auto mb-4 border dark:border-zinc-700">
             {business.logo_url ? (
               <img src={business.logo_url} alt={business.name} className="w-16 h-16 rounded-xl object-cover" />
             ) : (
@@ -136,14 +142,14 @@ export default function EncuestaPage() {
             )}
           </div>
           <h1 className="text-2xl font-bold text-gray-800 dark:text-white">{business.name}</h1>
-          <p className="text-gray-500 dark:text-gray-400 mt-1">¿Cómo fue tu experiencia?</p>
+          <p className="text-gray-500 dark:text-zinc-400 mt-1">¿Cómo fue tu experiencia?</p>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg dark:shadow-gray-900/50 p-6 md:p-8 space-y-6">
+        <form onSubmit={handleSubmit} className="bg-white dark:bg-zinc-900 rounded-2xl shadow-lg p-6 md:p-8 space-y-6 border dark:border-zinc-800">
           {/* Rating */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-3 text-center">
+            <label className="block text-sm font-medium text-gray-700 dark:text-zinc-200 mb-3 text-center">
               Tu calificación
             </label>
             <div className="flex justify-center gap-2">
@@ -160,7 +166,7 @@ export default function EncuestaPage() {
                     className={`text-5xl cursor-pointer transition-colors ${
                       (hoverRating || form.rating) >= star
                         ? "text-yellow-400"
-                        : "text-gray-200 dark:text-gray-600"
+                        : "text-gray-200 dark:text-zinc-700"
                     }`}
                   >
                     ★
@@ -168,7 +174,7 @@ export default function EncuestaPage() {
                 </button>
               ))}
             </div>
-            <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-2">
+            <p className="text-center text-sm text-gray-500 dark:text-zinc-400 mt-2">
               {form.rating === 1 && "Muy malo 😞"}
               {form.rating === 2 && "Malo 😕"}
               {form.rating === 3 && "Regular 😐"}
@@ -179,36 +185,38 @@ export default function EncuestaPage() {
 
           {/* Comment */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
-              Cuéntanos más <span className="text-gray-400 dark:text-gray-500 font-normal">(opcional)</span>
+            <label className="block text-sm font-medium text-gray-700 dark:text-zinc-200 mb-2">
+              Cuéntanos más <span className="text-gray-400 dark:text-zinc-500 font-normal">(opcional)</span>
             </label>
             <textarea
               name="comment"
-              className="w-full border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 rounded-xl p-4 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
+              className="w-full border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-gray-900 dark:text-white rounded-xl p-4 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
               rows={4}
               placeholder="¿Qué te gustó? ¿Qué podemos mejorar?"
               value={form.comment}
               onChange={handleChange}
+              style={{ color: 'inherit' }}
             />
           </div>
 
           {/* Comuna y Edad */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-zinc-200 mb-2">
                 Comuna
               </label>
               <input
                 name="comuna"
                 type="text"
-                className="w-full border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 rounded-xl p-4 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                className="w-full border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-gray-900 dark:text-white rounded-xl p-4 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                 placeholder="Ej: Providencia"
                 value={form.comuna}
                 onChange={handleChange}
+                style={{ color: 'inherit' }}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-zinc-200 mb-2">
                 Edad
               </label>
               <input
@@ -216,26 +224,28 @@ export default function EncuestaPage() {
                 type="number"
                 min="1"
                 max="120"
-                className="w-full border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 rounded-xl p-4 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                className="w-full border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-gray-900 dark:text-white rounded-xl p-4 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                 placeholder="Ej: 25"
                 value={form.edad}
                 onChange={handleChange}
+                style={{ color: 'inherit' }}
               />
             </div>
           </div>
 
           {/* Email */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
-              Tu email <span className="text-gray-400 dark:text-gray-500 font-normal">(opcional)</span>
+            <label className="block text-sm font-medium text-gray-700 dark:text-zinc-200 mb-2">
+              Tu email <span className="text-gray-400 dark:text-zinc-500 font-normal">(opcional)</span>
             </label>
             <input
               name="contact_email"
               type="email"
-              className="w-full border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 rounded-xl p-4 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              className="w-full border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-gray-900 dark:text-white rounded-xl p-4 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               placeholder="Para que podamos contactarte"
               value={form.contact_email}
               onChange={handleChange}
+              style={{ color: 'inherit' }}
             />
           </div>
 
@@ -252,8 +262,8 @@ export default function EncuestaPage() {
             disabled={submitting || !form.rating}
             className={`w-full py-4 rounded-xl font-semibold text-lg transition-all ${
               form.rating
-                ? "bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-200 dark:shadow-blue-900/50 hover:shadow-xl"
-                : "bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed"
+                ? "bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl"
+                : "bg-gray-100 dark:bg-zinc-800 text-gray-400 dark:text-zinc-500 cursor-not-allowed"
             }`}
           >
             {submitting ? (
@@ -268,7 +278,7 @@ export default function EncuestaPage() {
         </form>
 
         {/* Footer */}
-        <p className="text-center text-sm text-gray-400 dark:text-gray-500 mt-6">
+        <p className="text-center text-sm text-gray-400 dark:text-zinc-500 mt-6">
           Powered by <span className="font-medium">Satisfacción</span> ⭐
         </p>
       </main>

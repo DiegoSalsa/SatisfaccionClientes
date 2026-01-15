@@ -130,7 +130,7 @@ export default function AdminPage() {
 
   if (!authorized) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center">
           <div className="text-6xl mb-4">🔒</div>
           <h1 className="text-2xl font-bold text-white">Acceso Denegado</h1>
@@ -141,20 +141,20 @@ export default function AdminPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="animate-spin w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className="min-h-screen bg-black text-white">
       {/* Theme Toggle */}
       <div className="fixed top-4 right-4 z-50">
         <ThemeToggle />
       </div>
       {/* Header */}
-      <header className="bg-gray-800 border-b border-gray-700">
+      <header className="bg-zinc-900 border-b border-zinc-800">
         <div className="max-w-6xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div>
@@ -177,7 +177,7 @@ export default function AdminPage() {
       <main className="max-w-6xl mx-auto px-4 py-8">
         {/* Add Form */}
         {showAddForm && (
-          <div className="bg-gray-800 rounded-xl p-6 mb-8 border border-gray-700">
+          <div className="bg-zinc-900 rounded-xl p-6 mb-8 border border-zinc-800">
             <h3 className="text-lg font-semibold mb-4">Agregar Nuevo Negocio</h3>
             <div className="grid md:grid-cols-3 gap-4 mb-4">
               <input
@@ -185,21 +185,21 @@ export default function AdminPage() {
                 placeholder="Nombre del negocio *"
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
-                className="bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white"
               />
               <input
                 type="text"
                 placeholder="Slug (auto-generado si vacío)"
                 value={form.slug}
                 onChange={(e) => setForm({ ...form, slug: e.target.value })}
-                className="bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white"
               />
               <input
                 type="text"
                 placeholder="URL del logo (opcional)"
                 value={form.logo_url}
                 onChange={(e) => setForm({ ...form, logo_url: e.target.value })}
-                className="bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white"
               />
             </div>
             <div className="flex gap-2">
@@ -226,14 +226,14 @@ export default function AdminPage() {
             placeholder="🔍 Buscar negocios..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full md:w-96 bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full md:w-96 bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white"
           />
         </div>
 
         {/* Businesses Table */}
-        <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
+        <div className="bg-zinc-900 rounded-xl border border-zinc-800 overflow-hidden">
           <table className="w-full">
-            <thead className="bg-gray-700">
+            <thead className="bg-zinc-800">
               <tr>
                 <th className="text-left px-6 py-4 font-medium">Negocio</th>
                 <th className="text-left px-6 py-4 font-medium">Slug</th>
@@ -241,9 +241,9 @@ export default function AdminPage() {
                 <th className="text-right px-6 py-4 font-medium">Acciones</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-700">
+            <tbody className="divide-y divide-zinc-800">
               {filteredBusinesses.map((business) => (
-                <tr key={business.id} className="hover:bg-gray-750">
+                <tr key={business.id} className="hover:bg-zinc-800/50">
                   {editingId === business.id ? (
                     <>
                       <td className="px-6 py-4">
@@ -251,7 +251,7 @@ export default function AdminPage() {
                           type="text"
                           value={form.name}
                           onChange={(e) => setForm({ ...form, name: e.target.value })}
-                          className="bg-gray-700 border border-gray-600 rounded px-3 py-2 w-full"
+                          className="bg-zinc-800 border border-zinc-700 rounded px-3 py-2 w-full text-white"
                         />
                       </td>
                       <td className="px-6 py-4">
@@ -259,7 +259,7 @@ export default function AdminPage() {
                           type="text"
                           value={form.slug}
                           onChange={(e) => setForm({ ...form, slug: e.target.value })}
-                          className="bg-gray-700 border border-gray-600 rounded px-3 py-2 w-full"
+                          className="bg-zinc-800 border border-zinc-700 rounded px-3 py-2 w-full text-white"
                         />
                       </td>
                       <td className="px-6 py-4">
@@ -268,7 +268,7 @@ export default function AdminPage() {
                           value={form.logo_url}
                           onChange={(e) => setForm({ ...form, logo_url: e.target.value })}
                           placeholder="URL logo"
-                          className="bg-gray-700 border border-gray-600 rounded px-3 py-2 w-full"
+                          className="bg-zinc-800 border border-zinc-700 rounded px-3 py-2 w-full text-white"
                         />
                       </td>
                       <td className="px-6 py-4 text-right">
@@ -290,7 +290,7 @@ export default function AdminPage() {
                     <>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-gray-700 rounded-lg flex items-center justify-center">
+                          <div className="w-10 h-10 bg-zinc-800 rounded-lg flex items-center justify-center">
                             {business.logo_url ? (
                               <img src={business.logo_url} alt="" className="w-8 h-8 rounded object-cover" />
                             ) : (
@@ -300,7 +300,7 @@ export default function AdminPage() {
                           <span className="font-medium">{business.name}</span>
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-gray-400">{business.slug}</td>
+                      <td className="px-6 py-4 text-zinc-400">{business.slug}</td>
                       <td className="px-6 py-4">
                         <div className="flex gap-2">
                           <a

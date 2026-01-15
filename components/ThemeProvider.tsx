@@ -49,18 +49,32 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 export function useTheme() {
   const context = useContext(ThemeContext);
   if (!context) {
-    throw new Error("useTheme must be used within a ThemeProvider");
+    // Return default values during SSR or when not in provider
+    return { theme: "light" as Theme, toggleTheme: () => {} };
   }
   return context;
 }
 
 export function ThemeToggle() {
   const { theme, toggleTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <button className="p-3 rounded-full bg-gray-100 shadow-lg border border-gray-300 text-2xl w-12 h-12">
+        🌙
+      </button>
+    );
+  }
   
   return (
     <button
       onClick={toggleTheme}
-      className="fixed top-4 right-4 z-50 p-3 rounded-full bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700 hover:scale-110 transition-transform"
+      className="p-3 rounded-full bg-gray-100 dark:bg-zinc-800 shadow-lg border border-gray-300 dark:border-zinc-600 hover:scale-110 transition-all text-2xl"
       aria-label="Toggle theme"
     >
       {theme === "light" ? "🌙" : "☀️"}
