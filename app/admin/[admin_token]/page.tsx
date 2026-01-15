@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { db } from "@/firebase/client";
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from "firebase/firestore";
 import { useParams, useRouter } from "next/navigation";
+import { ThemeToggle } from "@/components/ThemeProvider";
 
 const ADMIN_TOKEN = "super-admin-secreto-2026-xyz";
 
@@ -148,6 +149,10 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
+      {/* Theme Toggle */}
+      <div className="fixed top-4 right-4 z-50">
+        <ThemeToggle />
+      </div>
       {/* Header */}
       <header className="bg-gray-800 border-b border-gray-700">
         <div className="max-w-6xl mx-auto px-4 py-6">
