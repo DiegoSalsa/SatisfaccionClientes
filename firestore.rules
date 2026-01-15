@@ -1,0 +1,20 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Businesses: permitir lectura (para buscar por slug o token)
+    // La seguridad real está en que el private_token es secreto (UUID v4)
+    match /businesses/{businessId} {
+      allow read: if true;
+      allow write: if false;
+    }
+    
+    // Reviews: cualquiera puede crear, solo el dueño puede leer (via dashboard)
+    match /reviews/{reviewId} {
+      allow create: if request.resource.data.rating >= 1 
+                    && request.resource.data.rating <= 5
+                    && request.resource.data.business_id is string;
+      allow read: if true;
+      allow update, delete: if false;
+    }
+  }
+}

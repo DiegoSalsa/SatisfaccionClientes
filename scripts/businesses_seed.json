@@ -1,0 +1,422 @@
+[
+  {
+    "id": "business_1",
+    "name": "Negocio 1",
+    "slug": "negocio-1",
+    "private_token": "c2e0c5bf-e0c9-4b6a-b6b6-02026e00c707",
+    "logo_url": ""
+  },
+  {
+    "id": "business_2",
+    "name": "Negocio 2",
+    "slug": "negocio-2",
+    "private_token": "97b52e00-dea0-4d24-b6a8-aa511c02fb1e",
+    "logo_url": ""
+  },
+  {
+    "id": "business_3",
+    "name": "Negocio 3",
+    "slug": "negocio-3",
+    "private_token": "ecbb8900-f471-449c-864a-b959de580d49",
+    "logo_url": ""
+  },
+  {
+    "id": "business_4",
+    "name": "Negocio 4",
+    "slug": "negocio-4",
+    "private_token": "b2f9e62d-7956-44c5-96a5-d2ff29248691",
+    "logo_url": ""
+  },
+  {
+    "id": "business_5",
+    "name": "Negocio 5",
+    "slug": "negocio-5",
+    "private_token": "2af888ab-bc80-49fb-9a52-7cf417283c26",
+    "logo_url": ""
+  },
+  {
+    "id": "business_6",
+    "name": "Negocio 6",
+    "slug": "negocio-6",
+    "private_token": "2fa4e419-6f9e-4661-9b2b-85cf110fb8f4",
+    "logo_url": ""
+  },
+  {
+    "id": "business_7",
+    "name": "Negocio 7",
+    "slug": "negocio-7",
+    "private_token": "10b0c3ee-410b-4f0d-ac84-243c1032a2bb",
+    "logo_url": ""
+  },
+  {
+    "id": "business_8",
+    "name": "Negocio 8",
+    "slug": "negocio-8",
+    "private_token": "9e4da80e-b735-440a-a612-63a4222a26f7",
+    "logo_url": ""
+  },
+  {
+    "id": "business_9",
+    "name": "Negocio 9",
+    "slug": "negocio-9",
+    "private_token": "be8d36af-e314-4772-8e30-b35c1441854a",
+    "logo_url": ""
+  },
+  {
+    "id": "business_10",
+    "name": "Negocio 10",
+    "slug": "negocio-10",
+    "private_token": "eff2c18f-b547-4337-bb29-1e954b2e40cd",
+    "logo_url": ""
+  },
+  {
+    "id": "business_11",
+    "name": "Negocio 11",
+    "slug": "negocio-11",
+    "private_token": "3e683e4f-c58b-4038-8b0e-4e27ca5ce24a",
+    "logo_url": ""
+  },
+  {
+    "id": "business_12",
+    "name": "Negocio 12",
+    "slug": "negocio-12",
+    "private_token": "66f71142-15fd-4b66-a04a-a36cc9b6587a",
+    "logo_url": ""
+  },
+  {
+    "id": "business_13",
+    "name": "Negocio 13",
+    "slug": "negocio-13",
+    "private_token": "1e68785b-24be-4fcb-a02b-0be8fd5f285b",
+    "logo_url": ""
+  },
+  {
+    "id": "business_14",
+    "name": "Negocio 14",
+    "slug": "negocio-14",
+    "private_token": "7569a262-cd0f-4cba-867c-42e4975f20b0",
+    "logo_url": ""
+  },
+  {
+    "id": "business_15",
+    "name": "Negocio 15",
+    "slug": "negocio-15",
+    "private_token": "a86a24ee-00c6-443e-941d-317c24ae2f4f",
+    "logo_url": ""
+  },
+  {
+    "id": "business_16",
+    "name": "Negocio 16",
+    "slug": "negocio-16",
+    "private_token": "72edc440-77c1-461f-97ea-dc5f124d439b",
+    "logo_url": ""
+  },
+  {
+    "id": "business_17",
+    "name": "Negocio 17",
+    "slug": "negocio-17",
+    "private_token": "0754615a-d99c-407e-840d-54c63b3437c0",
+    "logo_url": ""
+  },
+  {
+    "id": "business_18",
+    "name": "Negocio 18",
+    "slug": "negocio-18",
+    "private_token": "bbae3ee3-70ae-4ed3-8c6d-02a3a98bb261",
+    "logo_url": ""
+  },
+  {
+    "id": "business_19",
+    "name": "Negocio 19",
+    "slug": "negocio-19",
+    "private_token": "d60701c8-0d5c-494a-9ae6-6dc36200a645",
+    "logo_url": ""
+  },
+  {
+    "id": "business_20",
+    "name": "Negocio 20",
+    "slug": "negocio-20",
+    "private_token": "fcb8fa92-9858-4b3e-ab06-96826bb26cee",
+    "logo_url": ""
+  },
+  {
+    "id": "business_21",
+    "name": "Negocio 21",
+    "slug": "negocio-21",
+    "private_token": "017a8adb-24ab-4dae-b30e-46327b008f69",
+    "logo_url": ""
+  },
+  {
+    "id": "business_22",
+    "name": "Negocio 22",
+    "slug": "negocio-22",
+    "private_token": "9dc6e08f-8b1b-4ee3-9532-b4bcd8b30937",
+    "logo_url": ""
+  },
+  {
+    "id": "business_23",
+    "name": "Negocio 23",
+    "slug": "negocio-23",
+    "private_token": "44963a4b-f49c-4046-a6dc-0b407b4b1825",
+    "logo_url": ""
+  },
+  {
+    "id": "business_24",
+    "name": "Negocio 24",
+    "slug": "negocio-24",
+    "private_token": "742bc393-d9c2-483a-a67d-b8fa05041465",
+    "logo_url": ""
+  },
+  {
+    "id": "business_25",
+    "name": "Negocio 25",
+    "slug": "negocio-25",
+    "private_token": "7804caee-d8c8-4e52-8d9e-e1592c915ee3",
+    "logo_url": ""
+  },
+  {
+    "id": "business_26",
+    "name": "Negocio 26",
+    "slug": "negocio-26",
+    "private_token": "c9cb4ab5-3c5b-453d-acd9-a8cf86c0e02a",
+    "logo_url": ""
+  },
+  {
+    "id": "business_27",
+    "name": "Negocio 27",
+    "slug": "negocio-27",
+    "private_token": "04641b7e-45d5-4b9c-baf6-3095b6010e19",
+    "logo_url": ""
+  },
+  {
+    "id": "business_28",
+    "name": "Negocio 28",
+    "slug": "negocio-28",
+    "private_token": "eae1d9ba-25d8-4427-8428-a5021d8349e3",
+    "logo_url": ""
+  },
+  {
+    "id": "business_29",
+    "name": "Negocio 29",
+    "slug": "negocio-29",
+    "private_token": "f814bf8e-7b7d-4ec2-93a6-7c519d93b5dc",
+    "logo_url": ""
+  },
+  {
+    "id": "business_30",
+    "name": "Negocio 30",
+    "slug": "negocio-30",
+    "private_token": "e6841576-ebd1-4e3d-b8a5-2adf3112f72b",
+    "logo_url": ""
+  },
+  {
+    "id": "business_31",
+    "name": "Negocio 31",
+    "slug": "negocio-31",
+    "private_token": "e9c00f9d-5460-4ddb-97e9-f7d0693094a1",
+    "logo_url": ""
+  },
+  {
+    "id": "business_32",
+    "name": "Negocio 32",
+    "slug": "negocio-32",
+    "private_token": "c6b659a6-d5b0-4b72-b613-205a5bf852d4",
+    "logo_url": ""
+  },
+  {
+    "id": "business_33",
+    "name": "Negocio 33",
+    "slug": "negocio-33",
+    "private_token": "e93a84b0-892a-4b5c-a129-1302566ae9fc",
+    "logo_url": ""
+  },
+  {
+    "id": "business_34",
+    "name": "Negocio 34",
+    "slug": "negocio-34",
+    "private_token": "5698fc99-6a61-42bc-9fd3-25cb78c60515",
+    "logo_url": ""
+  },
+  {
+    "id": "business_35",
+    "name": "Negocio 35",
+    "slug": "negocio-35",
+    "private_token": "7954228d-5b0c-42ac-864e-1665fbdd42a9",
+    "logo_url": ""
+  },
+  {
+    "id": "business_36",
+    "name": "Negocio 36",
+    "slug": "negocio-36",
+    "private_token": "e0bdc87d-90fd-4032-9a1a-43d99c69d1d1",
+    "logo_url": ""
+  },
+  {
+    "id": "business_37",
+    "name": "Negocio 37",
+    "slug": "negocio-37",
+    "private_token": "5c6b20b8-ff04-42dc-9cc3-e84865de394f",
+    "logo_url": ""
+  },
+  {
+    "id": "business_38",
+    "name": "Negocio 38",
+    "slug": "negocio-38",
+    "private_token": "5ebb95b1-ff34-4582-85a1-99b167c1dc93",
+    "logo_url": ""
+  },
+  {
+    "id": "business_39",
+    "name": "Negocio 39",
+    "slug": "negocio-39",
+    "private_token": "2f789330-4e77-4dfd-a3d5-4e3227b8910a",
+    "logo_url": ""
+  },
+  {
+    "id": "business_40",
+    "name": "Negocio 40",
+    "slug": "negocio-40",
+    "private_token": "10f580ef-9172-4bba-b6bc-870da6543d8b",
+    "logo_url": ""
+  },
+  {
+    "id": "business_41",
+    "name": "Negocio 41",
+    "slug": "negocio-41",
+    "private_token": "fe415d28-da6c-4e43-aa86-638dc9a64409",
+    "logo_url": ""
+  },
+  {
+    "id": "business_42",
+    "name": "Negocio 42",
+    "slug": "negocio-42",
+    "private_token": "c1bcd6a2-8cec-49f6-bd51-d0469207d349",
+    "logo_url": ""
+  },
+  {
+    "id": "business_43",
+    "name": "Negocio 43",
+    "slug": "negocio-43",
+    "private_token": "2b94023a-5639-4685-aed4-db0fa1cd20bb",
+    "logo_url": ""
+  },
+  {
+    "id": "business_44",
+    "name": "Negocio 44",
+    "slug": "negocio-44",
+    "private_token": "31c7d758-916a-4d93-b647-9395fd068001",
+    "logo_url": ""
+  },
+  {
+    "id": "business_45",
+    "name": "Negocio 45",
+    "slug": "negocio-45",
+    "private_token": "976ed2e5-b06f-48ac-819e-661f2a1660ea",
+    "logo_url": ""
+  },
+  {
+    "id": "business_46",
+    "name": "Negocio 46",
+    "slug": "negocio-46",
+    "private_token": "534bbae8-0a78-453c-9955-d7145d593f2c",
+    "logo_url": ""
+  },
+  {
+    "id": "business_47",
+    "name": "Negocio 47",
+    "slug": "negocio-47",
+    "private_token": "67041c04-82cb-4fd9-96f7-b00b5e953f7a",
+    "logo_url": ""
+  },
+  {
+    "id": "business_48",
+    "name": "Negocio 48",
+    "slug": "negocio-48",
+    "private_token": "306cc664-9850-482d-9cf3-7699daaf2411",
+    "logo_url": ""
+  },
+  {
+    "id": "business_49",
+    "name": "Negocio 49",
+    "slug": "negocio-49",
+    "private_token": "26efc443-a277-495b-9312-9596bf7bd729",
+    "logo_url": ""
+  },
+  {
+    "id": "business_50",
+    "name": "Negocio 50",
+    "slug": "negocio-50",
+    "private_token": "db53c4d7-9a1f-4b94-b34b-d0ed8177aebe",
+    "logo_url": ""
+  },
+  {
+    "id": "business_51",
+    "name": "Negocio 51",
+    "slug": "negocio-51",
+    "private_token": "581d620c-ee6b-443c-ae9b-6f56c3d20175",
+    "logo_url": ""
+  },
+  {
+    "id": "business_52",
+    "name": "Negocio 52",
+    "slug": "negocio-52",
+    "private_token": "af1d1f68-3292-4c64-85bf-83d33662b16d",
+    "logo_url": ""
+  },
+  {
+    "id": "business_53",
+    "name": "Negocio 53",
+    "slug": "negocio-53",
+    "private_token": "1d263fca-74e3-4445-a390-dce5f3ea91dc",
+    "logo_url": ""
+  },
+  {
+    "id": "business_54",
+    "name": "Negocio 54",
+    "slug": "negocio-54",
+    "private_token": "83d8f515-fdc4-49b8-9901-a865534813a8",
+    "logo_url": ""
+  },
+  {
+    "id": "business_55",
+    "name": "Negocio 55",
+    "slug": "negocio-55",
+    "private_token": "6cf4e5eb-222e-4eab-b05c-b56c7a1a29c2",
+    "logo_url": ""
+  },
+  {
+    "id": "business_56",
+    "name": "Negocio 56",
+    "slug": "negocio-56",
+    "private_token": "798ca9f6-b7be-4cd2-a3cd-7473d859814e",
+    "logo_url": ""
+  },
+  {
+    "id": "business_57",
+    "name": "Negocio 57",
+    "slug": "negocio-57",
+    "private_token": "0b80307b-f1ff-4b07-a141-2057eb6ffd85",
+    "logo_url": ""
+  },
+  {
+    "id": "business_58",
+    "name": "Negocio 58",
+    "slug": "negocio-58",
+    "private_token": "0ab15b63-ca5a-47c4-8df3-f391b0b54c32",
+    "logo_url": ""
+  },
+  {
+    "id": "business_59",
+    "name": "Negocio 59",
+    "slug": "negocio-59",
+    "private_token": "00675bf6-ce6b-4f3e-b14b-0ac7dfef2edc",
+    "logo_url": ""
+  },
+  {
+    "id": "business_60",
+    "name": "Negocio 60",
+    "slug": "negocio-60",
+    "private_token": "801c02e0-687e-47bc-b6fe-05761b68d892",
+    "logo_url": ""
+  }
+]
