@@ -4,20 +4,14 @@ import { getFirestore } from 'firebase-admin/firestore';
 let app: App;
 
 if (!getApps().length) {
-  // En producción, usar variables de entorno
-  if (process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
-    const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
-    app = initializeApp({
-      credential: cert(serviceAccount),
-    });
-  } else {
-    // En desarrollo, usar el archivo serviceAccountKey.json
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const serviceAccount = require('../serviceAccountKey.json');
-    app = initializeApp({
-      credential: cert(serviceAccount),
-    });
+  if (!process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
+    throw new Error('FIREBASE_SERVICE_ACCOUNT_KEY no está configurada');
   }
+  
+  const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
+  app = initializeApp({
+    credential: cert(serviceAccount),
+  });
 } else {
   app = getApps()[0];
 }
