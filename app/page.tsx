@@ -1,11 +1,13 @@
 "use client";
 import { useState } from "react";
 import { ThemeToggle } from "@/components/ThemeProvider";
+import { CheckoutModal } from "@/components/CheckoutModal";
 
 export default function Home() {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [checkoutPlan, setCheckoutPlan] = useState<'pro_mensual' | 'pro_anual' | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -390,9 +392,12 @@ export default function Home() {
                   Soporte prioritario
                 </li>
               </ul>
-              <a href="#contact" className="block text-center bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold transition-colors">
+              <button 
+                onClick={() => setCheckoutPlan('pro_mensual')}
+                className="block w-full text-center bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold transition-colors cursor-pointer"
+              >
                 Comenzar
-              </a>
+              </button>
             </div>
             
             {/* Pro Anual */}
@@ -429,9 +434,12 @@ export default function Home() {
                   Facturación anual
                 </li>
               </ul>
-              <a href="#contact" className="block text-center bg-white text-blue-600 py-3 rounded-xl font-semibold hover:bg-blue-50 transition-colors">
+              <button 
+                onClick={() => setCheckoutPlan('pro_anual')}
+                className="block w-full text-center bg-white text-blue-600 py-3 rounded-xl font-semibold hover:bg-blue-50 transition-colors cursor-pointer"
+              >
                 Elegir anual
-              </a>
+              </button>
             </div>
           </div>
         </section>
@@ -567,6 +575,15 @@ export default function Home() {
           </div>
         </div>
       </footer>
+
+      {/* Checkout Modal */}
+      <CheckoutModal
+        isOpen={checkoutPlan !== null}
+        onClose={() => setCheckoutPlan(null)}
+        planId={checkoutPlan || 'pro_mensual'}
+        planName={checkoutPlan === 'pro_anual' ? 'Pro Anual' : 'Pro Mensual'}
+        planPrice={checkoutPlan === 'pro_anual' ? '$99.990 CLP/año' : '$9.990 CLP/mes'}
+      />
     </div>
   );
 }
