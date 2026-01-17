@@ -4,6 +4,64 @@ import { db } from "@/firebase/client";
 import { collection, addDoc, Timestamp, getDocs, query, where } from "firebase/firestore";
 import { useParams } from "next/navigation";
 import { ThemeToggle } from "@/components/ThemeProvider";
+import confetti from "canvas-confetti";
+
+// Rate limiting: 1 review cada 5 minutos por negocio
+const RATE_LIMIT_KEY = "review_timestamps";
+const RATE_LIMIT_MS = 5 * 60 * 1000; // 5 minutos
+
+function checkRateLimit(businessId: string): { allowed: boolean; remainingTime: number } {
+  try {
+    const stored = localStorage.getItem(RATE_LIMIT_KEY);
+    const timestamps: Record<string, number> = stored ? JSON.parse(stored) : {};
+    const lastSubmit = timestamps[businessId] || 0;
+    const now = Date.now();
+    const elapsed = now - lastSubmit;
+    
+    if (elapsed < RATE_LIMIT_MS) {
+      return { allowed: false, remainingTime: Math.ceil((RATE_LIMIT_MS - elapsed) / 1000) };
+    }
+    return { allowed: true, remainingTime: 0 };
+  } catch {
+    return { allowed: true, remainingTime: 0 };
+  }
+}
+
+function setRateLimitTimestamp(businessId: string) {
+  try {
+    const stored = localStorage.getItem(RATE_LIMIT_KEY);
+    const timestamps: Record<string, number> = stored ? JSON.parse(stored) : {};
+    timestamps[businessId] = Date.now();
+    localStorage.setItem(RATE_LIMIT_KEY, JSON.stringify(timestamps));
+  } catch {}
+}
+
+function fireConfetti() {
+  const duration = 3000;
+  const end = Date.now() + duration;
+
+  const frame = () => {
+    confetti({
+      particleCount: 3,
+      angle: 60,
+      spread: 55,
+      origin: { x: 0, y: 0.7 },
+      colors: ['#3b82f6', '#8b5cf6', '#f59e0b']
+    });
+    confetti({
+      particleCount: 3,
+      angle: 120,
+      spread: 55,
+      origin: { x: 1, y: 0.7 },
+      colors: ['#3b82f6', '#8b5cf6', '#f59e0b']
+    });
+
+    if (Date.now() < end) {
+      requestAnimationFrame(frame);
+    }
+  };
+  frame();
+}
 
 export default function EncuestaPage() {
   const params = useParams<{ slug: string }>();
@@ -14,6 +72,7 @@ export default function EncuestaPage() {
   const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({ rating: 0, comment: "", contact_email: "", comuna: "", edad: "" });
   const [hoverRating, setHoverRating] = useState(0);
+  const [rateLimitError, setRateLimitError] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchBusiness() {
@@ -47,11 +106,23 @@ export default function EncuestaPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setRateLimitError(null);
     setSuccess(false);
+    
     if (!form.rating) {
       setError("Debes seleccionar una calificación");
       return;
     }
+
+    // Check rate limit
+    const rateCheck = checkRateLimit(business.id);
+    if (!rateCheck.allowed) {
+      const minutes = Math.floor(rateCheck.remainingTime / 60);
+      const seconds = rateCheck.remainingTime % 60;
+      setRateLimitError(`Debes esperar ${minutes > 0 ? `${minutes}m ` : ''}${seconds}s antes de enviar otra opinión`);
+      return;
+    }
+
     setSubmitting(true);
     try {
       await addDoc(collection(db, "reviews"), {
@@ -63,7 +134,9 @@ export default function EncuestaPage() {
         edad: form.edad,
         timestamp: Timestamp.now(),
       });
+      setRateLimitTimestamp(business.id);
       setSuccess(true);
+      fireConfetti();
       setForm({ rating: 0, comment: "", contact_email: "", comuna: "", edad: "" });
     } catch (err) {
       setError("Error al enviar. Intenta de nuevo.");
@@ -253,6 +326,13 @@ export default function EncuestaPage() {
           {error && (
             <div className="bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 px-4 py-3 rounded-xl text-sm text-center">
               {error}
+            </div>
+          )}
+
+          {/* Rate Limit Error */}
+          {rateLimitError && (
+            <div className="bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 px-4 py-3 rounded-xl text-sm text-center flex items-center justify-center gap-2">
+              <span>⏱️</span> {rateLimitError}
             </div>
           )}
 

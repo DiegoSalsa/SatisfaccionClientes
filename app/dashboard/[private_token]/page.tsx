@@ -1,10 +1,12 @@
 "use client";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import { db } from "@/firebase/client";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { useParams } from "next/navigation";
 import { QRCodeSVG } from "qrcode.react";
 import { ThemeToggle } from "@/components/ThemeProvider";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts";
+import * as XLSX from "xlsx";
 
 interface Review {
   rating: number;
@@ -15,6 +17,15 @@ interface Review {
   timestamp?: any;
 }
 
+interface Filters {
+  dateFrom: string;
+  dateTo: string;
+  comuna: string;
+  edadMin: string;
+  edadMax: string;
+  rating: string;
+}
+
 export default function DashboardPage() {
   const params = useParams<{ private_token: string }>();
   const [business, setBusiness] = useState<any>(null);
@@ -22,16 +33,23 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [showQR, setShowQR] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
+  const [filters, setFilters] = useState<Filters>({
+    dateFrom: "",
+    dateTo: "",
+    comuna: "",
+    edadMin: "",
+    edadMax: "",
+    rating: ""
+  });
   const qrRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     async function fetchData() {
       setLoading(true);
       try {
-        console.log("Buscando token:", params.private_token);
         const q = query(collection(db, "businesses"), where("private_token", "==", params.private_token));
         const snapshot = await getDocs(q);
-        console.log("Resultados:", snapshot.size, snapshot.empty);
         if (snapshot.empty) {
           setError("Acceso no autorizado");
           setLoading(false);
@@ -46,7 +64,6 @@ export default function DashboardPage() {
         );
         const reviewsSnap = await getDocs(reviewsQ);
         const reviewsData = reviewsSnap.docs.map((doc) => doc.data() as Review);
-        // Ordenar en el cliente
         reviewsData.sort((a, b) => {
           const timeA = a.timestamp?.toDate?.() || new Date(0);
           const timeB = b.timestamp?.toDate?.() || new Date(0);
@@ -54,13 +71,93 @@ export default function DashboardPage() {
         });
         setReviews(reviewsData);
       } catch (err) {
-        console.error("Error:", err);
         setError("Error al cargar datos");
       }
       setLoading(false);
     }
     fetchData();
   }, [params.private_token]);
+
+  // Filtrar reviews
+  const filteredReviews = useMemo(() => {
+    return reviews.filter(r => {
+      const date = r.timestamp?.toDate?.() || new Date(0);
+      if (filters.dateFrom && date < new Date(filters.dateFrom)) return false;
+      if (filters.dateTo && date > new Date(filters.dateTo + "T23:59:59")) return false;
+      if (filters.comuna && r.comuna?.toLowerCase() !== filters.comuna.toLowerCase()) return false;
+      if (filters.edadMin && Number(r.edad) < Number(filters.edadMin)) return false;
+      if (filters.edadMax && Number(r.edad) > Number(filters.edadMax)) return false;
+      if (filters.rating && r.rating !== Number(filters.rating)) return false;
+      return true;
+    });
+  }, [reviews, filters]);
+
+  // Datos para gráfico de tendencia semanal
+  const trendData = useMemo(() => {
+    const weeks: Record<string, { ratings: number[], count: number }> = {};
+    filteredReviews.forEach(r => {
+      const date = r.timestamp?.toDate?.() || new Date();
+      const weekStart = new Date(date);
+      weekStart.setDate(date.getDate() - date.getDay());
+      const key = weekStart.toISOString().split('T')[0];
+      if (!weeks[key]) weeks[key] = { ratings: [], count: 0 };
+      weeks[key].ratings.push(r.rating);
+      weeks[key].count++;
+    });
+    return Object.entries(weeks)
+      .map(([week, data]) => ({
+        week: new Date(week).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }),
+        promedio: Number((data.ratings.reduce((a, b) => a + b, 0) / data.ratings.length).toFixed(1)),
+        cantidad: data.count
+      }))
+      .sort((a, b) => new Date(a.week).getTime() - new Date(b.week).getTime())
+      .slice(-8);
+  }, [filteredReviews]);
+
+  // Comunas únicas para el filtro
+  const uniqueComunas = useMemo(() => {
+    const comunas = reviews.map(r => r.comuna).filter(Boolean);
+    return [...new Set(comunas)].sort();
+  }, [reviews]);
+
+  // Exportar a Excel
+  const exportToExcel = () => {
+    const data = filteredReviews.map(r => ({
+      Fecha: r.timestamp?.toDate?.()?.toLocaleDateString('es-ES') || '',
+      Rating: r.rating,
+      Comentario: r.comment || '',
+      Email: r.contact_email || '',
+      Comuna: r.comuna || '',
+      Edad: r.edad || ''
+    }));
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Reviews");
+    XLSX.writeFile(wb, `reviews-${business?.slug || 'export'}.xlsx`);
+  };
+
+  // Exportar a CSV
+  const exportToCSV = () => {
+    const headers = ['Fecha', 'Rating', 'Comentario', 'Email', 'Comuna', 'Edad'];
+    const rows = filteredReviews.map(r => [
+      r.timestamp?.toDate?.()?.toLocaleDateString('es-ES') || '',
+      r.rating,
+      `"${(r.comment || '').replace(/"/g, '""')}"`,
+      r.contact_email || '',
+      r.comuna || '',
+      r.edad || ''
+    ]);
+    const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `reviews-${business?.slug || 'export'}.csv`;
+    link.click();
+  };
+
+  const clearFilters = () => {
+    setFilters({ dateFrom: "", dateTo: "", comuna: "", edadMin: "", edadMax: "", rating: "" });
+  };
 
   if (loading) {
     return (
@@ -232,6 +329,39 @@ export default function DashboardPage() {
           </div>
         )}
 
+        {/* Trend Chart */}
+        {trendData.length > 1 && (
+          <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm p-6 border border-gray-100 dark:border-zinc-800 mb-8">
+            <h3 className="font-semibold text-gray-800 dark:text-white mb-4">📈 Tendencia de satisfacción</h3>
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={trendData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" opacity={0.3} />
+                  <XAxis dataKey="week" stroke="#9CA3AF" fontSize={12} />
+                  <YAxis domain={[1, 5]} stroke="#9CA3AF" fontSize={12} />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#18181b',
+                      border: '1px solid #3f3f46',
+                      borderRadius: '8px',
+                      color: '#fff'
+                    }}
+                    formatter={(value) => [`${value} ⭐`, 'Promedio']}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="promedio"
+                    stroke="#3B82F6"
+                    strokeWidth={3}
+                    dot={{ fill: '#3B82F6', strokeWidth: 2, r: 5 }}
+                    activeDot={{ r: 8, fill: '#60A5FA' }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        )}
+
         {/* Rating Distribution */}
         <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm p-6 border border-gray-100 dark:border-zinc-800 mb-8">
           <h3 className="font-semibold text-gray-800 dark:text-white mb-4">Distribución de calificaciones</h3>
@@ -251,22 +381,139 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Reviews List */}
-        <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800">
-          <div className="p-6 border-b border-gray-100 dark:border-zinc-800">
-            <h3 className="font-semibold text-gray-800 dark:text-white">Comentarios recientes</h3>
+        {/* Filters & Export Section */}
+        <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 mb-8">
+          <div className="p-6 border-b border-gray-100 dark:border-zinc-800 flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <h3 className="font-semibold text-gray-800 dark:text-white">Comentarios</h3>
+              <span className="bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded-full text-sm">
+                {filteredReviews.length} de {reviews.length}
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
+                  showFilters 
+                    ? 'bg-blue-600 text-white' 
+                    : 'bg-gray-100 dark:bg-zinc-800 text-gray-700 dark:text-zinc-200 hover:bg-gray-200 dark:hover:bg-zinc-700'
+                }`}
+              >
+                🔍 Filtros
+              </button>
+              <button
+                onClick={exportToExcel}
+                className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+              >
+                📊 Excel
+              </button>
+              <button
+                onClick={exportToCSV}
+                className="bg-gray-100 dark:bg-zinc-800 hover:bg-gray-200 dark:hover:bg-zinc-700 text-gray-700 dark:text-zinc-200 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+              >
+                📄 CSV
+              </button>
+            </div>
           </div>
+
+          {/* Filters Panel */}
+          {showFilters && (
+            <div className="p-6 border-b border-gray-100 dark:border-zinc-800 bg-gray-50 dark:bg-zinc-800/50">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                <div>
+                  <label className="block text-xs text-gray-500 dark:text-zinc-400 mb-1">Desde</label>
+                  <input
+                    type="date"
+                    value={filters.dateFrom}
+                    onChange={(e) => setFilters({...filters, dateFrom: e.target.value})}
+                    className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-gray-800 dark:text-white text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-500 dark:text-zinc-400 mb-1">Hasta</label>
+                  <input
+                    type="date"
+                    value={filters.dateTo}
+                    onChange={(e) => setFilters({...filters, dateTo: e.target.value})}
+                    className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-gray-800 dark:text-white text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-500 dark:text-zinc-400 mb-1">Comuna</label>
+                  <select
+                    value={filters.comuna}
+                    onChange={(e) => setFilters({...filters, comuna: e.target.value})}
+                    className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-gray-800 dark:text-white text-sm"
+                  >
+                    <option value="">Todas</option>
+                    {uniqueComunas.map(c => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-500 dark:text-zinc-400 mb-1">Edad mín</label>
+                  <input
+                    type="number"
+                    placeholder="18"
+                    value={filters.edadMin}
+                    onChange={(e) => setFilters({...filters, edadMin: e.target.value})}
+                    className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-gray-800 dark:text-white text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-500 dark:text-zinc-400 mb-1">Edad máx</label>
+                  <input
+                    type="number"
+                    placeholder="99"
+                    value={filters.edadMax}
+                    onChange={(e) => setFilters({...filters, edadMax: e.target.value})}
+                    className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-gray-800 dark:text-white text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-500 dark:text-zinc-400 mb-1">Rating</label>
+                  <select
+                    value={filters.rating}
+                    onChange={(e) => setFilters({...filters, rating: e.target.value})}
+                    className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-gray-800 dark:text-white text-sm"
+                  >
+                    <option value="">Todos</option>
+                    {[5,4,3,2,1].map(r => (
+                      <option key={r} value={r}>{r} ⭐</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              <div className="mt-4 flex justify-end">
+                <button
+                  onClick={clearFilters}
+                  className="text-sm text-gray-500 dark:text-zinc-400 hover:text-gray-700 dark:hover:text-zinc-200 transition-colors"
+                >
+                  ✕ Limpiar filtros
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Reviews List */}
           <div className="divide-y divide-gray-100 dark:divide-zinc-800">
-            {reviews.length === 0 ? (
+            {filteredReviews.length === 0 ? (
               <div className="p-12 text-center">
                 <div className="w-16 h-16 bg-gray-100 dark:bg-zinc-800 rounded-full flex items-center justify-center mx-auto mb-4">
                   <span className="text-3xl">💬</span>
                 </div>
-                <h4 className="font-medium text-gray-800 dark:text-white mb-1">Sin comentarios aún</h4>
-                <p className="text-gray-500 dark:text-zinc-400 text-sm">Comparte tu enlace de encuesta para recibir opiniones</p>
+                <h4 className="font-medium text-gray-800 dark:text-white mb-1">
+                  {reviews.length === 0 ? 'Sin comentarios aún' : 'Sin resultados'}
+                </h4>
+                <p className="text-gray-500 dark:text-zinc-400 text-sm">
+                  {reviews.length === 0 
+                    ? 'Comparte tu enlace de encuesta para recibir opiniones' 
+                    : 'Intenta ajustar los filtros'}
+                </p>
               </div>
             ) : (
-              reviews.slice(0, 20).map((r, i) => (
+              filteredReviews.slice(0, 50).map((r, i) => (
                 <div key={i} className="p-6 hover:bg-gray-50 dark:hover:bg-zinc-800/50 transition-colors">
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
