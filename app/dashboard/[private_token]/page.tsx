@@ -318,6 +318,12 @@ export default function DashboardPage() {
                   size={200}
                   level="H"
                   includeMargin={true}
+                  imageSettings={business.logo_url ? {
+                    src: business.logo_url,
+                    height: 40,
+                    width: 40,
+                    excavate: true,
+                  } : undefined}
                 />
               </div>
               <div className="flex gap-2">
