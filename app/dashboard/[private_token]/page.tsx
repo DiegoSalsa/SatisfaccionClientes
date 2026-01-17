@@ -231,13 +231,13 @@ export default function DashboardPage() {
       <header className="bg-white dark:bg-zinc-900 border-b border-gray-200 dark:border-zinc-800">
         <div className="max-w-5xl mx-auto px-4 py-6">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
-              {business.logo_url ? (
-                <img src={business.logo_url} alt={business.name} className="w-12 h-12 rounded-lg object-cover" />
-              ) : (
+            {business.logo_url ? (
+              <img src={business.logo_url} alt={business.name} className="w-14 h-14 rounded-xl object-contain" />
+            ) : (
+              <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
                 <span className="text-2xl text-white">🏪</span>
-              )}
-            </div>
+              </div>
+            )}
             <div>
               <h1 className="text-2xl font-bold text-gray-800 dark:text-white">{business.name}</h1>
               <p className="text-gray-500 dark:text-zinc-400 text-sm">Dashboard de satisfacción</p>
