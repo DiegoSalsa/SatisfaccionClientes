@@ -114,6 +114,33 @@ export default function DashboardPage() {
       .slice(-8);
   }, [filteredReviews]);
 
+  // Datos para gráfico de distribución de edades
+  const ageDistributionData = useMemo(() => {
+    const ageGroups: Record<string, number> = {
+      '18-25': 0,
+      '26-35': 0,
+      '36-45': 0,
+      '46-55': 0,
+      '56-65': 0,
+      '65+': 0
+    };
+    
+    filteredReviews.forEach(r => {
+      const edad = Number(r.edad);
+      if (!edad) return;
+      if (edad <= 25) ageGroups['18-25']++;
+      else if (edad <= 35) ageGroups['26-35']++;
+      else if (edad <= 45) ageGroups['36-45']++;
+      else if (edad <= 55) ageGroups['46-55']++;
+      else if (edad <= 65) ageGroups['56-65']++;
+      else ageGroups['65+']++;
+    });
+    
+    return Object.entries(ageGroups)
+      .map(([rango, cantidad]) => ({ rango, cantidad }))
+      .filter(d => d.cantidad > 0);
+  }, [filteredReviews]);
+
   // Comunas únicas para el filtro
   const uniqueComunas = useMemo(() => {
     const comunas = reviews.map(r => r.comuna).filter(Boolean);
@@ -357,6 +384,36 @@ export default function DashboardPage() {
                     activeDot={{ r: 8, fill: '#60A5FA' }}
                   />
                 </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        )}
+
+        {/* Age Distribution Chart */}
+        {ageDistributionData.length > 0 && (
+          <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm p-6 border border-gray-100 dark:border-zinc-800 mb-8">
+            <h3 className="font-semibold text-gray-800 dark:text-white mb-4">👥 Distribución por edad</h3>
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={ageDistributionData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" opacity={0.3} />
+                  <XAxis dataKey="rango" stroke="#9CA3AF" fontSize={12} />
+                  <YAxis stroke="#9CA3AF" fontSize={12} allowDecimals={false} />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#18181b',
+                      border: '1px solid #3f3f46',
+                      borderRadius: '8px',
+                      color: '#fff'
+                    }}
+                    formatter={(value) => [`${value} clientes`, 'Cantidad']}
+                  />
+                  <Bar 
+                    dataKey="cantidad" 
+                    fill="#8B5CF6" 
+                    radius={[6, 6, 0, 0]}
+                  />
+                </BarChart>
               </ResponsiveContainer>
             </div>
           </div>
