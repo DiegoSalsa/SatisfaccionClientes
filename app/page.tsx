@@ -21,8 +21,8 @@ export default function Home() {
       answer: "Al registrarte, recibirás automáticamente tu enlace único de encuesta (ej: /encuesta/tu-negocio) y tu enlace privado al dashboard."
     },
     {
-      question: "¿Es gratis usar Satisfacción?",
-      answer: "Sí, ofrecemos un plan gratuito con todas las funciones básicas. Los planes de pago incluyen características avanzadas como exportación ilimitada y soporte prioritario."
+      question: "¿Cuánto cuesta Satisfacción?",
+      answer: "Ofrecemos dos opciones: Pro Mensual a $9.990 CLP/mes y Pro Anual a $99.990 CLP/año (ahorras 2 meses). Ambos planes incluyen todas las funcionalidades."
     },
     {
       question: "¿Puedo personalizar el QR con mi logo?",
@@ -49,7 +49,7 @@ export default function Home() {
       <header className="px-6 py-6 sticky top-0 bg-white/80 dark:bg-black/80 backdrop-blur-md z-40 border-b border-gray-100 dark:border-zinc-800">
         <nav className="max-w-6xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <span className="text-3xl">⭐</span>
+            <svg className="w-8 h-8 text-yellow-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
             <span className="text-xl font-bold text-gray-800 dark:text-white">Satisfacción</span>
           </div>
           <div className="hidden md:flex items-center gap-6 text-sm">
@@ -68,7 +68,7 @@ export default function Home() {
         <section className="max-w-6xl mx-auto px-6 py-20">
           <div className="text-center mb-16">
             <div className="inline-block bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-4 py-1.5 rounded-full text-sm font-medium mb-6">
-              🚀 +60 negocios ya confían en nosotros
+              +60 negocios ya confían en nosotros
             </div>
             <h1 className="text-5xl md:text-7xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
               Conoce lo que piensan<br />
@@ -85,7 +85,7 @@ export default function Home() {
                 href="#contact" 
                 className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all hover:scale-105 shadow-lg shadow-blue-600/25"
               >
-                Comenzar Gratis
+                Comenzar ahora
               </a>
               <a 
                 href="/encuesta/negocio-1" 
@@ -134,8 +134,8 @@ export default function Home() {
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div className="bg-white dark:bg-zinc-900 p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 hover:shadow-lg transition-all hover:-translate-y-1">
-              <div className="w-14 h-14 bg-blue-100 dark:bg-blue-900/50 rounded-xl flex items-center justify-center text-2xl mb-4">
-                📱
+              <div className="w-14 h-14 bg-blue-100 dark:bg-blue-900/50 rounded-xl flex items-center justify-center mb-4">
+                <svg className="w-7 h-7 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
               </div>
               <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">Encuesta en 30 segundos</h3>
               <p className="text-gray-600 dark:text-zinc-400">
@@ -144,8 +144,8 @@ export default function Home() {
             </div>
             
             <div className="bg-white dark:bg-zinc-900 p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 hover:shadow-lg transition-all hover:-translate-y-1">
-              <div className="w-14 h-14 bg-purple-100 dark:bg-purple-900/50 rounded-xl flex items-center justify-center text-2xl mb-4">
-                📊
+              <div className="w-14 h-14 bg-purple-100 dark:bg-purple-900/50 rounded-xl flex items-center justify-center mb-4">
+                <svg className="w-7 h-7 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
               </div>
               <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">Gráficos de tendencia</h3>
               <p className="text-gray-600 dark:text-zinc-400">
@@ -154,8 +154,8 @@ export default function Home() {
             </div>
             
             <div className="bg-white dark:bg-zinc-900 p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 hover:shadow-lg transition-all hover:-translate-y-1">
-              <div className="w-14 h-14 bg-green-100 dark:bg-green-900/50 rounded-xl flex items-center justify-center text-2xl mb-4">
-                📥
+              <div className="w-14 h-14 bg-green-100 dark:bg-green-900/50 rounded-xl flex items-center justify-center mb-4">
+                <svg className="w-7 h-7 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
               </div>
               <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">Exportar Excel/CSV</h3>
               <p className="text-gray-600 dark:text-zinc-400">
@@ -164,8 +164,8 @@ export default function Home() {
             </div>
             
             <div className="bg-white dark:bg-zinc-900 p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 hover:shadow-lg transition-all hover:-translate-y-1">
-              <div className="w-14 h-14 bg-orange-100 dark:bg-orange-900/50 rounded-xl flex items-center justify-center text-2xl mb-4">
-                🔍
+              <div className="w-14 h-14 bg-orange-100 dark:bg-orange-900/50 rounded-xl flex items-center justify-center mb-4">
+                <svg className="w-7 h-7 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
               </div>
               <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">Filtros avanzados</h3>
               <p className="text-gray-600 dark:text-zinc-400">
@@ -174,8 +174,8 @@ export default function Home() {
             </div>
             
             <div className="bg-white dark:bg-zinc-900 p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 hover:shadow-lg transition-all hover:-translate-y-1">
-              <div className="w-14 h-14 bg-pink-100 dark:bg-pink-900/50 rounded-xl flex items-center justify-center text-2xl mb-4">
-                📷
+              <div className="w-14 h-14 bg-pink-100 dark:bg-pink-900/50 rounded-xl flex items-center justify-center mb-4">
+                <svg className="w-7 h-7 text-pink-600 dark:text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" /></svg>
               </div>
               <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">QR con tu logo</h3>
               <p className="text-gray-600 dark:text-zinc-400">
@@ -184,8 +184,8 @@ export default function Home() {
             </div>
             
             <div className="bg-white dark:bg-zinc-900 p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 hover:shadow-lg transition-all hover:-translate-y-1">
-              <div className="w-14 h-14 bg-red-100 dark:bg-red-900/50 rounded-xl flex items-center justify-center text-2xl mb-4">
-                🛡️
+              <div className="w-14 h-14 bg-red-100 dark:bg-red-900/50 rounded-xl flex items-center justify-center mb-4">
+                <svg className="w-7 h-7 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
               </div>
               <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">Anti-spam</h3>
               <p className="text-gray-600 dark:text-zinc-400">
@@ -224,7 +224,9 @@ export default function Home() {
               {/* Content mock */}
               <div className="p-8">
                 <div className="flex items-center gap-4 mb-8">
-                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center text-white text-xl">🏪</div>
+                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center text-white">
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
+                  </div>
                   <div>
                     <div className="font-bold text-gray-800 dark:text-white">Tu Negocio</div>
                     <div className="text-sm text-gray-500 dark:text-zinc-400">Dashboard de satisfacción</div>
@@ -248,7 +250,10 @@ export default function Home() {
                 
                 {/* Chart mock */}
                 <div className="bg-gray-50 dark:bg-zinc-800 rounded-xl p-4">
-                  <div className="text-sm font-medium text-gray-700 dark:text-zinc-300 mb-4">📈 Tendencia semanal</div>
+                  <div className="text-sm font-medium text-gray-700 dark:text-zinc-300 mb-4 flex items-center gap-2">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                    Tendencia semanal
+                  </div>
                   <div className="flex items-end justify-between h-32 gap-2">
                     {[65, 45, 80, 55, 90, 70, 85].map((h, i) => (
                       <div key={i} className="flex-1 bg-blue-500 rounded-t-md transition-all hover:bg-blue-600" style={{ height: `${h}%` }}></div>
@@ -349,89 +354,83 @@ export default function Home() {
               Planes simples y transparentes
             </h2>
             <p className="text-gray-600 dark:text-zinc-400">
-              Empieza gratis, escala cuando lo necesites
+              Elige el plan que mejor se adapte a tu negocio
             </p>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            {/* Free */}
-            <div className="bg-white dark:bg-zinc-900 rounded-2xl p-8 border border-gray-200 dark:border-zinc-800">
-              <div className="text-lg font-medium text-gray-800 dark:text-white mb-2">Gratis</div>
-              <div className="text-4xl font-bold text-gray-900 dark:text-white mb-1">$0</div>
-              <div className="text-gray-500 dark:text-zinc-400 text-sm mb-6">Para siempre</div>
+          <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+            {/* Pro Mensual */}
+            <div className="bg-white dark:bg-zinc-900 rounded-2xl p-8 border border-gray-200 dark:border-zinc-800 hover:border-blue-300 dark:hover:border-blue-700 transition-colors">
+              <div className="text-lg font-medium text-gray-800 dark:text-white mb-2">Pro Mensual</div>
+              <div className="text-4xl font-bold text-gray-900 dark:text-white mb-1">$9.990</div>
+              <div className="text-gray-500 dark:text-zinc-400 text-sm mb-6">CLP / mes</div>
               <ul className="space-y-3 mb-8">
                 <li className="flex items-center gap-2 text-gray-700 dark:text-zinc-300">
-                  <span className="text-green-500">✓</span> Encuestas ilimitadas
+                  <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                  Encuestas ilimitadas
                 </li>
                 <li className="flex items-center gap-2 text-gray-700 dark:text-zinc-300">
-                  <span className="text-green-500">✓</span> Dashboard completo
+                  <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                  Dashboard completo
                 </li>
                 <li className="flex items-center gap-2 text-gray-700 dark:text-zinc-300">
-                  <span className="text-green-500">✓</span> Código QR básico
+                  <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                  QR con logo personalizado
                 </li>
                 <li className="flex items-center gap-2 text-gray-700 dark:text-zinc-300">
-                  <span className="text-green-500">✓</span> Exportar 100 registros/mes
+                  <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                  Exportación ilimitada
+                </li>
+                <li className="flex items-center gap-2 text-gray-700 dark:text-zinc-300">
+                  <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                  Gráficos avanzados
+                </li>
+                <li className="flex items-center gap-2 text-gray-700 dark:text-zinc-300">
+                  <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                  Soporte prioritario
                 </li>
               </ul>
-              <a href="#contact" className="block text-center bg-gray-100 dark:bg-zinc-800 hover:bg-gray-200 dark:hover:bg-zinc-700 text-gray-800 dark:text-white py-3 rounded-xl font-medium transition-colors">
-                Comenzar gratis
+              <a href="#contact" className="block text-center bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold transition-colors">
+                Comenzar
               </a>
             </div>
             
-            {/* Pro */}
-            <div className="bg-gradient-to-b from-blue-600 to-blue-700 rounded-2xl p-8 text-white relative transform md:scale-105 shadow-xl">
+            {/* Pro Anual */}
+            <div className="bg-gradient-to-b from-blue-600 to-blue-700 rounded-2xl p-8 text-white relative shadow-xl">
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-yellow-400 text-yellow-900 text-xs font-bold px-3 py-1 rounded-full">
-                POPULAR
+                AHORRA 17%
               </div>
-              <div className="text-lg font-medium text-blue-100 mb-2">Pro</div>
-              <div className="text-4xl font-bold mb-1">$9.990</div>
-              <div className="text-blue-200 text-sm mb-6">CLP / mes</div>
+              <div className="text-lg font-medium text-blue-100 mb-2">Pro Anual</div>
+              <div className="text-4xl font-bold mb-1">$99.990</div>
+              <div className="text-blue-200 text-sm mb-6">CLP / año</div>
               <ul className="space-y-3 mb-8">
                 <li className="flex items-center gap-2">
-                  <span className="text-yellow-300">✓</span> Todo lo del plan Gratis
+                  <svg className="w-5 h-5 text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                  Todo lo del plan mensual
                 </li>
                 <li className="flex items-center gap-2">
-                  <span className="text-yellow-300">✓</span> QR con logo personalizado
+                  <svg className="w-5 h-5 text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                  2 meses gratis incluidos
                 </li>
                 <li className="flex items-center gap-2">
-                  <span className="text-yellow-300">✓</span> Exportación ilimitada
+                  <svg className="w-5 h-5 text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                  Precio fijo garantizado
                 </li>
                 <li className="flex items-center gap-2">
-                  <span className="text-yellow-300">✓</span> Gráficos avanzados
+                  <svg className="w-5 h-5 text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                  Soporte prioritario 24/7
                 </li>
                 <li className="flex items-center gap-2">
-                  <span className="text-yellow-300">✓</span> Soporte prioritario
+                  <svg className="w-5 h-5 text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                  Onboarding personalizado
+                </li>
+                <li className="flex items-center gap-2">
+                  <svg className="w-5 h-5 text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                  Facturación anual
                 </li>
               </ul>
               <a href="#contact" className="block text-center bg-white text-blue-600 py-3 rounded-xl font-semibold hover:bg-blue-50 transition-colors">
-                Elegir Pro
-              </a>
-            </div>
-            
-            {/* Enterprise */}
-            <div className="bg-white dark:bg-zinc-900 rounded-2xl p-8 border border-gray-200 dark:border-zinc-800">
-              <div className="text-lg font-medium text-gray-800 dark:text-white mb-2">Enterprise</div>
-              <div className="text-4xl font-bold text-gray-900 dark:text-white mb-1">Custom</div>
-              <div className="text-gray-500 dark:text-zinc-400 text-sm mb-6">Según necesidades</div>
-              <ul className="space-y-3 mb-8">
-                <li className="flex items-center gap-2 text-gray-700 dark:text-zinc-300">
-                  <span className="text-green-500">✓</span> Todo lo del plan Pro
-                </li>
-                <li className="flex items-center gap-2 text-gray-700 dark:text-zinc-300">
-                  <span className="text-green-500">✓</span> Multi-sucursal
-                </li>
-                <li className="flex items-center gap-2 text-gray-700 dark:text-zinc-300">
-                  <span className="text-green-500">✓</span> API de integración
-                </li>
-                <li className="flex items-center gap-2 text-gray-700 dark:text-zinc-300">
-                  <span className="text-green-500">✓</span> Soporte dedicado
-                </li>
-                <li className="flex items-center gap-2 text-gray-700 dark:text-zinc-300">
-                  <span className="text-green-500">✓</span> SLA garantizado
-                </li>
-              </ul>
-              <a href="#contact" className="block text-center bg-gray-100 dark:bg-zinc-800 hover:bg-gray-200 dark:hover:bg-zinc-700 text-gray-800 dark:text-white py-3 rounded-xl font-medium transition-colors">
-                Contactar ventas
+                Elegir anual
               </a>
             </div>
           </div>
@@ -485,19 +484,27 @@ export default function Home() {
           
           <div className="flex flex-wrap justify-center gap-8 text-center">
             <div className="flex flex-col items-center gap-2">
-              <div className="w-16 h-16 bg-gray-100 dark:bg-zinc-800 rounded-2xl flex items-center justify-center text-3xl">📱</div>
+              <div className="w-16 h-16 bg-gray-100 dark:bg-zinc-800 rounded-2xl flex items-center justify-center">
+                <svg className="w-8 h-8 text-gray-600 dark:text-zinc-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+              </div>
               <span className="text-gray-700 dark:text-zinc-300 font-medium">Móvil</span>
             </div>
             <div className="flex flex-col items-center gap-2">
-              <div className="w-16 h-16 bg-gray-100 dark:bg-zinc-800 rounded-2xl flex items-center justify-center text-3xl">💻</div>
+              <div className="w-16 h-16 bg-gray-100 dark:bg-zinc-800 rounded-2xl flex items-center justify-center">
+                <svg className="w-8 h-8 text-gray-600 dark:text-zinc-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+              </div>
               <span className="text-gray-700 dark:text-zinc-300 font-medium">Desktop</span>
             </div>
             <div className="flex flex-col items-center gap-2">
-              <div className="w-16 h-16 bg-gray-100 dark:bg-zinc-800 rounded-2xl flex items-center justify-center text-3xl">📟</div>
+              <div className="w-16 h-16 bg-gray-100 dark:bg-zinc-800 rounded-2xl flex items-center justify-center">
+                <svg className="w-8 h-8 text-gray-600 dark:text-zinc-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 18h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+              </div>
               <span className="text-gray-700 dark:text-zinc-300 font-medium">Tablet</span>
             </div>
             <div className="flex flex-col items-center gap-2">
-              <div className="w-16 h-16 bg-gray-100 dark:bg-zinc-800 rounded-2xl flex items-center justify-center text-3xl">🌐</div>
+              <div className="w-16 h-16 bg-gray-100 dark:bg-zinc-800 rounded-2xl flex items-center justify-center">
+                <svg className="w-8 h-8 text-gray-600 dark:text-zinc-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" /></svg>
+              </div>
               <span className="text-gray-700 dark:text-zinc-300 font-medium">Todos los navegadores</span>
             </div>
           </div>
@@ -515,7 +522,7 @@ export default function Home() {
             
             {submitted ? (
               <div className="bg-white/20 backdrop-blur rounded-2xl p-6 max-w-md mx-auto">
-                <div className="text-4xl mb-3">🎉</div>
+                <svg className="w-12 h-12 mx-auto mb-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 <div className="font-semibold text-lg">¡Gracias por tu interés!</div>
                 <p className="text-blue-100 text-sm mt-2">Te contactaremos pronto.</p>
               </div>
@@ -546,7 +553,7 @@ export default function Home() {
         <div className="max-w-6xl mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="flex items-center gap-2">
-              <span className="text-2xl">⭐</span>
+              <svg className="w-6 h-6 text-yellow-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
               <span className="font-bold text-gray-800 dark:text-white">Satisfacción</span>
             </div>
             <div className="flex gap-6 text-sm text-gray-500 dark:text-zinc-400">
