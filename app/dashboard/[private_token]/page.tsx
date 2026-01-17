@@ -328,24 +328,60 @@ export default function DashboardPage() {
               </div>
               <div className="flex gap-2">
                 <button
-                  onClick={() => {
+                  onClick={async () => {
                     const svg = qrRef.current?.querySelector('svg');
-                    if (svg) {
-                      const svgData = new XMLSerializer().serializeToString(svg);
-                      const canvas = document.createElement('canvas');
-                      const ctx = canvas.getContext('2d');
-                      const img = new Image();
-                      img.onload = () => {
-                        canvas.width = img.width;
-                        canvas.height = img.height;
-                        ctx?.drawImage(img, 0, 0);
+                    if (!svg) return;
+                    
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    const size = 200 + 20; // QR size + margin
+                    canvas.width = size;
+                    canvas.height = size;
+                    
+                    // Dibujar QR base
+                    const svgData = new XMLSerializer().serializeToString(svg);
+                    const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+                    const svgUrl = URL.createObjectURL(svgBlob);
+                    
+                    const qrImg = new Image();
+                    qrImg.onload = async () => {
+                      ctx?.drawImage(qrImg, 0, 0, size, size);
+                      URL.revokeObjectURL(svgUrl);
+                      
+                      // Si hay logo, dibujarlo encima
+                      if (business.logo_url) {
+                        const logoImg = new Image();
+                        logoImg.crossOrigin = 'anonymous';
+                        logoImg.onload = () => {
+                          const logoSize = 40;
+                          const logoX = (size - logoSize) / 2;
+                          const logoY = (size - logoSize) / 2;
+                          // Fondo blanco para el logo
+                          ctx!.fillStyle = 'white';
+                          ctx!.fillRect(logoX - 4, logoY - 4, logoSize + 8, logoSize + 8);
+                          ctx?.drawImage(logoImg, logoX, logoY, logoSize, logoSize);
+                          
+                          const link = document.createElement('a');
+                          link.download = `qr-${business.slug}.png`;
+                          link.href = canvas.toDataURL('image/png');
+                          link.click();
+                        };
+                        logoImg.onerror = () => {
+                          // Si falla el logo, descargar sin él
+                          const link = document.createElement('a');
+                          link.download = `qr-${business.slug}.png`;
+                          link.href = canvas.toDataURL('image/png');
+                          link.click();
+                        };
+                        logoImg.src = business.logo_url;
+                      } else {
                         const link = document.createElement('a');
                         link.download = `qr-${business.slug}.png`;
                         link.href = canvas.toDataURL('image/png');
                         link.click();
-                      };
-                      img.src = 'data:image/svg+xml;base64,' + btoa(svgData);
-                    }
+                      }
+                    };
+                    qrImg.src = svgUrl;
                   }}
                   className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-medium transition-colors"
                 >
