@@ -10,12 +10,27 @@ function getApp(): App {
       app = getApps()[0];
     } else {
       if (!process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
+        console.error('FIREBASE_SERVICE_ACCOUNT_KEY no está definida');
         throw new Error('FIREBASE_SERVICE_ACCOUNT_KEY no está configurada');
       }
-      const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
-      app = initializeApp({
-        credential: cert(serviceAccount),
-      });
+      
+      let serviceAccount;
+      try {
+        serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
+      } catch (parseError) {
+        console.error('Error parseando FIREBASE_SERVICE_ACCOUNT_KEY:', parseError);
+        console.error('Valor (primeros 100 chars):', process.env.FIREBASE_SERVICE_ACCOUNT_KEY?.substring(0, 100));
+        throw new Error('FIREBASE_SERVICE_ACCOUNT_KEY no es un JSON válido');
+      }
+      
+      try {
+        app = initializeApp({
+          credential: cert(serviceAccount),
+        });
+      } catch (initError) {
+        console.error('Error inicializando Firebase Admin:', initError);
+        throw initError;
+      }
     }
   }
   return app;
