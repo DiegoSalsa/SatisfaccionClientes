@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { db } from "@/firebase/client";
 import { collection, addDoc, Timestamp, getDocs, query, where } from "firebase/firestore";
 import { useParams } from "next/navigation";
+import { motion } from "framer-motion";
 
 export default function EncuestaPage() {
   const params = useParams<{ slug: string }>();
@@ -107,19 +108,48 @@ export default function EncuestaPage() {
   if (success) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center px-4">
-        <div className="bg-white rounded-2xl shadow-lg p-8 text-center max-w-md">
-          <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, type: "spring" }}
+          className="bg-white rounded-2xl shadow-lg p-8 text-center max-w-md"
+        >
+          <motion.div 
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+            className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4"
+          >
             <span className="text-4xl">🎉</span>
-          </div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">¡Gracias por tu opinión!</h2>
-          <p className="text-gray-600 mb-6">Tu feedback nos ayuda a mejorar cada día.</p>
-          <button
+          </motion.div>
+          <motion.h2 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="text-2xl font-bold text-gray-800 mb-2"
+          >
+            ¡Gracias por tu opinión!
+          </motion.h2>
+          <motion.p 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+            className="text-gray-600 mb-6"
+          >
+            Tu feedback nos ayuda a mejorar cada día.
+          </motion.p>
+          <motion.button
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             onClick={() => setSuccess(false)}
             className="text-blue-600 hover:text-blue-700 font-medium"
           >
             Enviar otra opinión
-          </button>
-        </div>
+          </motion.button>
+        </motion.div>
       </div>
     );
   }
@@ -128,20 +158,50 @@ export default function EncuestaPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 py-8 px-4">
       <main className="max-w-lg mx-auto">
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="w-20 h-20 bg-white rounded-2xl shadow-md flex items-center justify-center mx-auto mb-4">
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="text-center mb-8"
+        >
+          <motion.div 
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.2, duration: 0.4 }}
+            className="w-20 h-20 bg-white rounded-2xl shadow-md flex items-center justify-center mx-auto mb-4"
+          >
             {business.logo_url ? (
               <img src={business.logo_url} alt={business.name} className="w-16 h-16 rounded-xl object-cover" />
             ) : (
               <span className="text-4xl">🏪</span>
             )}
-          </div>
-          <h1 className="text-2xl font-bold text-gray-800">{business.name}</h1>
-          <p className="text-gray-500 mt-1">¿Cómo fue tu experiencia?</p>
-        </div>
+          </motion.div>
+          <motion.h1 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className="text-2xl font-bold text-gray-800"
+          >
+            {business.name}
+          </motion.h1>
+          <motion.p 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+            className="text-gray-500 mt-1"
+          >
+            ¿Cómo fue tu experiencia?
+          </motion.p>
+        </motion.div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-lg p-6 md:p-8 space-y-6">
+        <motion.form 
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.5 }}
+          onSubmit={handleSubmit} 
+          className="bg-white rounded-2xl shadow-lg p-6 md:p-8 space-y-6"
+        >
           {/* Rating */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-3 text-center">
@@ -216,9 +276,11 @@ export default function EncuestaPage() {
           )}
 
           {/* Submit */}
-          <button
+          <motion.button
             type="submit"
             disabled={submitting || !form.rating}
+            whileHover={form.rating ? { scale: 1.02 } : {}}
+            whileTap={form.rating ? { scale: 0.98 } : {}}
             className={`w-full py-4 rounded-xl font-semibold text-lg transition-all ${
               form.rating
                 ? "bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-200 hover:shadow-xl"
@@ -233,8 +295,8 @@ export default function EncuestaPage() {
             ) : (
               "Enviar opinión"
             )}
-          </button>
-        </form>
+          </motion.button>
+        </motion.form>
 
         {/* Footer */}
         <p className="text-center text-sm text-gray-400 mt-6">

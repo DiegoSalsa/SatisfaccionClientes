@@ -1,7 +1,81 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ThemeToggle } from "@/components/ThemeProvider";
 import { CheckoutModal } from "@/components/CheckoutModal";
+import { motion, useInView } from "framer-motion";
+
+// Animation variants
+const fadeInUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+};
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1, delayChildren: 0.1 }
+  }
+};
+
+const staggerItem = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+};
+
+// Animated counter component
+function AnimatedCounter({ target, suffix = "" }: { target: number | string; suffix?: string }) {
+  const [count, setCount] = useState(0);
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true });
+  
+  useEffect(() => {
+    if (!isInView) return;
+    const numTarget = typeof target === "string" ? parseFloat(target) : target;
+    if (isNaN(numTarget)) return;
+    
+    const duration = 2000;
+    const steps = 60;
+    const increment = numTarget / steps;
+    let current = 0;
+    
+    const timer = setInterval(() => {
+      current += increment;
+      if (current >= numTarget) {
+        setCount(numTarget);
+        clearInterval(timer);
+      } else {
+        setCount(Math.floor(current * 10) / 10);
+      }
+    }, duration / steps);
+    
+    return () => clearInterval(timer);
+  }, [isInView, target]);
+  
+  const displayValue = typeof target === "string" && target.includes(".") 
+    ? count.toFixed(1) 
+    : Math.floor(count);
+  
+  return <span ref={ref}>{displayValue}{suffix}</span>;
+}
+
+// Section wrapper with intersection observer
+function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 30 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+      transition={{ duration: 0.6 }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
 
 export default function Home() {
   const [email, setEmail] = useState("");
@@ -69,20 +143,40 @@ export default function Home() {
         {/* Hero */}
         <section className="max-w-6xl mx-auto px-6 py-20">
           <div className="text-center mb-16">
-            <div className="inline-block bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-4 py-1.5 rounded-full text-sm font-medium mb-6">
+            <motion.div 
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="inline-block bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-4 py-1.5 rounded-full text-sm font-medium mb-6"
+            >
               +60 negocios ya confían en nosotros
-            </div>
-            <h1 className="text-5xl md:text-7xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
+            </motion.div>
+            <motion.h1 
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.2 }}
+              className="text-5xl md:text-7xl font-bold text-gray-900 dark:text-white mb-6 leading-tight"
+            >
               Conoce lo que piensan<br />
               <span className="bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
                 tus clientes
               </span>
-            </h1>
-            <p className="text-xl text-gray-600 dark:text-zinc-300 max-w-2xl mx-auto mb-10">
+            </motion.h1>
+            <motion.p 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              className="text-xl text-gray-600 dark:text-zinc-300 max-w-2xl mx-auto mb-10"
+            >
               Sistema de encuestas de valoración simple y efectivo. 
               Recoge opiniones, mejora tu servicio, haz crecer tu negocio.
-            </p>
-            <div className="flex gap-4 justify-center flex-wrap">
+            </motion.p>
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.6 }}
+              className="flex gap-4 justify-center flex-wrap"
+            >
               <a 
                 href="#contact" 
                 className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all hover:scale-105 shadow-lg shadow-blue-600/25"
@@ -91,51 +185,71 @@ export default function Home() {
               </a>
               <a 
                 href="/dashboard/c2e0c5bf-e0c9-4b6a-b6b6-02026e00c707" 
-                className="bg-white dark:bg-zinc-800 hover:bg-gray-50 dark:hover:bg-zinc-700 text-gray-800 dark:text-white px-8 py-4 rounded-full font-semibold text-lg transition-all border border-gray-200 dark:border-zinc-700"
+                className="bg-white dark:bg-zinc-800 hover:bg-gray-50 dark:hover:bg-zinc-700 text-gray-800 dark:text-white px-8 py-4 rounded-full font-semibold text-lg transition-all border border-gray-200 dark:border-zinc-700 hover:scale-105"
               >
                 Ver Demo →
               </a>
-            </div>
+            </motion.div>
           </div>
         </section>
 
         {/* Stats */}
         <section className="bg-white dark:bg-zinc-900 border-y border-gray-100 dark:border-zinc-800">
           <div className="max-w-6xl mx-auto px-6 py-16">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-              <div className="text-center">
-                <div className="text-4xl md:text-5xl font-bold text-blue-600 dark:text-blue-400 mb-2">60+</div>
+            <motion.div 
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+              className="grid grid-cols-2 md:grid-cols-4 gap-8"
+            >
+              <motion.div variants={staggerItem} className="text-center">
+                <div className="text-4xl md:text-5xl font-bold text-blue-600 dark:text-blue-400 mb-2">
+                  <AnimatedCounter target={60} suffix="+" />
+                </div>
                 <div className="text-gray-600 dark:text-zinc-400">Negocios activos</div>
-              </div>
-              <div className="text-center">
-                <div className="text-4xl md:text-5xl font-bold text-purple-600 dark:text-purple-400 mb-2">10K+</div>
+              </motion.div>
+              <motion.div variants={staggerItem} className="text-center">
+                <div className="text-4xl md:text-5xl font-bold text-purple-600 dark:text-purple-400 mb-2">
+                  <AnimatedCounter target={10} suffix="K+" />
+                </div>
                 <div className="text-gray-600 dark:text-zinc-400">Opiniones recolectadas</div>
-              </div>
-              <div className="text-center">
-                <div className="text-4xl md:text-5xl font-bold text-green-600 dark:text-green-400 mb-2">4.8</div>
+              </motion.div>
+              <motion.div variants={staggerItem} className="text-center">
+                <div className="text-4xl md:text-5xl font-bold text-green-600 dark:text-green-400 mb-2">
+                  <AnimatedCounter target="4.8" />
+                </div>
                 <div className="text-gray-600 dark:text-zinc-400">Rating promedio</div>
-              </div>
-              <div className="text-center">
-                <div className="text-4xl md:text-5xl font-bold text-orange-600 dark:text-orange-400 mb-2">30s</div>
+              </motion.div>
+              <motion.div variants={staggerItem} className="text-center">
+                <div className="text-4xl md:text-5xl font-bold text-orange-600 dark:text-orange-400 mb-2">
+                  <AnimatedCounter target={30} suffix="s" />
+                </div>
                 <div className="text-gray-600 dark:text-zinc-400">Tiempo de encuesta</div>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
           </div>
         </section>
 
         {/* Features */}
         <section id="features" className="max-w-6xl mx-auto px-6 py-20">
-          <div className="text-center mb-16">
+          <AnimatedSection className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
               Todo lo que necesitas
             </h2>
             <p className="text-gray-600 dark:text-zinc-400 max-w-2xl mx-auto">
               Herramientas poderosas para entender a tus clientes y mejorar tu negocio
             </p>
-          </div>
+          </AnimatedSection>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="bg-white dark:bg-zinc-900 p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 hover:shadow-lg transition-all hover:-translate-y-1">
+          <motion.div 
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
+            <motion.div variants={staggerItem} className="bg-white dark:bg-zinc-900 p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 hover:shadow-lg transition-all hover:-translate-y-1">
               <div className="w-14 h-14 bg-blue-100 dark:bg-blue-900/50 rounded-xl flex items-center justify-center mb-4">
                 <svg className="w-7 h-7 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
               </div>
@@ -143,9 +257,9 @@ export default function Home() {
               <p className="text-gray-600 dark:text-zinc-400">
                 Sin registros ni complicaciones. El cliente solo califica y comenta.
               </p>
-            </div>
+            </motion.div>
             
-            <div className="bg-white dark:bg-zinc-900 p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 hover:shadow-lg transition-all hover:-translate-y-1">
+            <motion.div variants={staggerItem} className="bg-white dark:bg-zinc-900 p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 hover:shadow-lg transition-all hover:-translate-y-1">
               <div className="w-14 h-14 bg-purple-100 dark:bg-purple-900/50 rounded-xl flex items-center justify-center mb-4">
                 <svg className="w-7 h-7 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
               </div>
@@ -153,9 +267,9 @@ export default function Home() {
               <p className="text-gray-600 dark:text-zinc-400">
                 Visualiza la evolución de valoraciones por semana y distribución por edad.
               </p>
-            </div>
+            </motion.div>
             
-            <div className="bg-white dark:bg-zinc-900 p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 hover:shadow-lg transition-all hover:-translate-y-1">
+            <motion.div variants={staggerItem} className="bg-white dark:bg-zinc-900 p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 hover:shadow-lg transition-all hover:-translate-y-1">
               <div className="w-14 h-14 bg-green-100 dark:bg-green-900/50 rounded-xl flex items-center justify-center mb-4">
                 <svg className="w-7 h-7 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
               </div>
@@ -163,9 +277,9 @@ export default function Home() {
               <p className="text-gray-600 dark:text-zinc-400">
                 Descarga todos los datos filtrados para análisis externo con un clic.
               </p>
-            </div>
+            </motion.div>
             
-            <div className="bg-white dark:bg-zinc-900 p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 hover:shadow-lg transition-all hover:-translate-y-1">
+            <motion.div variants={staggerItem} className="bg-white dark:bg-zinc-900 p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 hover:shadow-lg transition-all hover:-translate-y-1">
               <div className="w-14 h-14 bg-orange-100 dark:bg-orange-900/50 rounded-xl flex items-center justify-center mb-4">
                 <svg className="w-7 h-7 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
               </div>
@@ -173,9 +287,9 @@ export default function Home() {
               <p className="text-gray-600 dark:text-zinc-400">
                 Filtra por fecha, comuna, rango de edad y calificación específica.
               </p>
-            </div>
+            </motion.div>
             
-            <div className="bg-white dark:bg-zinc-900 p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 hover:shadow-lg transition-all hover:-translate-y-1">
+            <motion.div variants={staggerItem} className="bg-white dark:bg-zinc-900 p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 hover:shadow-lg transition-all hover:-translate-y-1">
               <div className="w-14 h-14 bg-pink-100 dark:bg-pink-900/50 rounded-xl flex items-center justify-center mb-4">
                 <svg className="w-7 h-7 text-pink-600 dark:text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" /></svg>
               </div>
@@ -183,9 +297,9 @@ export default function Home() {
               <p className="text-gray-600 dark:text-zinc-400">
                 Genera códigos QR personalizados con el logo de tu negocio al centro.
               </p>
-            </div>
+            </motion.div>
             
-            <div className="bg-white dark:bg-zinc-900 p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 hover:shadow-lg transition-all hover:-translate-y-1">
+            <motion.div variants={staggerItem} className="bg-white dark:bg-zinc-900 p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 hover:shadow-lg transition-all hover:-translate-y-1">
               <div className="w-14 h-14 bg-red-100 dark:bg-red-900/50 rounded-xl flex items-center justify-center mb-4">
                 <svg className="w-7 h-7 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
               </div>
@@ -193,24 +307,30 @@ export default function Home() {
               <p className="text-gray-600 dark:text-zinc-400">
                 Rate limiting inteligente para evitar opiniones duplicadas o spam.
               </p>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </section>
 
         {/* Dashboard Preview */}
         <section className="bg-gradient-to-b from-transparent to-blue-50 dark:to-zinc-900/50 py-20">
           <div className="max-w-6xl mx-auto px-6">
-            <div className="text-center mb-12">
+            <AnimatedSection className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
                 Dashboard intuitivo
               </h2>
               <p className="text-gray-600 dark:text-zinc-400">
                 Todo lo que necesitas saber de tu negocio en un solo lugar
               </p>
-            </div>
+            </AnimatedSection>
             
             {/* Mock Dashboard */}
-            <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-zinc-700 overflow-hidden">
+            <motion.div 
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7 }}
+              className="bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-zinc-700 overflow-hidden"
+            >
               {/* Header mock */}
               <div className="bg-gray-50 dark:bg-zinc-800 px-6 py-4 border-b border-gray-200 dark:border-zinc-700 flex items-center gap-3">
                 <div className="flex gap-2">
@@ -266,45 +386,63 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </section>
 
         {/* How it works */}
         <section className="max-w-6xl mx-auto px-6 py-20">
-          <div className="bg-white dark:bg-zinc-900 rounded-3xl p-10 md:p-16 shadow-sm border border-gray-100 dark:border-zinc-800">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="bg-white dark:bg-zinc-900 rounded-3xl p-10 md:p-16 shadow-sm border border-gray-100 dark:border-zinc-800"
+          >
             <h2 className="text-3xl font-bold text-center text-gray-900 dark:text-white mb-12">¿Cómo funciona?</h2>
-            <div className="grid md:grid-cols-3 gap-8">
-              <div className="text-center">
+            <motion.div 
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="grid md:grid-cols-3 gap-8"
+            >
+              <motion.div variants={staggerItem} className="text-center">
                 <div className="w-16 h-16 bg-blue-600 text-white rounded-2xl flex items-center justify-center text-2xl font-bold mx-auto mb-4 shadow-lg shadow-blue-600/25">1</div>
                 <h4 className="font-semibold text-gray-800 dark:text-white mb-2 text-lg">Comparte tu enlace</h4>
                 <p className="text-gray-600 dark:text-zinc-400">Cada negocio tiene una URL única y un código QR personalizable</p>
-              </div>
-              <div className="text-center">
+              </motion.div>
+              <motion.div variants={staggerItem} className="text-center">
                 <div className="w-16 h-16 bg-purple-600 text-white rounded-2xl flex items-center justify-center text-2xl font-bold mx-auto mb-4 shadow-lg shadow-purple-600/25">2</div>
                 <h4 className="font-semibold text-gray-800 dark:text-white mb-2 text-lg">Cliente responde</h4>
                 <p className="text-gray-600 dark:text-zinc-400">Califican de 1-5 estrellas, dejan comentario y datos opcionales</p>
-              </div>
-              <div className="text-center">
+              </motion.div>
+              <motion.div variants={staggerItem} className="text-center">
                 <div className="w-16 h-16 bg-green-600 text-white rounded-2xl flex items-center justify-center text-2xl font-bold mx-auto mb-4 shadow-lg shadow-green-600/25">3</div>
                 <h4 className="font-semibold text-gray-800 dark:text-white mb-2 text-lg">Analiza y mejora</h4>
                 <p className="text-gray-600 dark:text-zinc-400">Revisa gráficos, filtra datos y exporta para tomar decisiones</p>
-              </div>
-            </div>
-          </div>
+              </motion.div>
+            </motion.div>
+          </motion.div>
         </section>
 
         {/* Testimonials */}
         <section className="bg-white dark:bg-zinc-900 border-y border-gray-100 dark:border-zinc-800 py-20">
           <div className="max-w-6xl mx-auto px-6">
-            <div className="text-center mb-12">
+            <AnimatedSection className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
                 Lo que dicen nuestros clientes
               </h2>
-            </div>
+            </AnimatedSection>
             
-            <div className="grid md:grid-cols-3 gap-6">
-              <div className="bg-gray-50 dark:bg-zinc-800 p-6 rounded-2xl">
+            <motion.div 
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-50px" }}
+              className="grid md:grid-cols-3 gap-6"
+            >
+              <motion.div variants={staggerItem} className="bg-gray-50 dark:bg-zinc-800 p-6 rounded-2xl hover:shadow-lg transition-shadow">
                 <div className="flex text-yellow-400 mb-4">★★★★★</div>
                 <p className="text-gray-700 dark:text-zinc-300 mb-4">
                   &quot;Antes no tenía idea de qué pensaban mis clientes. Ahora puedo mejorar mi servicio basado en datos reales.&quot;
@@ -316,9 +454,9 @@ export default function Home() {
                     <div className="text-sm text-gray-500 dark:text-zinc-400">Restaurante El Buen Sabor</div>
                   </div>
                 </div>
-              </div>
+              </motion.div>
               
-              <div className="bg-gray-50 dark:bg-zinc-800 p-6 rounded-2xl">
+              <motion.div variants={staggerItem} className="bg-gray-50 dark:bg-zinc-800 p-6 rounded-2xl hover:shadow-lg transition-shadow">
                 <div className="flex text-yellow-400 mb-4">★★★★★</div>
                 <p className="text-gray-700 dark:text-zinc-300 mb-4">
                   &quot;El QR con nuestro logo quedó espectacular. Lo imprimimos en cada mesa y las opiniones aumentaron 300%.&quot;
@@ -330,9 +468,9 @@ export default function Home() {
                     <div className="text-sm text-gray-500 dark:text-zinc-400">Café Central</div>
                   </div>
                 </div>
-              </div>
+              </motion.div>
               
-              <div className="bg-gray-50 dark:bg-zinc-800 p-6 rounded-2xl">
+              <motion.div variants={staggerItem} className="bg-gray-50 dark:bg-zinc-800 p-6 rounded-2xl hover:shadow-lg transition-shadow">
                 <div className="flex text-yellow-400 mb-4">★★★★★</div>
                 <p className="text-gray-700 dark:text-zinc-300 mb-4">
                   &quot;Exportar a Excel me permite hacer reportes mensuales para mi equipo. Simple y efectivo.&quot;
@@ -344,25 +482,35 @@ export default function Home() {
                     <div className="text-sm text-gray-500 dark:text-zinc-400">Clínica Dental Sonrisa</div>
                   </div>
                 </div>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
           </div>
         </section>
 
         {/* Pricing */}
         <section id="pricing" className="max-w-6xl mx-auto px-6 py-20">
-          <div className="text-center mb-12">
+          <AnimatedSection className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
               Planes simples y transparentes
             </h2>
             <p className="text-gray-600 dark:text-zinc-400">
               Elige el plan que mejor se adapte a tu negocio
             </p>
-          </div>
+          </AnimatedSection>
           
-          <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+          <motion.div 
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto"
+          >
             {/* Pro Mensual */}
-            <div className="bg-white dark:bg-zinc-900 rounded-2xl p-8 border border-gray-200 dark:border-zinc-800 hover:border-blue-300 dark:hover:border-blue-700 transition-colors">
+            <motion.div 
+              variants={staggerItem}
+              whileHover={{ y: -5 }}
+              className="bg-white dark:bg-zinc-900 rounded-2xl p-8 border border-gray-200 dark:border-zinc-800 hover:border-blue-300 dark:hover:border-blue-700 transition-colors"
+            >
               <div className="text-lg font-medium text-gray-800 dark:text-white mb-2">Pro Mensual</div>
               <div className="text-4xl font-bold text-gray-900 dark:text-white mb-1">$9.990</div>
               <div className="text-gray-500 dark:text-zinc-400 text-sm mb-6">CLP / mes</div>
@@ -398,10 +546,14 @@ export default function Home() {
               >
                 Comenzar
               </button>
-            </div>
+            </motion.div>
             
             {/* Pro Anual */}
-            <div className="bg-gradient-to-b from-blue-600 to-blue-700 rounded-2xl p-8 text-white relative shadow-xl">
+            <motion.div 
+              variants={staggerItem}
+              whileHover={{ y: -5 }}
+              className="bg-gradient-to-b from-blue-600 to-blue-700 rounded-2xl p-8 text-white relative shadow-xl"
+            >
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-yellow-400 text-yellow-900 text-xs font-bold px-3 py-1 rounded-full">
                 AHORRA 17%
               </div>
@@ -440,23 +592,30 @@ export default function Home() {
               >
                 Elegir anual
               </button>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </section>
 
         {/* FAQ */}
         <section id="faq" className="bg-gray-50 dark:bg-zinc-900/50 py-20">
           <div className="max-w-3xl mx-auto px-6">
-            <div className="text-center mb-12">
+            <AnimatedSection className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
                 Preguntas frecuentes
               </h2>
-            </div>
+            </AnimatedSection>
             
-            <div className="space-y-4">
+            <motion.div 
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="space-y-4"
+            >
               {faqs.map((faq, i) => (
-                <div 
-                  key={i} 
+                <motion.div 
+                  key={i}
+                  variants={staggerItem}
                   className="bg-white dark:bg-zinc-900 rounded-xl border border-gray-200 dark:border-zinc-800 overflow-hidden"
                 >
                   <button
@@ -469,58 +628,76 @@ export default function Home() {
                     </span>
                   </button>
                   {openFaq === i && (
-                    <div className="px-6 pb-4 text-gray-600 dark:text-zinc-400">
+                    <motion.div 
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="px-6 pb-4 text-gray-600 dark:text-zinc-400"
+                    >
                       {faq.answer}
-                    </div>
+                    </motion.div>
                   )}
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </div>
         </section>
 
         {/* Compatibility */}
         <section className="max-w-6xl mx-auto px-6 py-20">
-          <div className="text-center mb-12">
+          <AnimatedSection className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
               Funciona en todas partes
             </h2>
             <p className="text-gray-600 dark:text-zinc-400">
               Diseñado para funcionar perfectamente en cualquier dispositivo
             </p>
-          </div>
+          </AnimatedSection>
           
-          <div className="flex flex-wrap justify-center gap-8 text-center">
-            <div className="flex flex-col items-center gap-2">
+          <motion.div 
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            className="flex flex-wrap justify-center gap-8 text-center"
+          >
+            <motion.div variants={staggerItem} className="flex flex-col items-center gap-2">
               <div className="w-16 h-16 bg-gray-100 dark:bg-zinc-800 rounded-2xl flex items-center justify-center">
                 <svg className="w-8 h-8 text-gray-600 dark:text-zinc-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
               </div>
               <span className="text-gray-700 dark:text-zinc-300 font-medium">Móvil</span>
-            </div>
-            <div className="flex flex-col items-center gap-2">
+            </motion.div>
+            <motion.div variants={staggerItem} className="flex flex-col items-center gap-2">
               <div className="w-16 h-16 bg-gray-100 dark:bg-zinc-800 rounded-2xl flex items-center justify-center">
                 <svg className="w-8 h-8 text-gray-600 dark:text-zinc-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
               </div>
               <span className="text-gray-700 dark:text-zinc-300 font-medium">Desktop</span>
-            </div>
-            <div className="flex flex-col items-center gap-2">
+            </motion.div>
+            <motion.div variants={staggerItem} className="flex flex-col items-center gap-2">
               <div className="w-16 h-16 bg-gray-100 dark:bg-zinc-800 rounded-2xl flex items-center justify-center">
                 <svg className="w-8 h-8 text-gray-600 dark:text-zinc-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 18h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
               </div>
               <span className="text-gray-700 dark:text-zinc-300 font-medium">Tablet</span>
-            </div>
-            <div className="flex flex-col items-center gap-2">
+            </motion.div>
+            <motion.div variants={staggerItem} className="flex flex-col items-center gap-2">
               <div className="w-16 h-16 bg-gray-100 dark:bg-zinc-800 rounded-2xl flex items-center justify-center">
                 <svg className="w-8 h-8 text-gray-600 dark:text-zinc-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" /></svg>
               </div>
               <span className="text-gray-700 dark:text-zinc-300 font-medium">Todos los navegadores</span>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </section>
 
         {/* Contact CTA */}
         <section id="contact" className="max-w-6xl mx-auto px-6 py-20">
-          <div className="bg-gradient-to-br from-blue-600 to-purple-600 rounded-3xl p-10 md:p-16 text-center text-white">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="bg-gradient-to-br from-blue-600 to-purple-600 rounded-3xl p-10 md:p-16 text-center text-white"
+          >
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
               ¿Listo para conocer a tus clientes?
             </h2>
@@ -529,11 +706,15 @@ export default function Home() {
             </p>
             
             {submitted ? (
-              <div className="bg-white/20 backdrop-blur rounded-2xl p-6 max-w-md mx-auto">
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="bg-white/20 backdrop-blur rounded-2xl p-6 max-w-md mx-auto"
+              >
                 <svg className="w-12 h-12 mx-auto mb-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 <div className="font-semibold text-lg">¡Gracias por tu interés!</div>
                 <p className="text-blue-100 text-sm mt-2">Te contactaremos pronto.</p>
-              </div>
+              </motion.div>
             ) : (
               <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
                 <input
@@ -546,13 +727,13 @@ export default function Home() {
                 />
                 <button
                   type="submit"
-                  className="bg-white text-blue-600 px-8 py-4 rounded-full font-semibold hover:bg-blue-50 transition-colors whitespace-nowrap"
+                  className="bg-white text-blue-600 px-8 py-4 rounded-full font-semibold hover:bg-blue-50 transition-colors whitespace-nowrap hover:scale-105 transform"
                 >
                   Comenzar →
                 </button>
               </form>
             )}
-          </div>
+          </motion.div>
         </section>
       </main>
 
