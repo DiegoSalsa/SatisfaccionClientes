@@ -48,6 +48,9 @@ export default function DashboardPage() {
   const [savingMaps, setSavingMaps] = useState(false);
   const [mapsSaved, setMapsSaved] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [logoSaved, setLogoSaved] = useState(false);
+  const logoInputRef = useRef<HTMLInputElement>(null);
   const [showEmails, setShowEmails] = useState(false);
   const reviewsPerPage = 15;
 
@@ -163,7 +166,7 @@ export default function DashboardPage() {
   const collectedEmails = useMemo(() => {
     const emails = reviews
       .map(r => r.contact_email?.trim().toLowerCase())
-      .filter((email): email is string => Boolean(email) && email.includes('@'));
+      .filter((email): email is string => Boolean(email) && email!.includes('@'));
     return [...new Set(emails)].sort();
   }, [reviews]);
 
@@ -244,6 +247,74 @@ export default function DashboardPage() {
       console.error("Error guardando Google Maps URL:", err);
     }
     setSavingMaps(false);
+  };
+
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !business?.id) return;
+
+    // Validar tipo de archivo
+    if (!file.type.startsWith('image/')) {
+      alert('Por favor selecciona una imagen');
+      return;
+    }
+
+    // Validar tamaño (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('La imagen no puede superar los 5MB');
+      return;
+    }
+
+    setUploadingLogo(true);
+    setLogoSaved(false);
+
+    try {
+      // Obtener firma de Cloudinary
+      const signRes = await fetch('/api/cloudinary/sign', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ public_id: `logo_${business.slug}` }),
+      });
+      
+      if (!signRes.ok) throw new Error('Error al obtener firma');
+      
+      const { signature, timestamp, cloudName, apiKey } = await signRes.json();
+
+      // Subir a Cloudinary
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('signature', signature);
+      formData.append('timestamp', timestamp.toString());
+      formData.append('api_key', apiKey);
+      formData.append('upload_preset', 'valoralocal_logos');
+      formData.append('folder', 'valoralocal/logos');
+      formData.append('public_id', `logo_${business.slug}`);
+
+      const uploadRes = await fetch(
+        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+        { method: 'POST', body: formData }
+      );
+
+      if (!uploadRes.ok) throw new Error('Error al subir imagen');
+
+      const uploadData = await uploadRes.json();
+      const logoUrl = uploadData.secure_url;
+
+      // Guardar URL en Firestore
+      const businessRef = doc(db, 'businesses', business.id);
+      await updateDoc(businessRef, { logo_url: logoUrl });
+
+      setBusiness({ ...business, logo_url: logoUrl });
+      setLogoSaved(true);
+      setTimeout(() => setLogoSaved(false), 3000);
+    } catch (err) {
+      console.error('Error subiendo logo:', err);
+      alert('Error al subir el logo. Intenta de nuevo.');
+    }
+
+    setUploadingLogo(false);
+    // Reset input
+    if (logoInputRef.current) logoInputRef.current.value = '';
   };
 
   if (loading) {
@@ -476,6 +547,84 @@ export default function DashboardPage() {
                   Integración activa - Los clientes satisfechos verán la invitación
                 </p>
               )}
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Logo Upload Section */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.45 }}
+          className="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm p-4 sm:p-6 border border-gray-100 dark:border-zinc-800 mb-6 sm:mb-8"
+        >
+          <div className="flex flex-col sm:flex-row sm:items-start gap-4">
+            <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center flex-shrink-0">
+              <svg className="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <div className="flex-1 min-w-0">
+              <h3 className="font-semibold text-gray-800 dark:text-white mb-1">Logo de tu negocio</h3>
+              <p className="text-gray-500 dark:text-zinc-400 text-sm mb-4">
+                Sube el logo de tu negocio para personalizar tu encuesta y dashboard.
+              </p>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                {/* Preview del logo */}
+                <div className="w-20 h-20 rounded-xl border-2 border-dashed border-gray-300 dark:border-zinc-700 flex items-center justify-center overflow-hidden bg-gray-50 dark:bg-zinc-800 flex-shrink-0">
+                  {business.logo_url ? (
+                    <img src={business.logo_url} alt="Logo" className="w-full h-full object-contain" />
+                  ) : (
+                    <svg className="w-8 h-8 text-gray-400 dark:text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                  )}
+                </div>
+                <div className="flex-1 w-full">
+                  <input
+                    ref={logoInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleLogoUpload}
+                    className="hidden"
+                    id="logo-upload"
+                  />
+                  <label
+                    htmlFor="logo-upload"
+                    className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-medium transition-colors cursor-pointer ${
+                      uploadingLogo
+                        ? 'bg-purple-400 text-white cursor-wait'
+                        : logoSaved
+                        ? 'bg-green-600 text-white'
+                        : 'bg-purple-600 hover:bg-purple-700 text-white'
+                    }`}
+                  >
+                    {uploadingLogo ? (
+                      <>
+                        <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                        Subiendo...
+                      </>
+                    ) : logoSaved ? (
+                      <>
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                        ¡Logo guardado!
+                      </>
+                    ) : (
+                      <>
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                        </svg>
+                        {business.logo_url ? 'Cambiar logo' : 'Subir logo'}
+                      </>
+                    )}
+                  </label>
+                  <p className="text-xs text-gray-400 dark:text-zinc-500 mt-2">
+                    PNG, JPG o SVG. Máximo 5MB.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </motion.div>
