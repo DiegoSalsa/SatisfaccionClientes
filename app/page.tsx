@@ -51,8 +51,8 @@ export default function Home() {
       <header className="px-6 py-6 sticky top-0 bg-white/80 dark:bg-black/80 backdrop-blur-md z-40 border-b border-gray-100 dark:border-zinc-800">
         <nav className="max-w-6xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <img src="/logo-light.png" alt="Satisfacción" className="h-8 dark:hidden" />
-            <img src="/logo-dark.png" alt="Satisfacción" className="h-8 hidden dark:block" />
+            <img src="/logo-light.png" alt="Satisfacción" className="h-10 dark:hidden" />
+            <img src="/logo-dark.png" alt="Satisfacción" className="h-10 hidden dark:block" />
           </div>
           <div className="hidden md:flex items-center gap-6 text-sm">
             <a href="#features" className="text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white transition-colors">Características</a>
