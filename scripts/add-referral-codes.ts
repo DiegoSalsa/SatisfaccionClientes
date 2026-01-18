@@ -1,8 +1,42 @@
 // Script para generar códigos de referido a negocios existentes que no tengan uno
-// Ejecutar con: npx ts-node --project tsconfig.json scripts/add-referral-codes.ts
+// Ejecutar con: npx tsx scripts/add-referral-codes.ts
 
-import { db } from '../firebase/admin';
-import { generateReferralCode } from '../lib/referralCodes';
+import admin from 'firebase-admin';
+import { readFileSync } from 'fs';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+// Inicializar Firebase Admin
+const serviceAccount = JSON.parse(
+  readFileSync(join(__dirname, '..', 'serviceAccountKey.json'), 'utf8')
+);
+
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+  });
+}
+
+const db = admin.firestore();
+
+// Generador de códigos estéticos
+const PALABRAS = [
+  'LUNA', 'SOL', 'MAR', 'RIO', 'LAGO', 'CIELO', 'NUBE', 'FLOR', 'ROSA', 'ARBOL',
+  'LEON', 'TIGRE', 'AGUILA', 'LOBO', 'OSO', 'PUMA', 'HALCON', 'ZORRO',
+  'AZUL', 'ROJO', 'VERDE', 'DORADO', 'PLATA', 'CORAL', 'JADE', 'PERLA',
+  'FUEGO', 'TIERRA', 'AIRE', 'RAYO', 'TRUENO', 'VIENTO', 'BRISA', 'AURORA',
+  'NORTE', 'SUR', 'CUMBRE', 'COSTA', 'VALLE', 'MONTE', 'BAHIA', 'DELTA',
+  'EXITO', 'ELITE', 'PRIME', 'STAR', 'ROYAL', 'SMART', 'NEXUS', 'CIMA',
+  'CAFE', 'RESTO', 'SHOP', 'CLUB', 'PLAZA', 'CENTRO', 'LOCAL', 'TIENDA'
+];
+
+function generateReferralCode(): string {
+  const palabra = PALABRAS[Math.floor(Math.random() * PALABRAS.length)];
+  const numero = Math.floor(1000 + Math.random() * 9000);
+  return `${palabra}-${numero}`;
+}
 
 async function addReferralCodesToExistingBusinesses() {
   try {
