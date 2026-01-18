@@ -6,9 +6,9 @@ import { useParams } from "next/navigation";
 import { ThemeToggle } from "@/components/ThemeProvider";
 import confetti from "canvas-confetti";
 
-// Rate limiting: 1 review cada 5 minutos por negocio
+// Rate limiting: 1 review cada 30 minutos por negocio
 const RATE_LIMIT_KEY = "review_timestamps";
-const RATE_LIMIT_MS = 5 * 60 * 1000; // 5 minutos
+const RATE_LIMIT_MS = 30 * 60 * 1000; // 30 minutos
 
 function checkRateLimit(businessId: string): { allowed: boolean; remainingTime: number } {
   try {
