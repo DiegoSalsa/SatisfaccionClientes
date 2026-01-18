@@ -807,7 +807,11 @@ export default function DashboardPage() {
 
       {/* Footer */}
       <footer className="text-center py-8 text-gray-400 dark:text-zinc-500 text-sm">
-        <p className="flex items-center justify-center gap-1">Powered by <span className="font-medium">ValoraLocal</span></p>
+        <p className="flex items-center justify-center gap-2">
+          Powered by 
+          <img src="/logo-light.svg" alt="ValoraLocal" className="h-5 dark:hidden" />
+          <img src="/logo-dark.svg" alt="ValoraLocal" className="h-5 hidden dark:block" />
+        </p>
       </footer>
     </div>
   );

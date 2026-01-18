@@ -378,8 +378,10 @@ export default function EncuestaPage() {
         </form>
 
         {/* Footer */}
-        <p className="text-center text-sm text-gray-400 dark:text-zinc-500 mt-6 flex items-center justify-center gap-1">
-          Powered by <span className="font-medium">ValoraLocal</span>
+        <p className="text-center text-sm text-gray-400 dark:text-zinc-500 mt-6 flex items-center justify-center gap-2">
+          Powered by 
+          <img src="/logo-light.svg" alt="ValoraLocal" className="h-5 dark:hidden" />
+          <img src="/logo-dark.svg" alt="ValoraLocal" className="h-5 hidden dark:block" />
         </p>
       </main>
 
