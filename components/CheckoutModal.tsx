@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-type PlanId = 'pro_mensual' | 'pro_anual';
+type PlanId = 'pro_mensual' | 'pro_anual' | 'test_plan';
 
 interface CheckoutModalProps {
   isOpen: boolean;

@@ -26,6 +26,14 @@ export const PLANES = {
     tipo_frecuencia: 'months' as const,
     descripcion: 'Plan Pro - Cobro anual (ahorra 17%)',
   },
+  test_plan: {
+    id: 'test_plan',
+    nombre: 'Plan Prueba',
+    precio: 1000,
+    frecuencia: 1,
+    tipo_frecuencia: 'months' as const,
+    descripcion: 'Plan de prueba - Solo para testing',
+  },
 } as const;
 
 export type PlanId = keyof typeof PLANES;
