@@ -121,6 +121,7 @@ export default function DashboardPage() {
   // Datos para gráfico de distribución de edades
   const ageDistributionData = useMemo(() => {
     const ageGroups: Record<string, number> = {
+      '< 18': 0,
       '18-25': 0,
       '26-35': 0,
       '36-45': 0,
@@ -131,8 +132,9 @@ export default function DashboardPage() {
     
     filteredReviews.forEach(r => {
       const edad = Number(r.edad);
-      if (!edad) return;
-      if (edad <= 25) ageGroups['18-25']++;
+      if (!edad || edad < 1 || edad > 120) return;
+      if (edad < 18) ageGroups['< 18']++;
+      else if (edad <= 25) ageGroups['18-25']++;
       else if (edad <= 35) ageGroups['26-35']++;
       else if (edad <= 45) ageGroups['36-45']++;
       else if (edad <= 55) ageGroups['46-55']++;
@@ -140,8 +142,10 @@ export default function DashboardPage() {
       else ageGroups['65+']++;
     });
     
-    return Object.entries(ageGroups)
-      .map(([rango, cantidad]) => ({ rango, cantidad }))
+    // Mantener orden específico de los grupos
+    const orderedGroups = ['< 18', '18-25', '26-35', '36-45', '46-55', '56-65', '65+'];
+    return orderedGroups
+      .map(rango => ({ rango, cantidad: ageGroups[rango] }))
       .filter(d => d.cantidad > 0);
   }, [filteredReviews]);
 
