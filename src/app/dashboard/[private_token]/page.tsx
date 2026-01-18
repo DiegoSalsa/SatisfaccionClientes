@@ -2,7 +2,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { db } from "@/firebase/client";
-import { collection, query, where, getDocs, orderBy } from "firebase/firestore";
+import { collection, query, where, getDocs, orderBy, doc, updateDoc } from "firebase/firestore";
 import { useParams } from "next/navigation";
 
 interface Review {
@@ -18,6 +18,9 @@ export default function DashboardPage() {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [googleMapsUrl, setGoogleMapsUrl] = useState("");
+  const [savingMaps, setSavingMaps] = useState(false);
+  const [mapsSaved, setMapsSaved] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
@@ -30,8 +33,9 @@ export default function DashboardPage() {
           setLoading(false);
           return;
         }
-        const businessData = { id: snapshot.docs[0].id, ...snapshot.docs[0].data() };
+        const businessData = { id: snapshot.docs[0].id, ...snapshot.docs[0].data() } as any;
         setBusiness(businessData);
+        setGoogleMapsUrl(businessData.google_maps_url || "");
         
         const reviewsQ = query(
           collection(db, "reviews"),
@@ -82,6 +86,24 @@ export default function DashboardPage() {
     count: reviews.filter((r) => r.rating === star).length,
     percent: reviews.length ? (reviews.filter((r) => r.rating === star).length / reviews.length) * 100 : 0,
   }));
+
+  const handleSaveGoogleMaps = async () => {
+    if (!business?.id) return;
+    setSavingMaps(true);
+    setMapsSaved(false);
+    try {
+      const businessRef = doc(db, "businesses", business.id);
+      await updateDoc(businessRef, {
+        google_maps_url: googleMapsUrl.trim() || null,
+      });
+      setBusiness({ ...business, google_maps_url: googleMapsUrl.trim() || null });
+      setMapsSaved(true);
+      setTimeout(() => setMapsSaved(false), 3000);
+    } catch (err) {
+      console.error("Error guardando Google Maps URL:", err);
+    }
+    setSavingMaps(false);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -153,6 +175,62 @@ export default function DashboardPage() {
             >
               📋 Copiar enlace
             </button>
+          </div>
+        </div>
+
+        {/* Google Maps Integration */}
+        <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100 mb-8">
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center flex-shrink-0">
+              <svg className="w-6 h-6 text-green-600" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+              </svg>
+            </div>
+            <div className="flex-1">
+              <h3 className="font-semibold text-gray-800 mb-1">Reseñas en Google Maps</h3>
+              <p className="text-gray-500 text-sm mb-4">
+                Agrega tu link de Google Maps y los clientes que califiquen con 4 o 5 estrellas 
+                recibirán una invitación para dejar su reseña pública en Google.
+              </p>
+              <div className="flex gap-3">
+                <input
+                  type="url"
+                  value={googleMapsUrl}
+                  onChange={(e) => setGoogleMapsUrl(e.target.value)}
+                  placeholder="https://g.page/r/tu-negocio/review"
+                  className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                />
+                <button
+                  onClick={handleSaveGoogleMaps}
+                  disabled={savingMaps}
+                  className="bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white px-6 py-3 rounded-xl font-medium transition-colors flex items-center gap-2"
+                >
+                  {savingMaps ? (
+                    <>
+                      <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                      Guardando
+                    </>
+                  ) : mapsSaved ? (
+                    <>
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      ¡Guardado!
+                    </>
+                  ) : (
+                    "Guardar"
+                  )}
+                </button>
+              </div>
+              {business.google_maps_url && (
+                <p className="text-green-600 text-sm mt-3 flex items-center gap-1">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  Integración activa - Los clientes satisfechos verán la invitación
+                </p>
+              )}
+            </div>
           </div>
         </div>
 

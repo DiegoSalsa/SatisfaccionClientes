@@ -14,6 +14,8 @@ export default function EncuestaPage() {
   const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({ rating: 0, comment: "", contact_email: "" });
   const [hoverRating, setHoverRating] = useState(0);
+  const [showMapsModal, setShowMapsModal] = useState(false);
+  const [submittedRating, setSubmittedRating] = useState(0);
 
   useEffect(() => {
     async function fetchBusiness() {
@@ -61,7 +63,15 @@ export default function EncuestaPage() {
         contact_email: form.contact_email,
         timestamp: Timestamp.now(),
       });
-      setSuccess(true);
+      
+      // Si rating >= 4 y hay Google Maps URL, mostrar modal
+      if (form.rating >= 4 && business.google_maps_url) {
+        setSubmittedRating(form.rating);
+        setShowMapsModal(true);
+      } else {
+        setSuccess(true);
+      }
+      
       setForm({ rating: 0, comment: "", contact_email: "" });
     } catch (err) {
       setError("Error al enviar. Intenta de nuevo.");
@@ -231,6 +241,69 @@ export default function EncuestaPage() {
           Powered by <span className="font-medium">Satisfacción</span> ⭐
         </p>
       </main>
+
+      {/* Google Maps Modal */}
+      {showMapsModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div 
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={() => {
+              setShowMapsModal(false);
+              setSuccess(true);
+            }}
+          />
+          <div className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 text-center animate-in fade-in zoom-in duration-300">
+            {/* Confetti-like decoration */}
+            <div className="absolute -top-6 left-1/2 -translate-x-1/2">
+              <div className="w-20 h-20 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center shadow-lg">
+                <span className="text-4xl">⭐</span>
+              </div>
+            </div>
+            
+            <div className="mt-8">
+              <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                {submittedRating === 5 ? "¡Increíble!" : "¡Genial!"}
+              </h2>
+              <p className="text-gray-600 mb-6">
+                Nos alegra que hayas tenido una gran experiencia en <strong>{business.name}</strong>. 
+                ¿Te gustaría compartir tu opinión en Google Maps?
+              </p>
+              
+              <p className="text-sm text-gray-500 mb-6">
+                Tu reseña ayuda a otros a descubrir este negocio 🙏
+              </p>
+
+              <div className="space-y-3">
+                <a
+                  href={business.google_maps_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => {
+                    setShowMapsModal(false);
+                    setSuccess(true);
+                  }}
+                  className="flex items-center justify-center gap-2 w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white py-4 rounded-xl font-semibold transition-all shadow-lg shadow-blue-200 hover:shadow-xl"
+                >
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                  </svg>
+                  Dejar reseña en Google Maps
+                </a>
+                
+                <button
+                  onClick={() => {
+                    setShowMapsModal(false);
+                    setSuccess(true);
+                  }}
+                  className="w-full text-gray-500 hover:text-gray-700 py-3 font-medium transition-colors"
+                >
+                  Quizás más tarde
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
