@@ -116,8 +116,14 @@ export default function EncuestaPage() {
         >
           <motion.div 
             initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+            animate={{ 
+              scale: 1,
+              y: [0, -10, 0]
+            }}
+            transition={{ 
+              scale: { delay: 0.2, type: "spring", stiffness: 200 },
+              y: { delay: 0.5, duration: 2, repeat: Infinity, ease: "easeInOut" }
+            }}
             className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4"
           >
             <span className="text-4xl">🎉</span>
@@ -207,35 +213,50 @@ export default function EncuestaPage() {
             <label className="block text-sm font-medium text-gray-700 mb-3 text-center">
               Tu calificación
             </label>
-            <div className="flex justify-center gap-2">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <button
+            <div className="flex justify-center gap-3">
+              {[1, 2, 3, 4, 5].map((star, index) => (
+                <motion.button
                   type="button"
                   key={star}
                   onClick={() => handleRating(star)}
                   onMouseEnter={() => setHoverRating(star)}
                   onMouseLeave={() => setHoverRating(0)}
-                  className="focus:outline-none transform transition-transform hover:scale-110"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 + index * 0.1, type: "spring", stiffness: 300 }}
+                  whileHover={{ scale: 1.3, rotate: 5 }}
+                  whileTap={{ scale: 0.9 }}
+                  className="focus:outline-none"
                 >
-                  <span
-                    className={`text-5xl cursor-pointer transition-colors ${
+                  <motion.span
+                    animate={{
+                      scale: (hoverRating || form.rating) >= star ? [1, 1.2, 1] : 1,
+                      rotate: (hoverRating || form.rating) >= star ? [0, -10, 10, 0] : 0
+                    }}
+                    transition={{ duration: 0.3 }}
+                    className={`text-5xl cursor-pointer transition-colors block ${
                       (hoverRating || form.rating) >= star
-                        ? "text-yellow-400"
+                        ? "text-yellow-400 drop-shadow-lg"
                         : "text-gray-200"
                     }`}
                   >
                     ★
-                  </span>
-                </button>
+                  </motion.span>
+                </motion.button>
               ))}
             </div>
-            <p className="text-center text-sm text-gray-500 mt-2">
+            <motion.p 
+              key={form.rating}
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="text-center text-sm text-gray-500 mt-3 h-6"
+            >
               {form.rating === 1 && "Muy malo 😞"}
               {form.rating === 2 && "Malo 😕"}
               {form.rating === 3 && "Regular 😐"}
               {form.rating === 4 && "Bueno 🙂"}
               {form.rating === 5 && "¡Excelente! 🤩"}
-            </p>
+            </motion.p>
           </div>
 
           {/* Comment */}

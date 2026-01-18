@@ -165,29 +165,62 @@ export default function DashboardPage() {
           className="grid md:grid-cols-3 gap-6 mb-8"
         >
           {/* Average Rating Card */}
-          <motion.div variants={staggerItem} className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition-shadow">
+          <motion.div 
+            variants={staggerItem} 
+            whileHover={{ scale: 1.02, y: -5 }}
+            transition={{ type: "spring", stiffness: 300 }}
+            className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100 hover:shadow-lg cursor-default"
+          >
             <p className="text-gray-500 text-sm mb-2">Calificación promedio</p>
             <div className="flex items-baseline gap-2">
-              <span className="text-4xl font-bold text-gray-800">{avg}</span>
-              <span className="text-yellow-400 text-2xl">★</span>
+              <motion.span 
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.5, type: "spring" }}
+                className="text-4xl font-bold text-gray-800"
+              >
+                {avg}
+              </motion.span>
+              <motion.span 
+                animate={{ rotate: [0, 15, -15, 0] }}
+                transition={{ delay: 0.8, duration: 0.5 }}
+                className="text-yellow-400 text-2xl"
+              >
+                ★
+              </motion.span>
             </div>
             <div className="flex gap-1 mt-2">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <span
+              {[1, 2, 3, 4, 5].map((star, i) => (
+                <motion.span
                   key={star}
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.6 + i * 0.1 }}
                   className={`text-xl ${parseFloat(avg) >= star ? "text-yellow-400" : "text-gray-200"}`}
                 >
                   ★
-                </span>
+                </motion.span>
               ))}
             </div>
           </motion.div>
 
           {/* Total Reviews Card */}
-          <motion.div variants={staggerItem} className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition-shadow">
+          <motion.div 
+            variants={staggerItem} 
+            whileHover={{ scale: 1.02, y: -5 }}
+            transition={{ type: "spring", stiffness: 300 }}
+            className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100 hover:shadow-lg cursor-default"
+          >
             <p className="text-gray-500 text-sm mb-2">Total de opiniones</p>
             <div className="flex items-baseline gap-2">
-              <span className="text-4xl font-bold text-gray-800">{reviews.length}</span>
+              <motion.span 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5 }}
+                className="text-4xl font-bold text-gray-800"
+              >
+                {reviews.length}
+              </motion.span>
               <span className="text-gray-400">reviews</span>
             </div>
             <p className="text-green-600 text-sm mt-2 flex items-center gap-1">
@@ -196,7 +229,12 @@ export default function DashboardPage() {
           </motion.div>
 
           {/* Survey Link Card */}
-          <motion.div variants={staggerItem} className="bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-sm p-6 text-white hover:shadow-lg transition-shadow">
+          <motion.div 
+            variants={staggerItem} 
+            whileHover={{ scale: 1.02, y: -5 }}
+            transition={{ type: "spring", stiffness: 300 }}
+            className="bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-sm p-6 text-white hover:shadow-xl cursor-default"
+          >
             <p className="text-blue-100 text-sm mb-2">Tu enlace de encuesta</p>
             <code className="text-sm bg-white/20 px-3 py-2 rounded-lg block truncate">
               /encuesta/{business.slug}
@@ -283,17 +321,32 @@ export default function DashboardPage() {
         >
           <h3 className="font-semibold text-gray-800 mb-4">Distribución de calificaciones</h3>
           <div className="space-y-3">
-            {ratingCounts.map(({ star, count, percent }) => (
-              <div key={star} className="flex items-center gap-3">
+            {ratingCounts.map(({ star, count, percent }, index) => (
+              <motion.div 
+                key={star} 
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.6 + index * 0.1 }}
+                className="flex items-center gap-3"
+              >
                 <span className="text-sm text-gray-600 w-6">{star}★</span>
                 <div className="flex-1 h-4 bg-gray-100 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-yellow-400 rounded-full transition-all duration-500"
-                    style={{ width: `${percent}%` }}
-                  ></div>
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${percent}%` }}
+                    transition={{ delay: 0.8 + index * 0.1, duration: 0.8, ease: "easeOut" }}
+                    className="h-full bg-yellow-400 rounded-full"
+                  />
                 </div>
-                <span className="text-sm text-gray-500 w-10 text-right">{count}</span>
-              </div>
+                <motion.span 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 1 + index * 0.1 }}
+                  className="text-sm text-gray-500 w-10 text-right"
+                >
+                  {count}
+                </motion.span>
+              </motion.div>
             ))}
           </div>
         </motion.div>
