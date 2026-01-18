@@ -3,6 +3,7 @@ import { db } from '@/firebase/admin';
 import { PLANES } from '@/lib/mercadopago';
 import crypto from 'crypto';
 import { generateReferralCode, REFERRAL_CONFIG } from '@/lib/referralCodes';
+import { sendWelcomeEmail, sendReferralNotification } from '@/lib/email';
 
 // Generar tokens únicos
 function generateToken(length: number = 32): string {
@@ -179,6 +180,17 @@ export async function POST(request: NextRequest) {
                   referred: businessRef.id,
                   amount: REFERRAL_CONFIG.REWARD_AMOUNT,
                 });
+
+                // Enviar email de notificación al referidor
+                if (referrerData.email) {
+                  await sendReferralNotification({
+                    referrerEmail: referrerData.email,
+                    referrerName: referrerData.name || 'Usuario',
+                    referredBusinessName: pendingData?.business_name || 'Nuevo negocio',
+                    newBalance: (referrerData.referral_balance || 0) + REFERRAL_CONFIG.REWARD_AMOUNT,
+                    referralCount: (referrerData.referral_count || 0) + 1,
+                  });
+                }
               }
             }
           }
@@ -190,7 +202,22 @@ export async function POST(request: NextRequest) {
             completed_at: new Date(),
           });
 
-          // Enviar email con credenciales (TODO: implementar)
+          // Construir URLs para el email
+          const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://satisfaccion-clientes-alpha.vercel.app';
+          const surveyUrl = `${baseUrl}/encuesta/${finalSlug}`;
+          const dashboardUrl = `${baseUrl}/dashboard/${privateToken}`;
+
+          // Enviar email de bienvenida con credenciales
+          if (pendingData?.email) {
+            await sendWelcomeEmail({
+              businessName: pendingData.business_name || 'Tu negocio',
+              email: pendingData.email,
+              surveyUrl,
+              dashboardUrl,
+              referralCode,
+            });
+          }
+
           console.log('Negocio creado:', {
             id: businessRef.id,
             slug: finalSlug,

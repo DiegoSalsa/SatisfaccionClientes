@@ -1,0 +1,205 @@
+import { Resend } from 'resend';
+
+// Lazy initialization de Resend
+let resendInstance: Resend | null = null;
+
+function getResend(): Resend {
+  if (!resendInstance) {
+    if (!process.env.RESEND_API_KEY) {
+      throw new Error('RESEND_API_KEY no está configurada');
+    }
+    resendInstance = new Resend(process.env.RESEND_API_KEY);
+  }
+  return resendInstance;
+}
+
+// Email de origen (debe ser verificado en Resend)
+const FROM_EMAIL = 'ValoraLocal <noreply@valoralocal.cl>';
+
+interface WelcomeEmailData {
+  businessName: string;
+  email: string;
+  surveyUrl: string;
+  dashboardUrl: string;
+  referralCode: string;
+}
+
+interface ReferralNotificationData {
+  referrerEmail: string;
+  referrerName: string;
+  referredBusinessName: string;
+  newBalance: number;
+  referralCount: number;
+}
+
+// Email de bienvenida con credenciales
+export async function sendWelcomeEmail(data: WelcomeEmailData) {
+  try {
+    const { businessName, email, surveyUrl, dashboardUrl, referralCode } = data;
+    const resend = getResend();
+
+    const result = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: email,
+      subject: `¡Bienvenido a ValoraLocal, ${businessName}! 🎉`,
+      html: `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f5f5f5;">
+  <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px;">
+    <div style="background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+      <!-- Header -->
+      <div style="background: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%); padding: 40px 30px; text-align: center;">
+        <h1 style="color: white; margin: 0; font-size: 28px; font-weight: 700;">¡Bienvenido a ValoraLocal!</h1>
+        <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0; font-size: 16px;">${businessName}</p>
+      </div>
+      
+      <!-- Content -->
+      <div style="padding: 40px 30px;">
+        <p style="color: #374151; font-size: 16px; line-height: 1.6; margin: 0 0 20px;">
+          Tu cuenta está lista. Aquí tienes tus enlaces de acceso:
+        </p>
+        
+        <!-- Survey Link -->
+        <div style="background: #F0F9FF; border-radius: 12px; padding: 20px; margin-bottom: 16px;">
+          <p style="color: #0369A1; font-size: 14px; font-weight: 600; margin: 0 0 8px;">📋 Tu enlace de encuesta</p>
+          <p style="color: #1E40AF; font-size: 13px; margin: 0; word-break: break-all;">
+            Comparte este enlace con tus clientes:
+          </p>
+          <a href="${surveyUrl}" style="display: block; color: #2563EB; font-size: 14px; margin-top: 8px; word-break: break-all;">${surveyUrl}</a>
+        </div>
+        
+        <!-- Dashboard Link -->
+        <div style="background: #F5F3FF; border-radius: 12px; padding: 20px; margin-bottom: 16px;">
+          <p style="color: #6D28D9; font-size: 14px; font-weight: 600; margin: 0 0 8px;">📊 Tu dashboard privado</p>
+          <p style="color: #5B21B6; font-size: 13px; margin: 0;">
+            Accede a tus métricas y opiniones:
+          </p>
+          <a href="${dashboardUrl}" style="display: block; color: #7C3AED; font-size: 14px; margin-top: 8px; word-break: break-all;">${dashboardUrl}</a>
+        </div>
+        
+        <!-- Referral Code -->
+        <div style="background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%); border-radius: 12px; padding: 20px; margin-bottom: 24px; text-align: center;">
+          <p style="color: #92400E; font-size: 14px; font-weight: 600; margin: 0 0 8px;">🎁 Tu código de referido</p>
+          <p style="color: #78350F; font-size: 28px; font-weight: 700; margin: 0; letter-spacing: 2px;">${referralCode}</p>
+          <p style="color: #A16207; font-size: 12px; margin: 8px 0 0;">
+            Gana $2.000 CLP por cada negocio que se suscriba con tu código
+          </p>
+        </div>
+        
+        <!-- CTA Button -->
+        <a href="${dashboardUrl}" style="display: block; background: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%); color: white; text-decoration: none; text-align: center; padding: 16px 24px; border-radius: 12px; font-weight: 600; font-size: 16px;">
+          Ir a mi Dashboard →
+        </a>
+        
+        <p style="color: #9CA3AF; font-size: 13px; text-align: center; margin: 24px 0 0;">
+          ⚠️ Guarda este correo, contiene tus enlaces de acceso únicos.
+        </p>
+      </div>
+      
+      <!-- Footer -->
+      <div style="background: #F9FAFB; padding: 24px 30px; text-align: center; border-top: 1px solid #E5E7EB;">
+        <p style="color: #6B7280; font-size: 12px; margin: 0;">
+          © 2026 ValoraLocal · Simplificando la opinión de tus clientes
+        </p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+      `,
+    });
+
+    console.log('Email de bienvenida enviado:', result);
+    return { success: true, id: result.data?.id };
+  } catch (error) {
+    console.error('Error enviando email de bienvenida:', error);
+    return { success: false, error };
+  }
+}
+
+// Email de notificación de referido
+export async function sendReferralNotification(data: ReferralNotificationData) {
+  try {
+    const { referrerEmail, referrerName, referredBusinessName, newBalance, referralCount } = data;
+    const resend = getResend();
+
+    const result = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: referrerEmail,
+      subject: `🎉 ¡Nuevo referido! ${referredBusinessName} usó tu código`,
+      html: `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f5f5f5;">
+  <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px;">
+    <div style="background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+      <!-- Header -->
+      <div style="background: linear-gradient(135deg, #F59E0B 0%, #EF4444 100%); padding: 40px 30px; text-align: center;">
+        <div style="font-size: 48px; margin-bottom: 10px;">🎉</div>
+        <h1 style="color: white; margin: 0; font-size: 24px; font-weight: 700;">¡Tienes un nuevo referido!</h1>
+      </div>
+      
+      <!-- Content -->
+      <div style="padding: 40px 30px;">
+        <p style="color: #374151; font-size: 16px; line-height: 1.6; margin: 0 0 20px;">
+          Hola <strong>${referrerName}</strong>,
+        </p>
+        
+        <p style="color: #374151; font-size: 16px; line-height: 1.6; margin: 0 0 24px;">
+          <strong>${referredBusinessName}</strong> se ha suscrito a ValoraLocal usando tu código de referido.
+        </p>
+        
+        <!-- Reward Box -->
+        <div style="background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%); border-radius: 12px; padding: 24px; margin-bottom: 24px; text-align: center;">
+          <p style="color: #065F46; font-size: 14px; margin: 0 0 8px;">Se han agregado a tu saldo</p>
+          <p style="color: #047857; font-size: 36px; font-weight: 700; margin: 0;">+$2.000 CLP</p>
+        </div>
+        
+        <!-- Stats -->
+        <div style="display: flex; gap: 16px; margin-bottom: 24px;">
+          <div style="flex: 1; background: #F9FAFB; border-radius: 12px; padding: 16px; text-align: center;">
+            <p style="color: #6B7280; font-size: 12px; margin: 0 0 4px;">Total referidos</p>
+            <p style="color: #111827; font-size: 24px; font-weight: 700; margin: 0;">${referralCount}/10</p>
+          </div>
+          <div style="flex: 1; background: #F9FAFB; border-radius: 12px; padding: 16px; text-align: center;">
+            <p style="color: #6B7280; font-size: 12px; margin: 0 0 4px;">Saldo acumulado</p>
+            <p style="color: #059669; font-size: 24px; font-weight: 700; margin: 0;">$${newBalance.toLocaleString('es-CL')}</p>
+          </div>
+        </div>
+        
+        <p style="color: #6B7280; font-size: 14px; line-height: 1.6; margin: 0; padding: 16px; background: #F9FAFB; border-radius: 8px;">
+          💡 <strong>¿Cómo cobrar?</strong> Solicita tu pago enviando un email a 
+          <a href="mailto:pagos@valoralocal.cl" style="color: #3B82F6;">pagos@valoralocal.cl</a> 
+          con tu código de referido y datos de transferencia.
+        </p>
+      </div>
+      
+      <!-- Footer -->
+      <div style="background: #F9FAFB; padding: 24px 30px; text-align: center; border-top: 1px solid #E5E7EB;">
+        <p style="color: #6B7280; font-size: 12px; margin: 0;">
+          © 2026 ValoraLocal · Gracias por recomendar nuestro servicio
+        </p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+      `,
+    });
+
+    console.log('Email de notificación de referido enviado:', result);
+    return { success: true, id: result.data?.id };
+  } catch (error) {
+    console.error('Error enviando notificación de referido:', error);
+    return { success: false, error };
+  }
+}
