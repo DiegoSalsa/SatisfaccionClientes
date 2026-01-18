@@ -177,7 +177,9 @@ export default function EncuestaPage() {
         </div>
         <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-lg p-8 text-center max-w-md border dark:border-zinc-800">
           <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span className="text-3xl">😕</span>
+            <svg className="w-8 h-8 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
           </div>
           <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">Negocio no encontrado</h2>
           <p className="text-gray-600 dark:text-zinc-400">El enlace que usaste no corresponde a ningún negocio registrado.</p>
@@ -194,7 +196,9 @@ export default function EncuestaPage() {
         </div>
         <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-lg p-8 text-center max-w-md border dark:border-zinc-800">
           <div className="w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span className="text-4xl">🎉</span>
+            <svg className="w-10 h-10 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
           </div>
           <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">¡Gracias por tu opinión!</h2>
           <p className="text-gray-600 dark:text-zinc-400 mb-6">Tu feedback nos ayuda a mejorar cada día.</p>
@@ -222,7 +226,9 @@ export default function EncuestaPage() {
             {business.logo_url ? (
               <img src={business.logo_url} alt={business.name} className="w-16 h-16 rounded-xl object-cover" />
             ) : (
-              <span className="text-4xl">🏪</span>
+              <svg className="w-10 h-10 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+              </svg>
             )}
           </div>
           <h1 className="text-2xl font-bold text-gray-800 dark:text-white">{business.name}</h1>
@@ -259,11 +265,11 @@ export default function EncuestaPage() {
               ))}
             </div>
             <p className="text-center text-sm text-gray-500 dark:text-zinc-400 mt-2">
-              {form.rating === 1 && "Muy malo 😞"}
-              {form.rating === 2 && "Malo 😕"}
-              {form.rating === 3 && "Regular 😐"}
-              {form.rating === 4 && "Bueno 🙂"}
-              {form.rating === 5 && "¡Excelente! 🤩"}
+              {form.rating === 1 && "Muy malo"}
+              {form.rating === 2 && "Malo"}
+              {form.rating === 3 && "Regular"}
+              {form.rating === 4 && "Bueno"}
+              {form.rating === 5 && "¡Excelente!"}
             </p>
           </div>
 
@@ -343,7 +349,10 @@ export default function EncuestaPage() {
           {/* Rate Limit Error */}
           {rateLimitError && (
             <div className="bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 px-4 py-3 rounded-xl text-sm text-center flex items-center justify-center gap-2">
-              <span>⏱️</span> {rateLimitError}
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              {rateLimitError}
             </div>
           )}
 
@@ -369,8 +378,8 @@ export default function EncuestaPage() {
         </form>
 
         {/* Footer */}
-        <p className="text-center text-sm text-gray-400 dark:text-zinc-500 mt-6">
-          Powered by <span className="font-medium">Satisfacción</span> ⭐
+        <p className="text-center text-sm text-gray-400 dark:text-zinc-500 mt-6 flex items-center justify-center gap-1">
+          Powered by <span className="font-medium">Satisfacción</span> <span className="text-yellow-400">★</span>
         </p>
       </main>
 
@@ -388,7 +397,9 @@ export default function EncuestaPage() {
             {/* Star decoration */}
             <div className="absolute -top-6 left-1/2 -translate-x-1/2">
               <div className="w-20 h-20 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center shadow-lg">
-                <span className="text-4xl">⭐</span>
+                <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                </svg>
               </div>
             </div>
             
@@ -402,7 +413,7 @@ export default function EncuestaPage() {
               </p>
               
               <p className="text-sm text-gray-500 dark:text-zinc-500 mb-6">
-                Tu reseña ayuda a otros a descubrir este negocio 🙏
+                Tu reseña ayuda a otros a descubrir este negocio
               </p>
 
               <div className="space-y-3">
