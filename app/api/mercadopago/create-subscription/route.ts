@@ -5,10 +5,11 @@ import { db } from '@/firebase/admin';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { planId, email, businessName } = body as {
+    const { planId, email, businessName, referralCode } = body as {
       planId: PlanId;
       email: string;
       businessName: string;
+      referralCode?: string;
     };
 
     // Validar plan
@@ -18,6 +19,23 @@ export async function POST(request: NextRequest) {
         { error: 'Plan no válido' },
         { status: 400 }
       );
+    }
+
+    // Validar código de referido si se proporciona
+    let validReferralCode: string | null = null;
+    if (referralCode && referralCode.trim()) {
+      const referrerSnapshot = await db
+        .collection('businesses')
+        .where('referral_code', '==', referralCode.toUpperCase().trim())
+        .get();
+      
+      if (!referrerSnapshot.empty) {
+        const referrerData = referrerSnapshot.docs[0].data();
+        // Solo aceptar si no ha llegado al límite de 10 referidos
+        if ((referrerData.referral_count || 0) < 10) {
+          validReferralCode = referralCode.toUpperCase().trim();
+        }
+      }
     }
 
     // Crear la suscripción usando la API REST de MercadoPago
@@ -45,7 +63,7 @@ export async function POST(request: NextRequest) {
       const errorData = await response.json();
       console.error('Error de MercadoPago:', errorData);
       return NextResponse.json(
-        { error: 'Error al crear la suscripción en MercadoPago' },
+        { error: 'Error al crear la suscripción en MercadoPago', details: errorData },
         { status: 500 }
       );
     }
@@ -59,6 +77,7 @@ export async function POST(request: NextRequest) {
         plan_id: planId,
         email,
         business_name: businessName,
+        referral_code: validReferralCode, // Código de referido validado
         status: 'pending',
         created_at: new Date(),
         init_point: subscription.init_point,
@@ -74,7 +93,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error creando suscripción:', error);
     return NextResponse.json(
-      { error: 'Error al crear la suscripción' },
+      { error: 'Error al crear la suscripción', details: String(error) },
       { status: 500 }
     );
   }
