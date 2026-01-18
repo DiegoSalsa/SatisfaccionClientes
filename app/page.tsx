@@ -23,7 +23,7 @@ export default function Home() {
       answer: "Al registrarte, recibirás automáticamente tu enlace único de encuesta (ej: /encuesta/tu-negocio) y tu enlace privado al dashboard."
     },
     {
-      question: "¿Cuánto cuesta Satisfacción?",
+      question: "¿Cuánto cuesta ValoraLocal?",
       answer: "Ofrecemos dos opciones: Pro Mensual a $9.990 CLP/mes y Pro Anual a $99.990 CLP/año (ahorras 2 meses). Ambos planes incluyen todas las funcionalidades."
     },
     {
@@ -51,8 +51,8 @@ export default function Home() {
       <header className="px-6 py-6 sticky top-0 bg-white/80 dark:bg-black/80 backdrop-blur-md z-40 border-b border-gray-100 dark:border-zinc-800">
         <nav className="max-w-6xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <img src="/logo-light.svg" alt="Satisfacción" className="h-10 dark:hidden" />
-            <img src="/logo-dark.svg" alt="Satisfacción" className="h-10 hidden dark:block" />
+            <img src="/logo-light.svg" alt="ValoraLocal" className="h-10 dark:hidden" />
+            <img src="/logo-dark.svg" alt="ValoraLocal" className="h-10 hidden dark:block" />
           </div>
           <div className="hidden md:flex items-center gap-6 text-sm">
             <a href="#features" className="text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white transition-colors">Características</a>
@@ -79,7 +79,7 @@ export default function Home() {
               </span>
             </h1>
             <p className="text-xl text-gray-600 dark:text-zinc-300 max-w-2xl mx-auto mb-10">
-              Sistema de encuestas de satisfacción simple y efectivo. 
+              Sistema de encuestas de valoración simple y efectivo. 
               Recoge opiniones, mejora tu servicio, haz crecer tu negocio.
             </p>
             <div className="flex gap-4 justify-center flex-wrap">
@@ -151,7 +151,7 @@ export default function Home() {
               </div>
               <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">Gráficos de tendencia</h3>
               <p className="text-gray-600 dark:text-zinc-400">
-                Visualiza la evolución de satisfacción por semana y distribución por edad.
+                Visualiza la evolución de valoraciones por semana y distribución por edad.
               </p>
             </div>
             
@@ -219,7 +219,7 @@ export default function Home() {
                   <div className="w-3 h-3 rounded-full bg-green-400"></div>
                 </div>
                 <div className="flex-1 text-center">
-                  <span className="text-sm text-gray-500 dark:text-zinc-400">dashboard.satisfaccion.cl</span>
+                  <span className="text-sm text-gray-500 dark:text-zinc-400">dashboard.valoralocal.cl</span>
                 </div>
               </div>
               
@@ -231,7 +231,7 @@ export default function Home() {
                   </div>
                   <div>
                     <div className="font-bold text-gray-800 dark:text-white">Tu Negocio</div>
-                    <div className="text-sm text-gray-500 dark:text-zinc-400">Dashboard de satisfacción</div>
+                    <div className="text-sm text-gray-500 dark:text-zinc-400">Dashboard de valoraciones</div>
                   </div>
                 </div>
                 
@@ -562,7 +562,7 @@ export default function Home() {
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="flex items-center gap-2">
               <svg className="w-6 h-6 text-yellow-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-              <span className="font-bold text-gray-800 dark:text-white">Satisfacción</span>
+              <span className="font-bold text-gray-800 dark:text-white">ValoraLocal</span>
             </div>
             <div className="flex gap-6 text-sm text-gray-500 dark:text-zinc-400">
               <a href="#" className="hover:text-gray-800 dark:hover:text-white transition-colors">Términos</a>
@@ -570,7 +570,7 @@ export default function Home() {
               <a href="#" className="hover:text-gray-800 dark:hover:text-white transition-colors">Contacto</a>
             </div>
             <div className="text-sm text-gray-500 dark:text-zinc-400">
-              © 2026 Satisfacción
+              © 2026 ValoraLocal
             </div>
           </div>
         </div>

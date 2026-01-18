@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Satisfacción - Encuestas para negocios",
-  description: "Sistema de encuestas de satisfacción del cliente",
+  title: "ValoraLocal - Encuestas para negocios",
+  description: "Sistema de encuestas de valoración del cliente",
 };
 
 export default function RootLayout({

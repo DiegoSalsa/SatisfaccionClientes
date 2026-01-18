@@ -379,7 +379,7 @@ export default function EncuestaPage() {
 
         {/* Footer */}
         <p className="text-center text-sm text-gray-400 dark:text-zinc-500 mt-6 flex items-center justify-center gap-1">
-          Powered by <span className="font-medium">Satisfacción</span> <span className="text-yellow-400">★</span>
+          Powered by <span className="font-medium">ValoraLocal</span> <span className="text-yellow-400">★</span>
         </p>
       </main>
 

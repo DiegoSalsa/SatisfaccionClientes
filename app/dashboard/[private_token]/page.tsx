@@ -270,7 +270,7 @@ export default function DashboardPage() {
             )}
             <div>
               <h1 className="text-2xl font-bold text-gray-800 dark:text-white">{business.name}</h1>
-              <p className="text-gray-500 dark:text-zinc-400 text-sm">Dashboard de satisfacción</p>
+              <p className="text-gray-500 dark:text-zinc-400 text-sm">Dashboard de valoraciones</p>
             </div>
           </div>
         </div>
@@ -503,7 +503,7 @@ export default function DashboardPage() {
               <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
               </svg>
-              Tendencia de satisfacción
+              Tendencia de valoraciones
             </h3>
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
@@ -807,7 +807,7 @@ export default function DashboardPage() {
 
       {/* Footer */}
       <footer className="text-center py-8 text-gray-400 dark:text-zinc-500 text-sm">
-        <p className="flex items-center justify-center gap-1">Powered by <span className="font-medium">Satisfacción</span> <span className="text-yellow-400">★</span></p>
+        <p className="flex items-center justify-center gap-1">Powered by <span className="font-medium">ValoraLocal</span> <span className="text-yellow-400">★</span></p>
       </footer>
     </div>
   );
