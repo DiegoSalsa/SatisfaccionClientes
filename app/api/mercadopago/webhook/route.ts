@@ -64,6 +64,28 @@ export async function POST(request: NextRequest) {
         if (pendingDoc.exists) {
           const pendingData = pendingDoc.data();
           
+          // IMPORTANTE: Verificar si ya se procesó esta suscripción
+          if (pendingData?.status === 'completed') {
+            console.log('Suscripción ya procesada, ignorando webhook duplicado:', subscriptionId);
+            return NextResponse.json({ received: true });
+          }
+
+          // Verificar si ya existe un negocio con esta suscripción
+          const existingBusiness = await db
+            .collection('businesses')
+            .where('subscription.mp_subscription_id', '==', subscriptionId)
+            .get();
+
+          if (!existingBusiness.empty) {
+            console.log('Negocio ya existe para esta suscripción, ignorando:', subscriptionId);
+            // Marcar como completado si no lo está
+            await pendingDoc.ref.update({ status: 'completed' });
+            return NextResponse.json({ received: true });
+          }
+
+          // Marcar como "processing" para evitar duplicados concurrentes
+          await pendingDoc.ref.update({ status: 'processing', processing_started_at: new Date() });
+          
           // Determinar el plan
           const planId = pendingData?.plan_id || 'pro_mensual';
           const plan = PLANES[planId as keyof typeof PLANES];
