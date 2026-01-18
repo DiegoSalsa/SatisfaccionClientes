@@ -1,16 +1,42 @@
 'use client';
 
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useEffect, useState, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+
+interface BusinessInfo {
+  private_token: string;
+  business_name: string;
+}
 
 function ConfirmacionContent() {
   const searchParams = useSearchParams();
   const [status, setStatus] = useState<'loading' | 'success' | 'pending' | 'error'>('loading');
+  const [businessInfo, setBusinessInfo] = useState<BusinessInfo | null>(null);
+  const [checkingBusiness, setCheckingBusiness] = useState(false);
   
   const preapproval_id = searchParams.get('preapproval_id');
   const external_reference = searchParams.get('external_reference');
   const statusParam = searchParams.get('status');
+
+  // Función para verificar si el negocio ya fue creado
+  const checkBusiness = useCallback(async () => {
+    if (!preapproval_id || businessInfo) return;
+    
+    try {
+      const response = await fetch(`/api/check-business?subscription_id=${preapproval_id}`);
+      const data = await response.json();
+      
+      if (data.found) {
+        setBusinessInfo({
+          private_token: data.private_token,
+          business_name: data.business_name,
+        });
+      }
+    } catch (error) {
+      console.error('Error checking business:', error);
+    }
+  }, [preapproval_id, businessInfo]);
 
   useEffect(() => {
     // Determinar el estado basado en los parámetros de MercadoPago
@@ -25,6 +51,34 @@ function ConfirmacionContent() {
       setStatus('error');
     }
   }, [statusParam, preapproval_id]);
+
+  // Polling para verificar si el negocio ya fue creado
+  useEffect(() => {
+    if (status !== 'success' || !preapproval_id || businessInfo) return;
+
+    // Verificar inmediatamente
+    checkBusiness();
+
+    // Luego verificar cada 3 segundos durante 2 minutos máximo
+    const interval = setInterval(() => {
+      if (!businessInfo) {
+        checkBusiness();
+      }
+    }, 3000);
+
+    // Detener después de 2 minutos
+    const timeout = setTimeout(() => {
+      clearInterval(interval);
+      setCheckingBusiness(false);
+    }, 120000);
+
+    setCheckingBusiness(true);
+
+    return () => {
+      clearInterval(interval);
+      clearTimeout(timeout);
+    };
+  }, [status, preapproval_id, businessInfo, checkBusiness]);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-black flex items-center justify-center p-4">
@@ -48,21 +102,71 @@ function ConfirmacionContent() {
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
               ¡Suscripción exitosa!
             </h1>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">
-              Tu cuenta ha sido activada. En unos minutos recibirás un email con tus credenciales de acceso al dashboard.
-            </p>
-            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 mb-6">
-              <p className="text-sm text-blue-800 dark:text-blue-300">
-                <strong>ID de suscripción:</strong><br />
-                <code className="text-xs">{preapproval_id || external_reference}</code>
-              </p>
-            </div>
-            <Link
-              href="/"
-              className="inline-block w-full bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              Volver al inicio
-            </Link>
+            
+            {businessInfo ? (
+              <>
+                <p className="text-gray-600 dark:text-gray-400 mb-4">
+                  Tu cuenta <strong className="text-gray-900 dark:text-white">{businessInfo.business_name}</strong> ha sido activada correctamente.
+                </p>
+                
+                <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4 mb-6">
+                  <p className="text-sm text-green-800 dark:text-green-300 mb-2">
+                    <strong>🎉 Tu dashboard está listo:</strong>
+                  </p>
+                  <code className="text-xs bg-green-100 dark:bg-green-900/40 px-2 py-1 rounded block overflow-x-auto">
+                    {typeof window !== 'undefined' ? window.location.origin : ''}/dashboard/{businessInfo.private_token}
+                  </code>
+                </div>
+
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
+                  También recibirás estas credenciales por email.
+                </p>
+
+                <Link
+                  href={`/dashboard/${businessInfo.private_token}`}
+                  className="inline-block w-full bg-green-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-green-700 transition-colors mb-3"
+                >
+                  Ir a mi Dashboard
+                </Link>
+                <Link
+                  href="/"
+                  className="inline-block w-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-semibold py-3 px-6 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                >
+                  Volver al inicio
+                </Link>
+              </>
+            ) : (
+              <>
+                <p className="text-gray-600 dark:text-gray-400 mb-6">
+                  Tu cuenta está siendo activada. En unos segundos verás el enlace a tu dashboard aquí.
+                </p>
+                
+                {checkingBusiness && (
+                  <div className="flex items-center justify-center gap-2 mb-4">
+                    <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                    <span className="text-sm text-gray-500 dark:text-gray-400">Activando tu cuenta...</span>
+                  </div>
+                )}
+
+                <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 mb-6">
+                  <p className="text-sm text-blue-800 dark:text-blue-300">
+                    <strong>ID de suscripción:</strong><br />
+                    <code className="text-xs">{preapproval_id || external_reference}</code>
+                  </p>
+                </div>
+                
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
+                  También recibirás tus credenciales por email.
+                </p>
+                
+                <Link
+                  href="/"
+                  className="inline-block w-full bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Volver al inicio
+                </Link>
+              </>
+            )}
           </>
         )}
 
