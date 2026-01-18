@@ -47,6 +47,8 @@ export default function DashboardPage() {
   const [googleMapsUrl, setGoogleMapsUrl] = useState("");
   const [savingMaps, setSavingMaps] = useState(false);
   const [mapsSaved, setMapsSaved] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const reviewsPerPage = 15;
 
   useEffect(() => {
     async function fetchData() {
@@ -193,7 +195,13 @@ export default function DashboardPage() {
 
   const clearFilters = () => {
     setFilters({ dateFrom: "", dateTo: "", comuna: "", edadMin: "", edadMax: "", rating: "" });
+    setCurrentPage(1);
   };
+
+  // Reset page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filters]);
 
   const handleSaveGoogleMaps = async () => {
     if (!business?.id) return;
@@ -781,7 +789,7 @@ export default function DashboardPage() {
                 </p>
               </div>
             ) : (
-              filteredReviews.slice(0, 50).map((r, i) => (
+              filteredReviews.slice((currentPage - 1) * reviewsPerPage, currentPage * reviewsPerPage).map((r, i) => (
                 <div key={i} className="p-6 hover:bg-gray-50 dark:hover:bg-zinc-800/50 transition-colors">
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
@@ -849,6 +857,58 @@ export default function DashboardPage() {
               ))
             )}
           </div>
+
+          {/* Pagination */}
+          {filteredReviews.length > reviewsPerPage && (
+            <div className="p-4 border-t border-gray-100 dark:border-zinc-800 flex items-center justify-between">
+              <p className="text-sm text-gray-500 dark:text-zinc-400">
+                Mostrando {((currentPage - 1) * reviewsPerPage) + 1} - {Math.min(currentPage * reviewsPerPage, filteredReviews.length)} de {filteredReviews.length} opiniones
+              </p>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  className="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-gray-100 dark:bg-zinc-800 text-gray-700 dark:text-zinc-200 hover:bg-gray-200 dark:hover:bg-zinc-700"
+                >
+                  ← Anterior
+                </button>
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: Math.ceil(filteredReviews.length / reviewsPerPage) }, (_, i) => i + 1)
+                    .filter(page => {
+                      const totalPages = Math.ceil(filteredReviews.length / reviewsPerPage);
+                      if (totalPages <= 7) return true;
+                      if (page === 1 || page === totalPages) return true;
+                      if (Math.abs(page - currentPage) <= 1) return true;
+                      return false;
+                    })
+                    .map((page, idx, arr) => (
+                      <span key={page} className="flex items-center">
+                        {idx > 0 && arr[idx - 1] !== page - 1 && (
+                          <span className="px-2 text-gray-400 dark:text-zinc-500">...</span>
+                        )}
+                        <button
+                          onClick={() => setCurrentPage(page)}
+                          className={`w-8 h-8 rounded-lg text-sm font-medium transition-colors ${
+                            currentPage === page
+                              ? 'bg-blue-600 text-white'
+                              : 'bg-gray-100 dark:bg-zinc-800 text-gray-700 dark:text-zinc-200 hover:bg-gray-200 dark:hover:bg-zinc-700'
+                          }`}
+                        >
+                          {page}
+                        </button>
+                      </span>
+                    ))}
+                </div>
+                <button
+                  onClick={() => setCurrentPage(p => Math.min(Math.ceil(filteredReviews.length / reviewsPerPage), p + 1))}
+                  disabled={currentPage >= Math.ceil(filteredReviews.length / reviewsPerPage)}
+                  className="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-gray-100 dark:bg-zinc-800 text-gray-700 dark:text-zinc-200 hover:bg-gray-200 dark:hover:bg-zinc-700"
+                >
+                  Siguiente →
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </main>
 
