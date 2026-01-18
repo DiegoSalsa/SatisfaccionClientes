@@ -5,6 +5,7 @@ import { collection, addDoc, Timestamp, getDocs, query, where } from "firebase/f
 import { useParams } from "next/navigation";
 import { ThemeToggle } from "@/components/ThemeProvider";
 import confetti from "canvas-confetti";
+import { motion } from "framer-motion";
 
 // Rate limiting: 1 review cada 30 minutos por negocio
 const RATE_LIMIT_KEY = "review_timestamps";
@@ -194,21 +195,53 @@ export default function EncuestaPage() {
         <div className="fixed top-4 right-4 z-50">
           <ThemeToggle />
         </div>
-        <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-lg p-8 text-center max-w-md border dark:border-zinc-800">
-          <div className="w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, type: "spring" }}
+          className="bg-white dark:bg-zinc-900 rounded-2xl shadow-lg p-8 text-center max-w-md border dark:border-zinc-800"
+        >
+          <motion.div 
+            initial={{ scale: 0 }}
+            animate={{ scale: 1, y: [0, -10, 0] }}
+            transition={{ 
+              scale: { delay: 0.2, type: "spring", stiffness: 200 },
+              y: { delay: 0.5, duration: 2, repeat: Infinity, ease: "easeInOut" }
+            }}
+            className="w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4"
+          >
             <svg className="w-10 h-10 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-          </div>
-          <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">¡Gracias por tu opinión!</h2>
-          <p className="text-gray-600 dark:text-zinc-400 mb-6">Tu feedback nos ayuda a mejorar cada día.</p>
-          <button
+          </motion.div>
+          <motion.h2 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="text-2xl font-bold text-gray-800 dark:text-white mb-2"
+          >
+            ¡Gracias por tu opinión!
+          </motion.h2>
+          <motion.p 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+            className="text-gray-600 dark:text-zinc-400 mb-6"
+          >
+            Tu feedback nos ayuda a mejorar cada día.
+          </motion.p>
+          <motion.button
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             onClick={() => setSuccess(false)}
             className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
           >
             Enviar otra opinión
-          </button>
-        </div>
+          </motion.button>
+        </motion.div>
       </div>
     );
   }
@@ -242,35 +275,50 @@ export default function EncuestaPage() {
             <label className="block text-sm font-medium text-gray-700 dark:text-zinc-200 mb-3 text-center">
               Tu calificación
             </label>
-            <div className="flex justify-center gap-2">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <button
+            <div className="flex justify-center gap-3">
+              {[1, 2, 3, 4, 5].map((star, index) => (
+                <motion.button
                   type="button"
                   key={star}
                   onClick={() => handleRating(star)}
                   onMouseEnter={() => setHoverRating(star)}
                   onMouseLeave={() => setHoverRating(0)}
-                  className="focus:outline-none transform transition-transform hover:scale-110"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 + index * 0.1, type: "spring", stiffness: 300 }}
+                  whileHover={{ scale: 1.3, rotate: 5 }}
+                  whileTap={{ scale: 0.9 }}
+                  className="focus:outline-none"
                 >
-                  <span
-                    className={`text-5xl cursor-pointer transition-colors ${
+                  <motion.span
+                    animate={{
+                      scale: (hoverRating || form.rating) >= star ? [1, 1.3, 1] : 1,
+                      rotate: (hoverRating || form.rating) >= star ? [0, -15, 15, 0] : 0
+                    }}
+                    transition={{ duration: 0.4 }}
+                    className={`text-5xl cursor-pointer transition-colors block ${
                       (hoverRating || form.rating) >= star
-                        ? "text-yellow-400"
+                        ? "text-yellow-400 drop-shadow-lg"
                         : "text-gray-200 dark:text-zinc-700"
                     }`}
                   >
                     ★
-                  </span>
-                </button>
+                  </motion.span>
+                </motion.button>
               ))}
             </div>
-            <p className="text-center text-sm text-gray-500 dark:text-zinc-400 mt-2">
-              {form.rating === 1 && "Muy malo"}
-              {form.rating === 2 && "Malo"}
-              {form.rating === 3 && "Regular"}
-              {form.rating === 4 && "Bueno"}
-              {form.rating === 5 && "¡Excelente!"}
-            </p>
+            <motion.p 
+              key={form.rating}
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="text-center text-sm text-gray-500 dark:text-zinc-400 mt-3 h-6"
+            >
+              {form.rating === 1 && "Muy malo 😞"}
+              {form.rating === 2 && "Malo 😕"}
+              {form.rating === 3 && "Regular 😐"}
+              {form.rating === 4 && "Bueno 🙂"}
+              {form.rating === 5 && "¡Excelente! 🤩"}
+            </motion.p>
           </div>
 
           {/* Comment */}

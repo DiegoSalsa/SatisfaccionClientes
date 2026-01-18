@@ -7,6 +7,7 @@ import { QRCodeSVG } from "qrcode.react";
 import { ThemeToggle } from "@/components/ThemeProvider";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts";
 import * as XLSX from "xlsx";
+import { motion } from "framer-motion";
 
 interface Review {
   rating: number;
@@ -280,29 +281,64 @@ export default function DashboardPage() {
         {/* Stats Grid */}
         <div className="grid md:grid-cols-3 gap-6 mb-8">
           {/* Average Rating Card */}
-          <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm p-6 border border-gray-100 dark:border-zinc-800">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            whileHover={{ scale: 1.02, y: -5 }}
+            className="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm p-6 border border-gray-100 dark:border-zinc-800 cursor-default hover:shadow-lg transition-shadow"
+          >
             <p className="text-gray-500 dark:text-zinc-400 text-sm mb-2">Calificación promedio</p>
             <div className="flex items-baseline gap-2">
-              <span className="text-4xl font-bold text-gray-800 dark:text-white">{avg}</span>
-              <span className="text-yellow-400 text-2xl">★</span>
+              <motion.span 
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.3, type: "spring" }}
+                className="text-4xl font-bold text-gray-800 dark:text-white"
+              >
+                {avg}
+              </motion.span>
+              <motion.span 
+                animate={{ rotate: [0, 15, -15, 0] }}
+                transition={{ delay: 0.5, duration: 0.5 }}
+                className="text-yellow-400 text-2xl"
+              >
+                ★
+              </motion.span>
             </div>
             <div className="flex gap-1 mt-2">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <span
+              {[1, 2, 3, 4, 5].map((star, i) => (
+                <motion.span
                   key={star}
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.4 + i * 0.1 }}
                   className={`text-xl ${parseFloat(avg) >= star ? "text-yellow-400" : "text-gray-200 dark:text-zinc-700"}`}
                 >
                   ★
-                </span>
+                </motion.span>
               ))}
             </div>
-          </div>
+          </motion.div>
 
           {/* Total Reviews Card */}
-          <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm p-6 border border-gray-100 dark:border-zinc-800">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            whileHover={{ scale: 1.02, y: -5 }}
+            className="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm p-6 border border-gray-100 dark:border-zinc-800 cursor-default hover:shadow-lg transition-shadow"
+          >
             <p className="text-gray-500 dark:text-zinc-400 text-sm mb-2">Total de opiniones</p>
             <div className="flex items-baseline gap-2">
-              <span className="text-4xl font-bold text-gray-800 dark:text-white">{reviews.length}</span>
+              <motion.span 
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.4, type: "spring" }}
+                className="text-4xl font-bold text-gray-800 dark:text-white"
+              >
+                {reviews.length}
+              </motion.span>
               <span className="text-gray-400 dark:text-zinc-500">reviews</span>
             </div>
             <p className="text-green-600 dark:text-green-400 text-sm mt-2 flex items-center gap-1">
@@ -311,10 +347,16 @@ export default function DashboardPage() {
               </svg>
               Sigue compartiendo tu enlace
             </p>
-          </div>
+          </motion.div>
 
           {/* Survey Link Card */}
-          <div className="bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-sm p-6 text-white">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            whileHover={{ scale: 1.02, y: -5 }}
+            className="bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-sm p-6 text-white cursor-default hover:shadow-xl transition-shadow"
+          >
             <p className="text-blue-100 text-sm mb-2">Tu enlace de encuesta</p>
             <code className="text-sm bg-white/20 px-3 py-2 rounded-lg block truncate">
               /encuesta/{business.slug}
@@ -342,11 +384,16 @@ export default function DashboardPage() {
                 Ver QR
               </button>
             </div>
-          </div>
+          </motion.div>
         </div>
 
         {/* Google Maps Integration */}
-        <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm p-6 border border-gray-100 dark:border-zinc-800 mb-8">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm p-6 border border-gray-100 dark:border-zinc-800 mb-8"
+        >
           <div className="flex items-start gap-4">
             <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center flex-shrink-0">
               <svg className="w-6 h-6 text-green-600 dark:text-green-400" viewBox="0 0 24 24" fill="currentColor">
@@ -399,7 +446,7 @@ export default function DashboardPage() {
               )}
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* QR Modal */}
         {showQR && (
