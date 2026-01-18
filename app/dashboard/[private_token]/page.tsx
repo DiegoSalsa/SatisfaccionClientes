@@ -456,6 +456,101 @@ export default function DashboardPage() {
           </div>
         </motion.div>
 
+        {/* Referral Section - Invita y Gana */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-2xl shadow-sm p-6 border border-amber-200 dark:border-amber-800/50 mb-8"
+        >
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg">
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-1">
+                <h3 className="font-semibold text-gray-800 dark:text-white">Invita y Gana</h3>
+                {/* Tooltip con información de pago */}
+                <div className="relative group">
+                  <button className="w-5 h-5 rounded-full bg-amber-200 dark:bg-amber-800 text-amber-700 dark:text-amber-300 text-xs font-bold flex items-center justify-center hover:bg-amber-300 dark:hover:bg-amber-700 transition-colors">
+                    ?
+                  </button>
+                  <div className="absolute left-0 bottom-full mb-2 w-72 p-4 bg-white dark:bg-zinc-800 rounded-xl shadow-xl border border-gray-200 dark:border-zinc-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                    <p className="text-sm text-gray-700 dark:text-zinc-200 font-medium mb-2">¿Cómo recibo mi pago?</p>
+                    <p className="text-xs text-gray-500 dark:text-zinc-400 leading-relaxed">
+                      El pago de tus referidos se efectuará al momento en que lo solicites mediante correo electrónico a <span className="text-amber-600 dark:text-amber-400 font-medium">pagos@valoralocal.cl</span>. Solo incluye tu código de referido y los datos de transferencia.
+                    </p>
+                    <div className="mt-2 pt-2 border-t border-gray-100 dark:border-zinc-700">
+                      <p className="text-xs text-gray-400 dark:text-zinc-500">Mínimo para solicitar: $2.000 CLP</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <p className="text-gray-500 dark:text-zinc-400 text-sm mb-4">
+                Gana <span className="font-bold text-amber-600 dark:text-amber-400">$2.000 CLP</span> por cada negocio que se suscriba usando tu código.
+              </p>
+
+              {/* Código de referido */}
+              <div className="bg-white dark:bg-zinc-900 rounded-xl p-4 border border-amber-200 dark:border-amber-800/50 mb-4">
+                <p className="text-xs text-gray-500 dark:text-zinc-500 mb-1">Tu código de referido</p>
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl font-bold text-gray-800 dark:text-white tracking-wider">
+                    {business.referral_code || 'CARGANDO...'}
+                  </span>
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(business.referral_code || '');
+                      alert("¡Código copiado!");
+                    }}
+                    className="p-2 bg-amber-100 dark:bg-amber-900/30 hover:bg-amber-200 dark:hover:bg-amber-800/50 rounded-lg text-amber-700 dark:text-amber-400 transition-colors"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              {/* Stats de referidos */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-white dark:bg-zinc-900 rounded-xl p-4 border border-gray-200 dark:border-zinc-700">
+                  <p className="text-xs text-gray-500 dark:text-zinc-500 mb-1">Referidos exitosos</p>
+                  <p className="text-xl font-bold text-gray-800 dark:text-white">
+                    {business.referral_count || 0} <span className="text-sm font-normal text-gray-400 dark:text-zinc-500">/ 10</span>
+                  </p>
+                  <div className="mt-2 h-2 bg-gray-100 dark:bg-zinc-800 rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-gradient-to-r from-amber-400 to-orange-500 rounded-full transition-all duration-500"
+                      style={{ width: `${Math.min(((business.referral_count || 0) / 10) * 100, 100)}%` }}
+                    />
+                  </div>
+                </div>
+                <div className="bg-white dark:bg-zinc-900 rounded-xl p-4 border border-gray-200 dark:border-zinc-700">
+                  <p className="text-xs text-gray-500 dark:text-zinc-500 mb-1">Saldo acumulado</p>
+                  <p className="text-xl font-bold text-green-600 dark:text-green-400">
+                    ${(business.referral_balance || 0).toLocaleString('es-CL')}
+                  </p>
+                  <p className="text-xs text-gray-400 dark:text-zinc-500 mt-1">CLP</p>
+                </div>
+              </div>
+
+              {/* Mensaje si llegó al límite */}
+              {(business.referral_count || 0) >= 10 && (
+                <div className="mt-4 p-3 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
+                  <p className="text-sm text-amber-700 dark:text-amber-400 flex items-center gap-2">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                    </svg>
+                    ¡Felicitaciones! Has alcanzado el máximo de referidos.
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </motion.div>
+
         {/* QR Modal */}
         {showQR && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowQR(false)}>

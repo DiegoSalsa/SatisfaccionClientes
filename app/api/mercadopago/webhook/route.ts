@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/firebase/admin';
 import { PLANES } from '@/lib/mercadopago';
 import crypto from 'crypto';
+import { generateReferralCode, REFERRAL_CONFIG } from '@/lib/referralCodes';
 
 // Generar tokens únicos
 function generateToken(length: number = 32): string {
@@ -82,6 +83,23 @@ export async function POST(request: NextRequest) {
             ? slug 
             : `${slug}-${Date.now()}`;
 
+          // Generar código de referido único para este negocio
+          let referralCode = generateReferralCode();
+          let codeExists = true;
+          let attempts = 0;
+          while (codeExists && attempts < 10) {
+            const existingCode = await db
+              .collection('businesses')
+              .where('referral_code', '==', referralCode)
+              .get();
+            if (existingCode.empty) {
+              codeExists = false;
+            } else {
+              referralCode = generateReferralCode();
+              attempts++;
+            }
+          }
+
           // Crear el negocio
           const businessRef = await db.collection('businesses').add({
             name: pendingData?.business_name,
@@ -90,6 +108,11 @@ export async function POST(request: NextRequest) {
             private_token: privateToken,
             admin_token: adminToken,
             created_at: new Date(),
+            // Sistema de referidos
+            referral_code: referralCode,
+            referred_by: pendingData?.referral_code || null, // Código de quien lo refirió
+            referral_count: 0, // Cuántos ha referido
+            referral_balance: 0, // Saldo acumulado en CLP
             subscription: {
               plan: planId,
               status: 'active',
@@ -100,6 +123,43 @@ export async function POST(request: NextRequest) {
               amount: plan.precio,
             },
           });
+
+          // Si fue referido por alguien, acreditar la recompensa al referidor
+          if (pendingData?.referral_code) {
+            const referrerSnapshot = await db
+              .collection('businesses')
+              .where('referral_code', '==', pendingData.referral_code)
+              .get();
+
+            if (!referrerSnapshot.empty) {
+              const referrerDoc = referrerSnapshot.docs[0];
+              const referrerData = referrerDoc.data();
+              
+              // Solo acreditar si no ha llegado al límite de 10 referidos
+              if ((referrerData.referral_count || 0) < REFERRAL_CONFIG.MAX_REFERRALS) {
+                await referrerDoc.ref.update({
+                  referral_count: (referrerData.referral_count || 0) + 1,
+                  referral_balance: (referrerData.referral_balance || 0) + REFERRAL_CONFIG.REWARD_AMOUNT,
+                });
+
+                // Registrar la transacción de referido
+                await db.collection('referral_transactions').add({
+                  referrer_id: referrerDoc.id,
+                  referred_id: businessRef.id,
+                  referred_name: pendingData?.business_name,
+                  amount: REFERRAL_CONFIG.REWARD_AMOUNT,
+                  status: 'credited',
+                  created_at: new Date(),
+                });
+
+                console.log('Referido acreditado:', {
+                  referrer: referrerDoc.id,
+                  referred: businessRef.id,
+                  amount: REFERRAL_CONFIG.REWARD_AMOUNT,
+                });
+              }
+            }
+          }
 
           // Actualizar suscripción pendiente
           await pendingDoc.ref.update({
@@ -113,6 +173,7 @@ export async function POST(request: NextRequest) {
             id: businessRef.id,
             slug: finalSlug,
             privateToken,
+            referralCode,
           });
         }
       }
