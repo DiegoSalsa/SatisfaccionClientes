@@ -259,42 +259,41 @@ export default function DashboardPage() {
   }));
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-black transition-colors">
-      {/* Theme Toggle */}
-      <div className="fixed top-4 right-4 z-50">
-        <ThemeToggle />
-      </div>
+    <div className="min-h-screen bg-gray-50 dark:bg-black transition-colors overflow-x-hidden">
       {/* Header */}
       <header className="bg-white dark:bg-zinc-900 border-b border-gray-200 dark:border-zinc-800">
-        <div className="max-w-5xl mx-auto px-4 py-6">
-          <div className="flex items-center gap-4">
-            {business.logo_url ? (
-              <img src={business.logo_url} alt={business.name} className="w-14 h-14 rounded-xl object-contain" />
-            ) : (
-              <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
-                <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                </svg>
+        <div className="max-w-5xl mx-auto px-4 py-4 sm:py-6">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
+              {business.logo_url ? (
+                <img src={business.logo_url} alt={business.name} className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl object-contain flex-shrink-0" />
+              ) : (
+                <div className="w-10 h-10 sm:w-14 sm:h-14 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <svg className="w-5 h-5 sm:w-7 sm:h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                  </svg>
+                </div>
+              )}
+              <div className="min-w-0">
+                <h1 className="text-lg sm:text-2xl font-bold text-gray-800 dark:text-white truncate">{business.name}</h1>
+                <p className="text-gray-500 dark:text-zinc-400 text-xs sm:text-sm">Dashboard de valoraciones</p>
               </div>
-            )}
-            <div>
-              <h1 className="text-2xl font-bold text-gray-800 dark:text-white">{business.name}</h1>
-              <p className="text-gray-500 dark:text-zinc-400 text-sm">Dashboard de valoraciones</p>
             </div>
+            <ThemeToggle />
           </div>
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-4 py-8">
+      <main className="max-w-5xl mx-auto px-4 py-6 sm:py-8">
         {/* Stats Grid */}
-        <div className="grid md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
           {/* Average Rating Card */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
             whileHover={{ scale: 1.02, y: -5 }}
-            className="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm p-6 border border-gray-100 dark:border-zinc-800 cursor-default hover:shadow-lg transition-shadow"
+            className="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm p-5 sm:p-6 border border-gray-100 dark:border-zinc-800 cursor-default hover:shadow-lg transition-shadow"
           >
             <p className="text-gray-500 dark:text-zinc-400 text-sm mb-2">Calificación promedio</p>
             <div className="flex items-baseline gap-2">
@@ -302,14 +301,14 @@ export default function DashboardPage() {
                 initial={{ opacity: 0, scale: 0.5 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.3, type: "spring" }}
-                className="text-4xl font-bold text-gray-800 dark:text-white"
+                className="text-3xl sm:text-4xl font-bold text-gray-800 dark:text-white"
               >
                 {avg}
               </motion.span>
               <motion.span 
                 animate={{ rotate: [0, 15, -15, 0] }}
                 transition={{ delay: 0.5, duration: 0.5 }}
-                className="text-yellow-400 text-2xl"
+                className="text-yellow-400 text-xl sm:text-2xl"
               >
                 ★
               </motion.span>
@@ -321,7 +320,7 @@ export default function DashboardPage() {
                   initial={{ opacity: 0, scale: 0 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.4 + i * 0.1 }}
-                  className={`text-xl ${parseFloat(avg) >= star ? "text-yellow-400" : "text-gray-200 dark:text-zinc-700"}`}
+                  className={`text-lg sm:text-xl ${parseFloat(avg) >= star ? "text-yellow-400" : "text-gray-200 dark:text-zinc-700"}`}
                 >
                   ★
                 </motion.span>
@@ -335,7 +334,7 @@ export default function DashboardPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
             whileHover={{ scale: 1.02, y: -5 }}
-            className="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm p-6 border border-gray-100 dark:border-zinc-800 cursor-default hover:shadow-lg transition-shadow"
+            className="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm p-5 sm:p-6 border border-gray-100 dark:border-zinc-800 cursor-default hover:shadow-lg transition-shadow"
           >
             <p className="text-gray-500 dark:text-zinc-400 text-sm mb-2">Total de opiniones</p>
             <div className="flex items-baseline gap-2">
@@ -343,7 +342,7 @@ export default function DashboardPage() {
                 initial={{ opacity: 0, scale: 0.5 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.4, type: "spring" }}
-                className="text-4xl font-bold text-gray-800 dark:text-white"
+                className="text-3xl sm:text-4xl font-bold text-gray-800 dark:text-white"
               >
                 {reviews.length}
               </motion.span>
@@ -363,10 +362,10 @@ export default function DashboardPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
             whileHover={{ scale: 1.02, y: -5 }}
-            className="bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-sm p-6 text-white cursor-default hover:shadow-xl transition-shadow"
+            className="bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-sm p-5 sm:p-6 text-white cursor-default hover:shadow-xl transition-shadow sm:col-span-2 lg:col-span-1"
           >
             <p className="text-blue-100 text-sm mb-2">Tu enlace de encuesta</p>
-            <code className="text-sm bg-white/20 px-3 py-2 rounded-lg block truncate">
+            <code className="text-xs sm:text-sm bg-white/20 px-3 py-2 rounded-lg block truncate">
               /encuesta/{business.slug}
             </code>
             <div className="flex gap-2 mt-3">
@@ -375,7 +374,7 @@ export default function DashboardPage() {
                   navigator.clipboard.writeText(`${window.location.origin}/encuesta/${business.slug}`);
                   alert("¡Enlace copiado!");
                 }}
-                className="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-1"
+                className="flex-1 sm:flex-none bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
@@ -384,7 +383,7 @@ export default function DashboardPage() {
               </button>
               <button
                 onClick={() => setShowQR(true)}
-                className="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-1"
+                className="flex-1 sm:flex-none bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h2M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
@@ -400,32 +399,32 @@ export default function DashboardPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm p-6 border border-gray-100 dark:border-zinc-800 mb-8"
+          className="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm p-4 sm:p-6 border border-gray-100 dark:border-zinc-800 mb-6 sm:mb-8"
         >
-          <div className="flex items-start gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-start gap-4">
             <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center flex-shrink-0">
               <svg className="w-6 h-6 text-green-600 dark:text-green-400" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
               </svg>
             </div>
-            <div className="flex-1">
+            <div className="flex-1 min-w-0">
               <h3 className="font-semibold text-gray-800 dark:text-white mb-1">Reseñas en Google Maps</h3>
               <p className="text-gray-500 dark:text-zinc-400 text-sm mb-4">
                 Agrega tu link de Google Maps y los clientes que califiquen con 4 o 5 estrellas 
                 recibirán una invitación para dejar su reseña pública en Google.
               </p>
-              <div className="flex gap-3 flex-col sm:flex-row">
+              <div className="flex gap-3 flex-col">
                 <input
                   type="url"
                   value={googleMapsUrl}
                   onChange={(e) => setGoogleMapsUrl(e.target.value)}
                   placeholder="https://g.page/r/tu-negocio/review"
-                  className="flex-1 border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 rounded-xl px-4 py-3 text-sm text-gray-800 dark:text-white placeholder-gray-400 dark:placeholder-zinc-500 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                  className="w-full border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 rounded-xl px-4 py-3 text-sm text-gray-800 dark:text-white placeholder-gray-400 dark:placeholder-zinc-500 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                 />
                 <button
                   onClick={handleSaveGoogleMaps}
                   disabled={savingMaps}
-                  className="bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white px-6 py-3 rounded-xl font-medium transition-colors flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white px-6 py-3 rounded-xl font-medium transition-colors flex items-center justify-center gap-2"
                 >
                   {savingMaps ? (
                     <>
@@ -461,15 +460,15 @@ export default function DashboardPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-2xl shadow-sm p-6 border border-amber-200 dark:border-amber-800/50 mb-8"
+          className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-2xl shadow-sm p-4 sm:p-6 border border-amber-200 dark:border-amber-800/50 mb-6 sm:mb-8"
         >
-          <div className="flex items-start gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-start gap-4">
             <div className="w-12 h-12 bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg">
               <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <div className="flex-1">
+            <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
                 <h3 className="font-semibold text-gray-800 dark:text-white">Invita y Gana</h3>
                 {/* Tooltip con información de pago */}
@@ -648,19 +647,19 @@ export default function DashboardPage() {
 
         {/* Trend Chart */}
         {trendData.length > 1 && (
-          <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm p-6 border border-gray-100 dark:border-zinc-800 mb-8">
-            <h3 className="font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+          <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm p-4 sm:p-6 border border-gray-100 dark:border-zinc-800 mb-6 sm:mb-8">
+            <h3 className="font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2 text-sm sm:text-base">
               <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
               </svg>
               Tendencia de valoraciones
             </h3>
-            <div className="h-64">
+            <div className="h-48 sm:h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={trendData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#374151" opacity={0.3} />
-                  <XAxis dataKey="week" stroke="#9CA3AF" fontSize={12} />
-                  <YAxis domain={[1, 5]} stroke="#9CA3AF" fontSize={12} />
+                  <XAxis dataKey="week" stroke="#9CA3AF" fontSize={10} />
+                  <YAxis domain={[1, 5]} stroke="#9CA3AF" fontSize={10} />
                   <Tooltip
                     contentStyle={{
                       backgroundColor: '#18181b',
@@ -675,8 +674,8 @@ export default function DashboardPage() {
                     dataKey="promedio"
                     stroke="#3B82F6"
                     strokeWidth={3}
-                    dot={{ fill: '#3B82F6', strokeWidth: 2, r: 5 }}
-                    activeDot={{ r: 8, fill: '#60A5FA' }}
+                    dot={{ fill: '#3B82F6', strokeWidth: 2, r: 4 }}
+                    activeDot={{ r: 6, fill: '#60A5FA' }}
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -686,19 +685,19 @@ export default function DashboardPage() {
 
         {/* Age Distribution Chart */}
         {ageDistributionData.length > 0 && (
-          <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm p-6 border border-gray-100 dark:border-zinc-800 mb-8">
-            <h3 className="font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+          <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm p-4 sm:p-6 border border-gray-100 dark:border-zinc-800 mb-6 sm:mb-8">
+            <h3 className="font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2 text-sm sm:text-base">
               <svg className="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
               </svg>
               Distribución por edad
             </h3>
-            <div className="h-64">
+            <div className="h-48 sm:h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={ageDistributionData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#374151" opacity={0.3} />
-                  <XAxis dataKey="rango" stroke="#9CA3AF" fontSize={12} />
-                  <YAxis stroke="#9CA3AF" fontSize={12} allowDecimals={false} />
+                  <XAxis dataKey="rango" stroke="#9CA3AF" fontSize={10} />
+                  <YAxis stroke="#9CA3AF" fontSize={10} allowDecimals={false} />
                   <Tooltip
                     contentStyle={{
                       backgroundColor: '#18181b',
@@ -720,72 +719,74 @@ export default function DashboardPage() {
         )}
 
         {/* Rating Distribution */}
-        <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm p-6 border border-gray-100 dark:border-zinc-800 mb-8">
-          <h3 className="font-semibold text-gray-800 dark:text-white mb-4">Distribución de calificaciones</h3>
+        <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm p-4 sm:p-6 border border-gray-100 dark:border-zinc-800 mb-6 sm:mb-8">
+          <h3 className="font-semibold text-gray-800 dark:text-white mb-4 text-sm sm:text-base">Distribución de calificaciones</h3>
           <div className="space-y-3">
             {ratingCounts.map(({ star, count, percent }) => (
-              <div key={star} className="flex items-center gap-3">
-                <span className="text-sm text-gray-600 dark:text-zinc-400 w-6">{star}★</span>
-                <div className="flex-1 h-4 bg-gray-100 dark:bg-zinc-800 rounded-full overflow-hidden">
+              <div key={star} className="flex items-center gap-2 sm:gap-3">
+                <span className="text-xs sm:text-sm text-gray-600 dark:text-zinc-400 w-6">{star}★</span>
+                <div className="flex-1 h-3 sm:h-4 bg-gray-100 dark:bg-zinc-800 rounded-full overflow-hidden">
                   <div
                     className="h-full bg-yellow-400 rounded-full transition-all duration-500"
                     style={{ width: `${percent}%` }}
                   ></div>
                 </div>
-                <span className="text-sm text-gray-500 dark:text-zinc-400 w-10 text-right">{count}</span>
+                <span className="text-xs sm:text-sm text-gray-500 dark:text-zinc-400 w-8 sm:w-10 text-right">{count}</span>
               </div>
             ))}
           </div>
         </div>
 
         {/* Filters & Export Section */}
-        <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 mb-8">
-          <div className="p-6 border-b border-gray-100 dark:border-zinc-800 flex flex-wrap items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <h3 className="font-semibold text-gray-800 dark:text-white">Comentarios</h3>
-              <span className="bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded-full text-sm">
-                {filteredReviews.length} de {reviews.length}
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setShowFilters(!showFilters)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
-                  showFilters 
-                    ? 'bg-blue-600 text-white' 
-                    : 'bg-gray-100 dark:bg-zinc-800 text-gray-700 dark:text-zinc-200 hover:bg-gray-200 dark:hover:bg-zinc-700'
-                }`}
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-                </svg>
-                Filtros
-              </button>
-              <button
-                onClick={exportToExcel}
-                className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-1"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                Excel
-              </button>
-              <button
-                onClick={exportToCSV}
-                className="bg-gray-100 dark:bg-zinc-800 hover:bg-gray-200 dark:hover:bg-zinc-700 text-gray-700 dark:text-zinc-200 px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-1"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                </svg>
-                CSV
-              </button>
+        <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 mb-6 sm:mb-8">
+          <div className="p-4 sm:p-6 border-b border-gray-100 dark:border-zinc-800">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <h3 className="font-semibold text-gray-800 dark:text-white text-sm sm:text-base">Comentarios</h3>
+                <span className="bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded-full text-xs sm:text-sm">
+                  {filteredReviews.length} de {reviews.length}
+                </span>
+              </div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <button
+                  onClick={() => setShowFilters(!showFilters)}
+                  className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors flex items-center gap-1 sm:gap-2 ${
+                    showFilters 
+                      ? 'bg-blue-600 text-white' 
+                      : 'bg-gray-100 dark:bg-zinc-800 text-gray-700 dark:text-zinc-200 hover:bg-gray-200 dark:hover:bg-zinc-700'
+                  }`}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                  </svg>
+                  <span className="hidden sm:inline">Filtros</span>
+                </button>
+                <button
+                  onClick={exportToExcel}
+                  className="bg-green-600 hover:bg-green-700 text-white px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors flex items-center gap-1"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  <span className="hidden sm:inline">Excel</span>
+                </button>
+                <button
+                  onClick={exportToCSV}
+                  className="bg-gray-100 dark:bg-zinc-800 hover:bg-gray-200 dark:hover:bg-zinc-700 text-gray-700 dark:text-zinc-200 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors flex items-center gap-1"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                  </svg>
+                  <span className="hidden sm:inline">CSV</span>
+                </button>
+              </div>
             </div>
           </div>
 
           {/* Filters Panel */}
           {showFilters && (
-            <div className="p-6 border-b border-gray-100 dark:border-zinc-800 bg-gray-50 dark:bg-zinc-800/50">
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            <div className="p-4 sm:p-6 border-b border-gray-100 dark:border-zinc-800 bg-gray-50 dark:bg-zinc-800/50">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
                 <div>
                   <label className="block text-xs text-gray-500 dark:text-zinc-400 mb-1">Desde</label>
                   <input
@@ -868,16 +869,16 @@ export default function DashboardPage() {
           {/* Reviews List */}
           <div className="divide-y divide-gray-100 dark:divide-zinc-800">
             {filteredReviews.length === 0 ? (
-              <div className="p-12 text-center">
-                <div className="w-16 h-16 bg-gray-100 dark:bg-zinc-800 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-8 h-8 text-gray-400 dark:text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="p-8 sm:p-12 text-center">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 bg-gray-100 dark:bg-zinc-800 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-6 h-6 sm:w-8 sm:h-8 text-gray-400 dark:text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                   </svg>
                 </div>
-                <h4 className="font-medium text-gray-800 dark:text-white mb-1">
+                <h4 className="font-medium text-gray-800 dark:text-white mb-1 text-sm sm:text-base">
                   {reviews.length === 0 ? 'Sin comentarios aún' : 'Sin resultados'}
                 </h4>
-                <p className="text-gray-500 dark:text-zinc-400 text-sm">
+                <p className="text-gray-500 dark:text-zinc-400 text-xs sm:text-sm">
                   {reviews.length === 0 
                     ? 'Comparte tu enlace de encuesta para recibir opiniones' 
                     : 'Intenta ajustar los filtros'}
@@ -885,37 +886,37 @@ export default function DashboardPage() {
               </div>
             ) : (
               filteredReviews.slice((currentPage - 1) * reviewsPerPage, currentPage * reviewsPerPage).map((r, i) => (
-                <div key={i} className="p-6 hover:bg-gray-50 dark:hover:bg-zinc-800/50 transition-colors">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1">
+                <div key={i} className="p-4 sm:p-6 hover:bg-gray-50 dark:hover:bg-zinc-800/50 transition-colors">
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-4">
+                    <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-2">
                         <div className="flex">
                           {[1, 2, 3, 4, 5].map((star) => (
                             <span
                               key={star}
-                              className={`text-lg ${r.rating >= star ? "text-yellow-400" : "text-gray-200 dark:text-zinc-700"}`}
+                              className={`text-base sm:text-lg ${r.rating >= star ? "text-yellow-400" : "text-gray-200 dark:text-zinc-700"}`}
                             >
                               ★
                             </span>
                           ))}
                         </div>
-                        <span className="text-sm font-medium text-gray-700 dark:text-zinc-300">{r.rating}/5</span>
+                        <span className="text-xs sm:text-sm font-medium text-gray-700 dark:text-zinc-300">{r.rating}/5</span>
                       </div>
                       {r.comment ? (
-                        <p className="text-gray-700 dark:text-zinc-200">{r.comment}</p>
+                        <p className="text-gray-700 dark:text-zinc-200 text-sm sm:text-base break-words">{r.comment}</p>
                       ) : (
-                        <p className="text-gray-400 dark:text-zinc-500 italic text-sm">Sin comentario</p>
+                        <p className="text-gray-400 dark:text-zinc-500 italic text-xs sm:text-sm">Sin comentario</p>
                       )}
                       {r.contact_email && (
-                        <p className="text-sm text-gray-500 dark:text-zinc-400 mt-2 flex items-center gap-1">
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <p className="text-xs sm:text-sm text-gray-500 dark:text-zinc-400 mt-2 flex items-center gap-1 break-all">
+                          <svg className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                           </svg>
                           {r.contact_email}
                         </p>
                       )}
                       {(r.comuna || r.edad) && (
-                        <p className="text-sm text-gray-500 dark:text-zinc-400 mt-1 flex items-center gap-3">
+                        <p className="text-xs sm:text-sm text-gray-500 dark:text-zinc-400 mt-1 flex items-center gap-3 flex-wrap">
                           {r.comuna && (
                             <span className="flex items-center gap-1">
                               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -936,7 +937,7 @@ export default function DashboardPage() {
                         </p>
                       )}
                     </div>
-                    <div className="text-right">
+                    <div className="text-left sm:text-right flex-shrink-0">
                       <p className="text-xs text-gray-400 dark:text-zinc-500">
                         {r.timestamp?.toDate
                           ? new Date(r.timestamp.toDate()).toLocaleDateString("es-ES", {
@@ -955,23 +956,23 @@ export default function DashboardPage() {
 
           {/* Pagination */}
           {filteredReviews.length > reviewsPerPage && (
-            <div className="p-4 border-t border-gray-100 dark:border-zinc-800 flex items-center justify-between">
-              <p className="text-sm text-gray-500 dark:text-zinc-400">
-                Mostrando {((currentPage - 1) * reviewsPerPage) + 1} - {Math.min(currentPage * reviewsPerPage, filteredReviews.length)} de {filteredReviews.length} opiniones
+            <div className="p-4 border-t border-gray-100 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-3">
+              <p className="text-xs sm:text-sm text-gray-500 dark:text-zinc-400 text-center sm:text-left">
+                Mostrando {((currentPage - 1) * reviewsPerPage) + 1} - {Math.min(currentPage * reviewsPerPage, filteredReviews.length)} de {filteredReviews.length}
               </p>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1 sm:gap-2">
                 <button
                   onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                   disabled={currentPage === 1}
-                  className="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-gray-100 dark:bg-zinc-800 text-gray-700 dark:text-zinc-200 hover:bg-gray-200 dark:hover:bg-zinc-700"
+                  className="px-2 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-gray-100 dark:bg-zinc-800 text-gray-700 dark:text-zinc-200 hover:bg-gray-200 dark:hover:bg-zinc-700"
                 >
-                  ← Anterior
+                  ← <span className="hidden sm:inline">Anterior</span>
                 </button>
                 <div className="flex items-center gap-1">
                   {Array.from({ length: Math.ceil(filteredReviews.length / reviewsPerPage) }, (_, i) => i + 1)
                     .filter(page => {
                       const totalPages = Math.ceil(filteredReviews.length / reviewsPerPage);
-                      if (totalPages <= 7) return true;
+                      if (totalPages <= 5) return true;
                       if (page === 1 || page === totalPages) return true;
                       if (Math.abs(page - currentPage) <= 1) return true;
                       return false;
@@ -979,11 +980,11 @@ export default function DashboardPage() {
                     .map((page, idx, arr) => (
                       <span key={page} className="flex items-center">
                         {idx > 0 && arr[idx - 1] !== page - 1 && (
-                          <span className="px-2 text-gray-400 dark:text-zinc-500">...</span>
+                          <span className="px-1 sm:px-2 text-gray-400 dark:text-zinc-500 text-xs">...</span>
                         )}
                         <button
                           onClick={() => setCurrentPage(page)}
-                          className={`w-8 h-8 rounded-lg text-sm font-medium transition-colors ${
+                          className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
                             currentPage === page
                               ? 'bg-blue-600 text-white'
                               : 'bg-gray-100 dark:bg-zinc-800 text-gray-700 dark:text-zinc-200 hover:bg-gray-200 dark:hover:bg-zinc-700'
@@ -997,9 +998,9 @@ export default function DashboardPage() {
                 <button
                   onClick={() => setCurrentPage(p => Math.min(Math.ceil(filteredReviews.length / reviewsPerPage), p + 1))}
                   disabled={currentPage >= Math.ceil(filteredReviews.length / reviewsPerPage)}
-                  className="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-gray-100 dark:bg-zinc-800 text-gray-700 dark:text-zinc-200 hover:bg-gray-200 dark:hover:bg-zinc-700"
+                  className="px-2 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-gray-100 dark:bg-zinc-800 text-gray-700 dark:text-zinc-200 hover:bg-gray-200 dark:hover:bg-zinc-700"
                 >
-                  Siguiente →
+                  <span className="hidden sm:inline">Siguiente</span> →
                 </button>
               </div>
             </div>
@@ -1008,7 +1009,7 @@ export default function DashboardPage() {
       </main>
 
       {/* Footer */}
-      <footer className="text-center py-8 text-gray-400 dark:text-zinc-500 text-sm">
+      <footer className="text-center py-6 sm:py-8 text-gray-400 dark:text-zinc-500 text-xs sm:text-sm">
         <p className="flex items-center justify-center gap-2">
           Powered by 
           <img src="/logo-light.svg" alt="ValoraLocal" className="h-5 dark:hidden" />
