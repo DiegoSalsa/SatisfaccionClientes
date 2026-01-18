@@ -90,7 +90,7 @@ export default function Home() {
                 Comenzar ahora
               </a>
               <a 
-                href="/encuesta/ValoraLocal-Prueba" 
+                href="/dashboard/c2e0c5bf-e0c9-4b6a-b6b6-02026e00c707" 
                 className="bg-white dark:bg-zinc-800 hover:bg-gray-50 dark:hover:bg-zinc-700 text-gray-800 dark:text-white px-8 py-4 rounded-full font-semibold text-lg transition-all border border-gray-200 dark:border-zinc-700"
               >
                 Ver Demo →
