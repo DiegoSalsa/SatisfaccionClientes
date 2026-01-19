@@ -32,6 +32,17 @@ export const metadata: Metadata = {
   alternates: {
     canonical: '/',
   },
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
+  },
+  manifest: '/site.webmanifest',
   openGraph: {
     title: 'ValoraLocal - Encuestas de Satisfacción para Negocios',
     description: 'Conoce la opinión real de tus clientes con encuestas QR simples. Dashboard en tiempo real, exportación a Excel y QR con tu logo.',
