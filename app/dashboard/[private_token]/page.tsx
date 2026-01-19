@@ -58,6 +58,7 @@ export default function DashboardPage() {
   const [editingName, setEditingName] = useState(false);
   const [newName, setNewName] = useState("");
   const [savingName, setSavingName] = useState(false);
+  const [showPaymentInfo, setShowPaymentInfo] = useState(false);
   const reviewsPerPage = 15;
 
   useEffect(() => {
@@ -845,19 +846,30 @@ export default function DashboardPage() {
               <div className="flex items-center gap-2 mb-1">
                 <h3 className="font-semibold text-gray-800 dark:text-white">Invita y Gana</h3>
                 {/* Tooltip con información de pago */}
-                <div className="relative group">
-                  <button className="w-5 h-5 rounded-full bg-amber-200 dark:bg-amber-800 text-amber-700 dark:text-amber-300 text-xs font-bold flex items-center justify-center hover:bg-amber-300 dark:hover:bg-amber-700 transition-colors">
+                <div className="relative">
+                  <button 
+                    onClick={() => setShowPaymentInfo(!showPaymentInfo)}
+                    className="w-5 h-5 rounded-full bg-amber-200 dark:bg-amber-800 text-amber-700 dark:text-amber-300 text-xs font-bold flex items-center justify-center hover:bg-amber-300 dark:hover:bg-amber-700 transition-colors"
+                  >
                     ?
                   </button>
-                  <div className="absolute left-0 bottom-full mb-2 w-72 p-4 bg-white dark:bg-zinc-800 rounded-xl shadow-xl border border-gray-200 dark:border-zinc-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                    <p className="text-sm text-gray-700 dark:text-zinc-200 font-medium mb-2">¿Cómo recibo mi pago?</p>
-                    <p className="text-xs text-gray-500 dark:text-zinc-400 leading-relaxed">
-                      El pago de tus referidos se efectuará al momento en que lo solicites mediante correo electrónico a <span className="text-amber-600 dark:text-amber-400 font-medium">pagos@valoralocal.cl</span>. Solo incluye tu código de referido y los datos de transferencia.
-                    </p>
-                    <div className="mt-2 pt-2 border-t border-gray-100 dark:border-zinc-700">
-                      <p className="text-xs text-gray-400 dark:text-zinc-500">Mínimo para solicitar: $2.000 CLP</p>
-                    </div>
-                  </div>
+                  {showPaymentInfo && (
+                    <>
+                      <div 
+                        className="fixed inset-0 z-40" 
+                        onClick={() => setShowPaymentInfo(false)}
+                      />
+                      <div className="absolute left-0 sm:left-auto sm:right-0 bottom-full mb-2 w-72 p-4 bg-white dark:bg-zinc-800 rounded-xl shadow-xl border border-gray-200 dark:border-zinc-700 z-50">
+                        <p className="text-sm text-gray-700 dark:text-zinc-200 font-medium mb-2">¿Cómo recibo mi pago?</p>
+                        <p className="text-xs text-gray-500 dark:text-zinc-400 leading-relaxed">
+                          El pago de tus referidos se efectuará al momento en que lo solicites mediante correo electrónico a <span className="text-amber-600 dark:text-amber-400 font-medium">pagos@valoralocal.cl</span>. Solo incluye tu código de referido y los datos de transferencia.
+                        </p>
+                        <div className="mt-2 pt-2 border-t border-gray-100 dark:border-zinc-700">
+                          <p className="text-xs text-gray-400 dark:text-zinc-500">Mínimo para solicitar: $2.000 CLP</p>
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
               <p className="text-gray-500 dark:text-zinc-400 text-sm mb-4">
