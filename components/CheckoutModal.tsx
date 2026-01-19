@@ -199,7 +199,7 @@ export function CheckoutModal({ isOpen, onClose, planId, planName, planPrice }: 
             <div className="grid grid-cols-2 gap-3 mb-4">
               <button
                 type="button"
-                onClick={() => { setPaymentMethod('mercadopago'); setShowPaypal(false); }}
+                onClick={() => setPaymentMethod('mercadopago')}
                 className={`p-3 rounded-xl border-2 transition-all ${
                   paymentMethod === 'mercadopago'
                     ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
