@@ -13,9 +13,8 @@ function getResend(): Resend {
   return resendInstance;
 }
 
-// Email de origen - usar onboarding@resend.dev hasta verificar dominio propio
-// Cuando tengas dominio: 'ValoraLocal <noreply@valoralocal.cl>'
-const FROM_EMAIL = 'ValoraLocal <onboarding@resend.dev>';
+// Email de origen - dominio verificado
+const FROM_EMAIL = 'ValoraLocal <noreply@valoralocal.cl>';
 
 interface WelcomeEmailData {
   businessName: string;
