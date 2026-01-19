@@ -743,7 +743,7 @@ export default function Home() {
               ¿Listo para conocer a tus clientes?
             </h2>
             <p className="text-blue-100 max-w-xl mx-auto mb-8">
-              Déjanos tu email y te contactaremos para configurar tu cuenta gratis en menos de 24 horas.
+              Déjanos tu email y te contactaremos para configurar tu cuenta en menos de 24 horas.
             </p>
             
             {submitted ? (
