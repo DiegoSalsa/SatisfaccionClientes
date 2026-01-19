@@ -55,7 +55,6 @@ export default function DashboardPage() {
   const logoInputRef = useRef<HTMLInputElement>(null);
   const [showEmails, setShowEmails] = useState(false);
   const [exportingPDF, setExportingPDF] = useState(false);
-  const reportRef = useRef<HTMLDivElement>(null);
   const reviewsPerPage = 15;
 
   useEffect(() => {
@@ -232,7 +231,7 @@ export default function DashboardPage() {
 
   // Exportar a PDF
   const exportToPDF = useCallback(async () => {
-    if (!reportRef.current || !business) return;
+    if (!business) return;
     
     setExportingPDF(true);
     
