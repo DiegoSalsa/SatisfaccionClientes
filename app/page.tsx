@@ -433,13 +433,16 @@ export default function Home() {
           </motion.div>
         </section>
 
-        {/* Testimonials */}
+        {/* Why Choose Us - Stats */}
         <section className="bg-white dark:bg-zinc-900 border-y border-gray-100 dark:border-zinc-800 py-20">
           <div className="max-w-6xl mx-auto px-6">
             <AnimatedSection className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-                Lo que dicen nuestros clientes
+                ¿Por qué elegir ValoraLocal?
               </h2>
+              <p className="text-gray-600 dark:text-zinc-400 max-w-2xl mx-auto">
+                Una solución diseñada pensando en los negocios locales de Chile
+              </p>
             </AnimatedSection>
             
             <motion.div 
@@ -447,48 +450,58 @@ export default function Home() {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, margin: "-50px" }}
-              className="grid md:grid-cols-3 gap-6"
+              className="grid md:grid-cols-4 gap-6"
             >
-              <motion.div variants={staggerItem} className="bg-gray-50 dark:bg-zinc-800 p-6 rounded-2xl hover:shadow-lg transition-shadow">
-                <div className="flex text-yellow-400 mb-4">★★★★★</div>
-                <p className="text-gray-700 dark:text-zinc-300 mb-4">
-                  &quot;Antes no tenía idea de qué pensaban mis clientes. Ahora puedo mejorar mi servicio basado en datos reales.&quot;
-                </p>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold">M</div>
-                  <div>
-                    <div className="font-medium text-gray-800 dark:text-white">María González</div>
-                    <div className="text-sm text-gray-500 dark:text-zinc-400">Restaurante El Buen Sabor</div>
-                  </div>
-                </div>
+              <motion.div variants={staggerItem} className="text-center p-6">
+                <div className="text-5xl font-bold text-blue-600 dark:text-blue-400 mb-2">30s</div>
+                <p className="text-gray-600 dark:text-zinc-400">Tiempo promedio para responder una encuesta</p>
               </motion.div>
               
-              <motion.div variants={staggerItem} className="bg-gray-50 dark:bg-zinc-800 p-6 rounded-2xl hover:shadow-lg transition-shadow">
-                <div className="flex text-yellow-400 mb-4">★★★★★</div>
-                <p className="text-gray-700 dark:text-zinc-300 mb-4">
-                  &quot;El QR con nuestro logo quedó espectacular. Lo imprimimos en cada mesa y las opiniones aumentaron 300%.&quot;
-                </p>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center text-white font-bold">C</div>
-                  <div>
-                    <div className="font-medium text-gray-800 dark:text-white">Carlos Muñoz</div>
-                    <div className="text-sm text-gray-500 dark:text-zinc-400">Café Central</div>
-                  </div>
-                </div>
+              <motion.div variants={staggerItem} className="text-center p-6">
+                <div className="text-5xl font-bold text-green-600 dark:text-green-400 mb-2">100%</div>
+                <p className="text-gray-600 dark:text-zinc-400">Datos en tiempo real en tu dashboard</p>
               </motion.div>
               
-              <motion.div variants={staggerItem} className="bg-gray-50 dark:bg-zinc-800 p-6 rounded-2xl hover:shadow-lg transition-shadow">
-                <div className="flex text-yellow-400 mb-4">★★★★★</div>
-                <p className="text-gray-700 dark:text-zinc-300 mb-4">
-                  &quot;Exportar a Excel me permite hacer reportes mensuales para mi equipo. Simple y efectivo.&quot;
-                </p>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white font-bold">A</div>
-                  <div>
-                    <div className="font-medium text-gray-800 dark:text-white">Ana Torres</div>
-                    <div className="text-sm text-gray-500 dark:text-zinc-400">Clínica Dental Sonrisa</div>
-                  </div>
+              <motion.div variants={staggerItem} className="text-center p-6">
+                <div className="text-5xl font-bold text-purple-600 dark:text-purple-400 mb-2">24/7</div>
+                <p className="text-gray-600 dark:text-zinc-400">Tu encuesta disponible sin interrupciones</p>
+              </motion.div>
+              
+              <motion.div variants={staggerItem} className="text-center p-6">
+                <div className="text-5xl font-bold text-amber-600 dark:text-amber-400 mb-2">$0</div>
+                <p className="text-gray-600 dark:text-zinc-400">Costo adicional por respuesta recibida</p>
+              </motion.div>
+            </motion.div>
+
+            <motion.div 
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="grid md:grid-cols-3 gap-6 mt-12"
+            >
+              <motion.div variants={staggerItem} className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 p-6 rounded-2xl">
+                <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center mb-4">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
                 </div>
+                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Fácil para tus clientes</h3>
+                <p className="text-gray-600 dark:text-zinc-400 text-sm">Escanean el QR, responden 3 preguntas y listo. Sin descargas ni registros.</p>
+              </motion.div>
+              
+              <motion.div variants={staggerItem} className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 p-6 rounded-2xl">
+                <div className="w-12 h-12 bg-green-600 rounded-xl flex items-center justify-center mb-4">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+                </div>
+                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Datos accionables</h3>
+                <p className="text-gray-600 dark:text-zinc-400 text-sm">Gráficos claros y exportación a Excel para tomar decisiones informadas.</p>
+              </motion.div>
+              
+              <motion.div variants={staggerItem} className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 p-6 rounded-2xl">
+                <div className="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center mb-4">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                </div>
+                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Precio justo</h3>
+                <p className="text-gray-600 dark:text-zinc-400 text-sm">Sin sorpresas ni cobros por cantidad de respuestas. Un precio fijo mensual.</p>
               </motion.div>
             </motion.div>
           </div>
