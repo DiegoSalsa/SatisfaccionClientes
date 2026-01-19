@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js';
 
 type PlanId = 'pro_mensual' | 'pro_anual' | 'test_plan';
 
@@ -18,11 +19,28 @@ export function CheckoutModal({ isOpen, onClose, planId, planName, planPrice }: 
   const [referralCode, setReferralCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState<'mercadopago' | 'paypal'>('mercadopago');
+  const [showPaypal, setShowPaypal] = useState(false);
 
   if (!isOpen) return null;
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const validateForm = () => {
+    if (!businessName.trim()) {
+      setError('Ingresa el nombre de tu negocio');
+      return false;
+    }
+    if (!email.trim() || !email.includes('@')) {
+      setError('Ingresa un email válido');
+      return false;
+    }
+    setError('');
+    return true;
+  };
+
+  const handleMercadoPago = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validateForm()) return;
+    
     setLoading(true);
     setError('');
 
@@ -44,7 +62,6 @@ export function CheckoutModal({ isOpen, onClose, planId, planName, planPrice }: 
         throw new Error(data.error || 'Error al crear la suscripción');
       }
 
-      // Redirigir al checkout de MercadoPago
       if (data.init_point) {
         window.location.href = data.init_point;
       }
@@ -53,6 +70,62 @@ export function CheckoutModal({ isOpen, onClose, planId, planName, planPrice }: 
       setLoading(false);
     }
   };
+
+  const handlePayPalClick = () => {
+    if (!validateForm()) return;
+    setShowPaypal(true);
+  };
+
+  const createPayPalOrder = async () => {
+    try {
+      const response = await fetch('/api/paypal/create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          planId,
+          businessName,
+          email,
+          referralCode: referralCode.trim() || undefined,
+        }),
+      });
+      
+      const data = await response.json();
+      
+      if (data.error) {
+        throw new Error(data.error);
+      }
+      
+      return data.orderID;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error al crear orden');
+      throw err;
+    }
+  };
+
+  const onPayPalApprove = async (data: { orderID: string }) => {
+    setLoading(true);
+    try {
+      const response = await fetch('/api/paypal/capture-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderID: data.orderID }),
+      });
+      
+      const result = await response.json();
+      
+      if (result.success && result.dashboardUrl) {
+        window.location.href = result.dashboardUrl;
+      } else {
+        throw new Error(result.error || 'Error al procesar pago');
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error al procesar pago');
+      setLoading(false);
+    }
+  };
+
+  // Precio en USD para mostrar
+  const usdPrice = planId === 'pro_anual' ? '$99.99 USD' : '$9.99 USD';
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -63,7 +136,7 @@ export function CheckoutModal({ isOpen, onClose, planId, planName, planPrice }: 
       />
       
       {/* Modal */}
-      <div className="relative bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl max-w-md w-full p-6 animate-in fade-in zoom-in duration-200">
+      <div className="relative bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl max-w-md w-full p-6 animate-in fade-in zoom-in duration-200 max-h-[90vh] overflow-y-auto">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-white transition-colors"
@@ -87,7 +160,7 @@ export function CheckoutModal({ isOpen, onClose, planId, planName, planPrice }: 
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-1">
               Nombre de tu negocio
@@ -127,13 +200,10 @@ export function CheckoutModal({ isOpen, onClose, planId, planName, planPrice }: 
               type="text"
               value={referralCode}
               onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
-              placeholder="Ej: CAFE-1234"
+              placeholder="Ej: CAFE1234"
               maxLength={15}
               className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white placeholder-gray-400 uppercase tracking-wider"
             />
-            <p className="text-xs text-gray-500 dark:text-zinc-500 mt-1">
-              ¿Te recomendó otro negocio? Ingresa su código aquí
-            </p>
           </div>
 
           {error && (
@@ -142,30 +212,115 @@ export function CheckoutModal({ isOpen, onClose, planId, planName, planPrice }: 
             </div>
           )}
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold py-3 rounded-xl transition-colors flex items-center justify-center gap-2"
-          >
-            {loading ? (
-              <>
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                Procesando...
-              </>
+          {/* Método de pago */}
+          <div className="pt-2">
+            <p className="text-sm font-medium text-gray-700 dark:text-zinc-300 mb-3">
+              Método de pago
+            </p>
+            
+            <div className="grid grid-cols-2 gap-3 mb-4">
+              <button
+                type="button"
+                onClick={() => { setPaymentMethod('mercadopago'); setShowPaypal(false); }}
+                className={`p-3 rounded-xl border-2 transition-all ${
+                  paymentMethod === 'mercadopago'
+                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                    : 'border-gray-200 dark:border-zinc-700 hover:border-gray-300'
+                }`}
+              >
+                <div className="flex items-center justify-center gap-2">
+                  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="#00bcff">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                  </svg>
+                  <span className="text-sm font-medium text-gray-700 dark:text-zinc-300">MercadoPago</span>
+                </div>
+              </button>
+              
+              <button
+                type="button"
+                onClick={() => setPaymentMethod('paypal')}
+                className={`p-3 rounded-xl border-2 transition-all ${
+                  paymentMethod === 'paypal'
+                    ? 'border-[#0070ba] bg-[#0070ba]/10'
+                    : 'border-gray-200 dark:border-zinc-700 hover:border-gray-300'
+                }`}
+              >
+                <div className="flex items-center justify-center gap-2">
+                  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="#0070ba">
+                    <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 0 0-.607-.541c-.013.076-.026.175-.041.254-.93 4.778-4.005 7.201-9.138 7.201h-2.19a.563.563 0 0 0-.556.479l-1.187 7.527h-.506l-.24 1.516a.56.56 0 0 0 .554.647h3.882c.46 0 .85-.334.922-.788.06-.26.76-4.852.816-5.09a.932.932 0 0 1 .923-.788h.58c3.76 0 6.705-1.528 7.565-5.946.36-1.847.174-3.388-.777-4.471z"/>
+                  </svg>
+                  <span className="text-sm font-medium text-gray-700 dark:text-zinc-300">PayPal</span>
+                </div>
+              </button>
+            </div>
+
+            {paymentMethod === 'mercadopago' ? (
+              <button
+                onClick={handleMercadoPago}
+                disabled={loading}
+                className="w-full bg-[#00bcff] hover:bg-[#00a8e8] disabled:bg-[#00bcff]/50 text-white font-semibold py-3 rounded-xl transition-colors flex items-center justify-center gap-2"
+              >
+                {loading ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    Procesando...
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                    Pagar {planPrice}
+                  </>
+                )}
+              </button>
             ) : (
-              <>
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                </svg>
-                Pagar con MercadoPago
-              </>
+              <div>
+                {!showPaypal ? (
+                  <button
+                    onClick={handlePayPalClick}
+                    className="w-full bg-[#0070ba] hover:bg-[#003087] text-white font-semibold py-3 rounded-xl transition-colors flex items-center justify-center gap-2"
+                  >
+                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 0 0-.607-.541c-.013.076-.026.175-.041.254-.93 4.778-4.005 7.201-9.138 7.201h-2.19a.563.563 0 0 0-.556.479l-1.187 7.527h-.506l-.24 1.516a.56.56 0 0 0 .554.647h3.882c.46 0 .85-.334.922-.788.06-.26.76-4.852.816-5.09a.932.932 0 0 1 .923-.788h.58c3.76 0 6.705-1.528 7.565-5.946.36-1.847.174-3.388-.777-4.471z"/>
+                    </svg>
+                    Continuar con PayPal ({usdPrice})
+                  </button>
+                ) : (
+                  <PayPalScriptProvider options={{ 
+                    clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || '',
+                    currency: 'USD'
+                  }}>
+                    <div className="paypal-buttons-container">
+                      <PayPalButtons
+                        style={{ layout: 'vertical', shape: 'rect' }}
+                        createOrder={createPayPalOrder}
+                        onApprove={onPayPalApprove}
+                        onError={(err) => {
+                          console.error('PayPal error:', err);
+                          setError('Error en PayPal. Intenta de nuevo.');
+                        }}
+                        onCancel={() => {
+                          setShowPaypal(false);
+                        }}
+                      />
+                    </div>
+                    <p className="text-xs text-center text-gray-500 dark:text-zinc-500 mt-2">
+                      Precio en USD: {usdPrice}
+                    </p>
+                  </PayPalScriptProvider>
+                )}
+              </div>
             )}
-          </button>
+          </div>
 
           <p className="text-xs text-center text-gray-500 dark:text-zinc-500">
-            Serás redirigido a MercadoPago para completar el pago de forma segura
+            {paymentMethod === 'mercadopago' 
+              ? 'Serás redirigido a MercadoPago para completar el pago'
+              : 'Pago seguro procesado por PayPal'
+            }
           </p>
-        </form>
+        </div>
       </div>
     </div>
   );
