@@ -510,42 +510,8 @@ export default function Home() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto"
+            className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto"
           >
-            {/* Plan Prueba - Solo para testing */}
-            <motion.div 
-              variants={staggerItem}
-              whileHover={{ y: -5 }}
-              className="bg-gradient-to-b from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-2xl p-8 border-2 border-dashed border-amber-300 dark:border-amber-700 relative"
-            >
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full">
-                🧪 SOLO TESTING
-              </div>
-              <div className="text-lg font-medium text-gray-800 dark:text-white mb-2">Plan Prueba</div>
-              <div className="text-4xl font-bold text-gray-900 dark:text-white mb-1">$1.000</div>
-              <div className="text-gray-500 dark:text-zinc-400 text-sm mb-6">CLP / mes</div>
-              <ul className="space-y-3 mb-8">
-                <li className="flex items-center gap-2 text-gray-700 dark:text-zinc-300">
-                  <svg className="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                  Para probar referidos
-                </li>
-                <li className="flex items-center gap-2 text-gray-700 dark:text-zinc-300">
-                  <svg className="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                  Funcionalidad completa
-                </li>
-                <li className="flex items-center gap-2 text-gray-700 dark:text-zinc-300">
-                  <svg className="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                  Precio mínimo
-                </li>
-              </ul>
-              <button 
-                onClick={() => setCheckoutPlan('test_plan')}
-                className="block w-full text-center bg-amber-500 hover:bg-amber-600 text-white py-3 rounded-xl font-semibold transition-colors cursor-pointer"
-              >
-                Probar ahora
-              </button>
-            </motion.div>
-
             {/* Pro Mensual */}
             <motion.div 
               variants={staggerItem}
