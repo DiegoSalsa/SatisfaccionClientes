@@ -452,23 +452,71 @@ export default function Home() {
               viewport={{ once: true, margin: "-50px" }}
               className="grid md:grid-cols-4 gap-6"
             >
-              <motion.div variants={staggerItem} className="text-center p-6">
-                <div className="text-5xl font-bold text-blue-600 dark:text-blue-400 mb-2">30s</div>
+              <motion.div 
+                variants={staggerItem} 
+                whileHover={{ scale: 1.05, y: -5 }}
+                className="text-center p-6 bg-gradient-to-br from-blue-50 to-white dark:from-blue-900/10 dark:to-zinc-900 rounded-2xl border border-blue-100 dark:border-blue-900/30"
+              >
+                <motion.div 
+                  className="text-5xl font-bold text-blue-600 dark:text-blue-400 mb-2"
+                  initial={{ scale: 0 }}
+                  whileInView={{ scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ type: "spring", stiffness: 200, delay: 0.1 }}
+                >
+                  30s
+                </motion.div>
                 <p className="text-gray-600 dark:text-zinc-400">Tiempo promedio para responder una encuesta</p>
               </motion.div>
               
-              <motion.div variants={staggerItem} className="text-center p-6">
-                <div className="text-5xl font-bold text-green-600 dark:text-green-400 mb-2">100%</div>
+              <motion.div 
+                variants={staggerItem} 
+                whileHover={{ scale: 1.05, y: -5 }}
+                className="text-center p-6 bg-gradient-to-br from-green-50 to-white dark:from-green-900/10 dark:to-zinc-900 rounded-2xl border border-green-100 dark:border-green-900/30"
+              >
+                <motion.div 
+                  className="text-5xl font-bold text-green-600 dark:text-green-400 mb-2"
+                  initial={{ scale: 0 }}
+                  whileInView={{ scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ type: "spring", stiffness: 200, delay: 0.2 }}
+                >
+                  100%
+                </motion.div>
                 <p className="text-gray-600 dark:text-zinc-400">Datos en tiempo real en tu dashboard</p>
               </motion.div>
               
-              <motion.div variants={staggerItem} className="text-center p-6">
-                <div className="text-5xl font-bold text-purple-600 dark:text-purple-400 mb-2">24/7</div>
+              <motion.div 
+                variants={staggerItem} 
+                whileHover={{ scale: 1.05, y: -5 }}
+                className="text-center p-6 bg-gradient-to-br from-purple-50 to-white dark:from-purple-900/10 dark:to-zinc-900 rounded-2xl border border-purple-100 dark:border-purple-900/30"
+              >
+                <motion.div 
+                  className="text-5xl font-bold text-purple-600 dark:text-purple-400 mb-2"
+                  initial={{ scale: 0 }}
+                  whileInView={{ scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ type: "spring", stiffness: 200, delay: 0.3 }}
+                >
+                  24/7
+                </motion.div>
                 <p className="text-gray-600 dark:text-zinc-400">Tu encuesta disponible sin interrupciones</p>
               </motion.div>
               
-              <motion.div variants={staggerItem} className="text-center p-6">
-                <div className="text-5xl font-bold text-amber-600 dark:text-amber-400 mb-2">$0</div>
+              <motion.div 
+                variants={staggerItem} 
+                whileHover={{ scale: 1.05, y: -5 }}
+                className="text-center p-6 bg-gradient-to-br from-amber-50 to-white dark:from-amber-900/10 dark:to-zinc-900 rounded-2xl border border-amber-100 dark:border-amber-900/30"
+              >
+                <motion.div 
+                  className="text-5xl font-bold text-amber-600 dark:text-amber-400 mb-2"
+                  initial={{ scale: 0 }}
+                  whileInView={{ scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ type: "spring", stiffness: 200, delay: 0.4 }}
+                >
+                  $0
+                </motion.div>
                 <p className="text-gray-600 dark:text-zinc-400">Costo adicional por respuesta recibida</p>
               </motion.div>
             </motion.div>
@@ -480,26 +528,50 @@ export default function Home() {
               viewport={{ once: true }}
               className="grid md:grid-cols-3 gap-6 mt-12"
             >
-              <motion.div variants={staggerItem} className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 p-6 rounded-2xl">
-                <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center mb-4">
+              <motion.div 
+                variants={staggerItem} 
+                whileHover={{ y: -8, boxShadow: "0 20px 40px -12px rgba(59, 130, 246, 0.25)" }}
+                className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 p-6 rounded-2xl transition-all"
+              >
+                <motion.div 
+                  className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center mb-4"
+                  whileHover={{ rotate: [0, -10, 10, 0] }}
+                  transition={{ duration: 0.5 }}
+                >
                   <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
-                </div>
+                </motion.div>
                 <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Fácil para tus clientes</h3>
                 <p className="text-gray-600 dark:text-zinc-400 text-sm">Escanean el QR, responden 3 preguntas y listo. Sin descargas ni registros.</p>
               </motion.div>
               
-              <motion.div variants={staggerItem} className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 p-6 rounded-2xl">
-                <div className="w-12 h-12 bg-green-600 rounded-xl flex items-center justify-center mb-4">
+              <motion.div 
+                variants={staggerItem} 
+                whileHover={{ y: -8, boxShadow: "0 20px 40px -12px rgba(34, 197, 94, 0.25)" }}
+                className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 p-6 rounded-2xl transition-all"
+              >
+                <motion.div 
+                  className="w-12 h-12 bg-green-600 rounded-xl flex items-center justify-center mb-4"
+                  whileHover={{ rotate: [0, -10, 10, 0] }}
+                  transition={{ duration: 0.5 }}
+                >
                   <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
-                </div>
+                </motion.div>
                 <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Datos accionables</h3>
                 <p className="text-gray-600 dark:text-zinc-400 text-sm">Gráficos claros y exportación a Excel para tomar decisiones informadas.</p>
               </motion.div>
               
-              <motion.div variants={staggerItem} className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 p-6 rounded-2xl">
-                <div className="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center mb-4">
+              <motion.div 
+                variants={staggerItem} 
+                whileHover={{ y: -8, boxShadow: "0 20px 40px -12px rgba(147, 51, 234, 0.25)" }}
+                className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 p-6 rounded-2xl transition-all"
+              >
+                <motion.div 
+                  className="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center mb-4"
+                  whileHover={{ rotate: [0, -10, 10, 0] }}
+                  transition={{ duration: 0.5 }}
+                >
                   <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
-                </div>
+                </motion.div>
                 <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Precio justo</h3>
                 <p className="text-gray-600 dark:text-zinc-400 text-sm">Sin sorpresas ni cobros por cantidad de respuestas. Un precio fijo mensual.</p>
               </motion.div>
