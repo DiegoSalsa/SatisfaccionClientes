@@ -307,3 +307,109 @@ export async function sendNewReviewNotification(data: NewReviewEmailData) {
     return { success: false, error };
   }
 }
+
+// Email interno: nuevo lead desde landing
+export async function sendLeadNotification(leadEmail: string) {
+  try {
+    const resend = getResend();
+
+    const result = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: 'contacto.valoralocal@gmail.com',
+      subject: `🎯 Nuevo lead interesado: ${leadEmail}`,
+      html: `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+</head>
+<body style="margin: 0; padding: 20px; font-family: Arial, sans-serif; background-color: #f5f5f5;">
+  <div style="max-width: 500px; margin: 0 auto; background: white; border-radius: 12px; padding: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+    <h2 style="color: #3B82F6; margin: 0 0 20px;">🎯 Nuevo Lead</h2>
+    <p style="color: #374151; margin: 0 0 16px;">Alguien dejó su email en la landing:</p>
+    <div style="background: #F3F4F6; padding: 16px; border-radius: 8px; margin-bottom: 20px;">
+      <p style="margin: 0; font-size: 18px; font-weight: bold; color: #1F2937;">${leadEmail}</p>
+    </div>
+    <p style="color: #6B7280; font-size: 14px; margin: 0;">Contacta a este lead lo antes posible.</p>
+  </div>
+</body>
+</html>
+      `,
+    });
+
+    console.log('Notificación de lead enviada:', result);
+    return { success: true, id: result.data?.id };
+  } catch (error) {
+    console.error('Error enviando notificación de lead:', error);
+    return { success: false, error };
+  }
+}
+
+// Email interno: nueva suscripción
+interface NewSubscriptionData {
+  businessName: string;
+  email: string;
+  plan: string;
+  amount: number;
+  referralCode?: string | null;
+}
+
+export async function sendNewSubscriptionNotification(data: NewSubscriptionData) {
+  try {
+    const resend = getResend();
+    const { businessName, email, plan, amount, referralCode } = data;
+
+    const result = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: 'contacto.valoralocal@gmail.com',
+      subject: `💰 ¡Nueva suscripción! ${businessName}`,
+      html: `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+</head>
+<body style="margin: 0; padding: 20px; font-family: Arial, sans-serif; background-color: #f5f5f5;">
+  <div style="max-width: 500px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+    <div style="background: linear-gradient(135deg, #10B981, #059669); padding: 24px; text-align: center;">
+      <h2 style="color: white; margin: 0;">💰 ¡Nueva Suscripción!</h2>
+    </div>
+    <div style="padding: 30px;">
+      <table style="width: 100%; border-collapse: collapse;">
+        <tr>
+          <td style="padding: 12px 0; border-bottom: 1px solid #E5E7EB; color: #6B7280;">Negocio</td>
+          <td style="padding: 12px 0; border-bottom: 1px solid #E5E7EB; font-weight: bold; color: #1F2937; text-align: right;">${businessName}</td>
+        </tr>
+        <tr>
+          <td style="padding: 12px 0; border-bottom: 1px solid #E5E7EB; color: #6B7280;">Email</td>
+          <td style="padding: 12px 0; border-bottom: 1px solid #E5E7EB; color: #1F2937; text-align: right;">${email}</td>
+        </tr>
+        <tr>
+          <td style="padding: 12px 0; border-bottom: 1px solid #E5E7EB; color: #6B7280;">Plan</td>
+          <td style="padding: 12px 0; border-bottom: 1px solid #E5E7EB; color: #1F2937; text-align: right;">${plan}</td>
+        </tr>
+        <tr>
+          <td style="padding: 12px 0; border-bottom: 1px solid #E5E7EB; color: #6B7280;">Monto</td>
+          <td style="padding: 12px 0; border-bottom: 1px solid #E5E7EB; font-weight: bold; color: #059669; text-align: right;">$${amount.toLocaleString('es-CL')} CLP</td>
+        </tr>
+        ${referralCode ? `
+        <tr>
+          <td style="padding: 12px 0; color: #6B7280;">Código referido</td>
+          <td style="padding: 12px 0; color: #F59E0B; font-weight: bold; text-align: right;">${referralCode}</td>
+        </tr>
+        ` : ''}
+      </table>
+    </div>
+  </div>
+</body>
+</html>
+      `,
+    });
+
+    console.log('Notificación de nueva suscripción enviada:', result);
+    return { success: true, id: result.data?.id };
+  } catch (error) {
+    console.error('Error enviando notificación de suscripción:', error);
+    return { success: false, error };
+  }
+}

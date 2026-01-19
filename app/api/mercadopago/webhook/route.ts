@@ -3,7 +3,7 @@ import { db } from '@/firebase/admin';
 import { PLANES } from '@/lib/mercadopago';
 import crypto from 'crypto';
 import { generateReferralCode, REFERRAL_CONFIG } from '@/lib/referralCodes';
-import { sendWelcomeEmail, sendReferralNotification } from '@/lib/email';
+import { sendWelcomeEmail, sendReferralNotification, sendNewSubscriptionNotification } from '@/lib/email';
 
 // Generar tokens únicos
 function generateToken(length: number = 32): string {
@@ -215,6 +215,15 @@ export async function POST(request: NextRequest) {
               surveyUrl,
               dashboardUrl,
               referralCode,
+            });
+
+            // Notificar al admin sobre nueva suscripción
+            await sendNewSubscriptionNotification({
+              businessName: pendingData.business_name || 'Tu negocio',
+              email: pendingData.email,
+              plan: planId,
+              amount: plan.precio,
+              referralCode: pendingData.referral_code || null,
             });
           }
 

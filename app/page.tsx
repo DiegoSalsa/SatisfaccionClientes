@@ -83,9 +83,16 @@ export default function Home() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [checkoutPlan, setCheckoutPlan] = useState<'pro_mensual' | 'pro_anual' | 'test_plan' | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (email) {
+      // Enviar notificación al admin
+      fetch('/api/notify-lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      }).catch(console.error);
+      
       setSubmitted(true);
       setEmail("");
     }
