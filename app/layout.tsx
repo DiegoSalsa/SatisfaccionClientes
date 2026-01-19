@@ -14,8 +14,60 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ValoraLocal - Encuestas para negocios",
-  description: "Sistema de encuestas de valoración del cliente",
+  title: {
+    default: 'ValoraLocal - Encuestas de Satisfacción para Negocios en Chile',
+    template: '%s | ValoraLocal',
+  },
+  description: 'Conoce la opinión real de tus clientes con encuestas QR simples y efectivas. Dashboard en tiempo real, exportación a Excel y QR personalizado con tu logo. Ideal para restaurantes, cafés y comercios en Chile.',
+  keywords: ['encuestas de satisfacción', 'encuestas QR', 'opinión de clientes', 'feedback clientes', 'encuestas restaurantes', 'encuestas negocios', 'satisfacción del cliente', 'NPS', 'Chile', 'valoración clientes'],
+  authors: [{ name: 'ValoraLocal' }],
+  creator: 'ValoraLocal',
+  publisher: 'ValoraLocal',
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  metadataBase: new URL('https://valoralocal.cl'),
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    title: 'ValoraLocal - Encuestas de Satisfacción para Negocios',
+    description: 'Conoce la opinión real de tus clientes con encuestas QR simples. Dashboard en tiempo real, exportación a Excel y QR con tu logo.',
+    url: 'https://valoralocal.cl',
+    siteName: 'ValoraLocal',
+    locale: 'es_CL',
+    type: 'website',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'ValoraLocal - Encuestas de Satisfacción',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'ValoraLocal - Encuestas de Satisfacción para Negocios',
+    description: 'Conoce la opinión real de tus clientes con encuestas QR simples y efectivas.',
+    images: ['/og-image.png'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  verification: {
+    // google: 'tu-codigo-de-verificacion', // Agregar cuando tengas Google Search Console
+  },
 };
 
 export default function RootLayout({

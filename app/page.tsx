@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { ThemeToggle } from "@/components/ThemeProvider";
 import { CheckoutModal } from "@/components/CheckoutModal";
 import { motion, useInView } from "framer-motion";
+import JsonLd from "@/components/JsonLd";
 
 // Animation variants
 const fadeInUp = {
@@ -122,7 +123,9 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-black dark:via-zinc-900 dark:to-black transition-colors">
+    <>
+      <JsonLd />
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-black dark:via-zinc-900 dark:to-black transition-colors">
       {/* Theme Toggle */}
       <div className="fixed top-4 right-4 z-50">
         <ThemeToggle />
@@ -873,5 +876,6 @@ export default function Home() {
         }
       />
     </div>
+    </>
   );
 }
