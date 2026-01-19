@@ -55,6 +55,9 @@ export default function DashboardPage() {
   const logoInputRef = useRef<HTMLInputElement>(null);
   const [showEmails, setShowEmails] = useState(false);
   const [exportingPDF, setExportingPDF] = useState(false);
+  const [editingName, setEditingName] = useState(false);
+  const [newName, setNewName] = useState("");
+  const [savingName, setSavingName] = useState(false);
   const reviewsPerPage = 15;
 
   useEffect(() => {
@@ -443,6 +446,28 @@ export default function DashboardPage() {
     if (logoInputRef.current) logoInputRef.current.value = '';
   };
 
+  const handleSaveName = async () => {
+    if (!business?.id || !newName.trim()) return;
+    setSavingName(true);
+    try {
+      const businessRef = doc(db, "businesses", business.id);
+      await updateDoc(businessRef, {
+        name: newName.trim(),
+      });
+      setBusiness({ ...business, name: newName.trim() });
+      setEditingName(false);
+    } catch (err) {
+      console.error("Error guardando nombre:", err);
+      alert("Error al guardar el nombre");
+    }
+    setSavingName(false);
+  };
+
+  const startEditingName = () => {
+    setNewName(business?.name || "");
+    setEditingName(true);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-black flex items-center justify-center transition-colors">
@@ -496,8 +521,56 @@ export default function DashboardPage() {
                   </svg>
                 </div>
               )}
-              <div className="min-w-0">
-                <h1 className="text-lg sm:text-2xl font-bold text-gray-800 dark:text-white truncate">{business.name}</h1>
+              <div className="min-w-0 flex-1">
+                {editingName ? (
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      value={newName}
+                      onChange={(e) => setNewName(e.target.value)}
+                      className="text-lg sm:text-2xl font-bold text-gray-800 dark:text-white bg-gray-100 dark:bg-zinc-800 rounded-lg px-3 py-1 border border-gray-300 dark:border-zinc-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full max-w-xs"
+                      autoFocus
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') handleSaveName();
+                        if (e.key === 'Escape') setEditingName(false);
+                      }}
+                    />
+                    <button
+                      onClick={handleSaveName}
+                      disabled={savingName}
+                      className="p-2 bg-green-600 hover:bg-green-700 text-white rounded-lg disabled:opacity-50"
+                    >
+                      {savingName ? (
+                        <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin block"></span>
+                      ) : (
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      )}
+                    </button>
+                    <button
+                      onClick={() => setEditingName(false)}
+                      className="p-2 bg-gray-200 dark:bg-zinc-700 hover:bg-gray-300 dark:hover:bg-zinc-600 text-gray-600 dark:text-zinc-300 rounded-lg"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 group">
+                    <h1 className="text-lg sm:text-2xl font-bold text-gray-800 dark:text-white truncate">{business.name}</h1>
+                    <button
+                      onClick={startEditingName}
+                      className="p-1.5 text-gray-400 hover:text-gray-600 dark:text-zinc-500 dark:hover:text-zinc-300 opacity-0 group-hover:opacity-100 transition-opacity"
+                      title="Editar nombre"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                      </svg>
+                    </button>
+                  </div>
+                )}
                 <p className="text-gray-500 dark:text-zinc-400 text-xs sm:text-sm">Dashboard de valoraciones</p>
               </div>
             </div>
