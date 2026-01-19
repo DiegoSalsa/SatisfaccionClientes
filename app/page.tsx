@@ -779,10 +779,17 @@ export default function Home() {
               <img src="/logo-light.svg" alt="ValoraLocal" className="h-6 dark:hidden" />
               <img src="/logo-dark.svg" alt="ValoraLocal" className="h-6 hidden dark:block" />
             </div>
-            <div className="flex gap-6 text-sm text-gray-500 dark:text-zinc-400">
-              <a href="#" className="hover:text-gray-800 dark:hover:text-white transition-colors">Términos</a>
-              <a href="#" className="hover:text-gray-800 dark:hover:text-white transition-colors">Privacidad</a>
-              <a href="#" className="hover:text-gray-800 dark:hover:text-white transition-colors">Contacto</a>
+            <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 text-sm text-gray-500 dark:text-zinc-400">
+              <a href="mailto:contacto.valoralocal@gmail.com" className="hover:text-gray-800 dark:hover:text-white transition-colors flex items-center gap-1">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+                contacto.valoralocal@gmail.com
+              </a>
+              <div className="flex gap-6">
+                <a href="#" className="hover:text-gray-800 dark:hover:text-white transition-colors">Términos</a>
+                <a href="#" className="hover:text-gray-800 dark:hover:text-white transition-colors">Privacidad</a>
+              </div>
             </div>
             <div className="text-sm text-gray-500 dark:text-zinc-400">
               © 2026 ValoraLocal
