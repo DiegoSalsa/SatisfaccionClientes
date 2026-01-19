@@ -413,3 +413,98 @@ export async function sendNewSubscriptionNotification(data: NewSubscriptionData)
     return { success: false, error };
   }
 }
+
+// Email de recordatorio de expiración
+interface ExpirationReminderData {
+  email: string;
+  businessName: string;
+  daysLeft: number;
+  expiresAt: Date;
+  renewUrl: string;
+}
+
+export async function sendExpirationReminder(data: ExpirationReminderData) {
+  try {
+    const resend = getResend();
+    const { email, businessName, daysLeft, expiresAt, renewUrl } = data;
+    
+    const urgencyColor = daysLeft === 1 ? '#EF4444' : daysLeft === 3 ? '#F59E0B' : '#3B82F6';
+    const urgencyText = daysLeft === 1 ? '¡ÚLTIMO DÍA!' : daysLeft === 3 ? '¡Solo quedan 3 días!' : 'Tu suscripción expira pronto';
+
+    const result = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: email,
+      subject: `⚠️ ${businessName}: ${urgencyText} - Renueva tu suscripción`,
+      html: `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f5f5f5;">
+  <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px;">
+    <div style="background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+      <!-- Header -->
+      <div style="background: ${urgencyColor}; padding: 40px 30px; text-align: center;">
+        <div style="font-size: 48px; margin-bottom: 10px;">⚠️</div>
+        <h1 style="color: white; margin: 0; font-size: 24px; font-weight: 700;">${urgencyText}</h1>
+        <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0; font-size: 16px;">${businessName}</p>
+      </div>
+      
+      <!-- Content -->
+      <div style="padding: 30px;">
+        <div style="text-align: center; margin-bottom: 24px;">
+          <div style="display: inline-block; background: ${urgencyColor}15; border: 2px solid ${urgencyColor}; border-radius: 12px; padding: 20px 40px;">
+            <p style="margin: 0; color: #6B7280; font-size: 14px;">Tu suscripción expira en</p>
+            <p style="margin: 8px 0 0; font-size: 48px; font-weight: 700; color: ${urgencyColor};">${daysLeft}</p>
+            <p style="margin: 0; color: #6B7280; font-size: 14px;">${daysLeft === 1 ? 'día' : 'días'}</p>
+          </div>
+        </div>
+
+        <p style="color: #374151; font-size: 16px; line-height: 1.6; margin: 0 0 16px;">
+          Hola,
+        </p>
+        
+        <p style="color: #374151; font-size: 16px; line-height: 1.6; margin: 0 0 16px;">
+          Tu suscripción de <strong>${businessName}</strong> en ValoraLocal expirará el <strong>${expiresAt.toLocaleDateString('es-CL', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</strong>.
+        </p>
+        
+        <p style="color: #374151; font-size: 16px; line-height: 1.6; margin: 0 0 24px;">
+          Para seguir recibiendo feedback de tus clientes y acceder a tu dashboard, renueva tu suscripción antes de esa fecha.
+        </p>
+
+        <div style="text-align: center; margin: 32px 0;">
+          <a href="${renewUrl}" style="display: inline-block; background: ${urgencyColor}; color: white; text-decoration: none; padding: 16px 40px; border-radius: 12px; font-weight: 600; font-size: 16px;">
+            Renovar ahora
+          </a>
+        </div>
+
+        <div style="background: #FEF3C7; border-radius: 12px; padding: 16px; margin-top: 24px;">
+          <p style="margin: 0; color: #92400E; font-size: 14px; line-height: 1.5;">
+            <strong>💡 ¿Sabías que?</strong> Con el plan anual ahorras 17% comparado con el plan mensual.
+          </p>
+        </div>
+      </div>
+      
+      <!-- Footer -->
+      <div style="background: #F9FAFB; padding: 24px 30px; text-align: center; border-top: 1px solid #E5E7EB;">
+        <p style="color: #6B7280; font-size: 12px; margin: 0;">
+          © 2026 ValoraLocal · <a href="mailto:contacto.valoralocal@gmail.com" style="color: #3B82F6;">¿Necesitas ayuda?</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+      `,
+    });
+
+    console.log(`Recordatorio de expiración enviado a ${email} (${daysLeft} días)`);
+    return { success: true, id: result.data?.id };
+  } catch (error) {
+    console.error('Error enviando recordatorio de expiración:', error);
+    return { success: false, error };
+  }
+}
+
