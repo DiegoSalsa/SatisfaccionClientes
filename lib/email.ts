@@ -178,7 +178,7 @@ export async function sendReferralNotification(data: ReferralNotificationData) {
         
         <p style="color: #6B7280; font-size: 14px; line-height: 1.6; margin: 0; padding: 16px; background: #F9FAFB; border-radius: 8px;">
           💡 <strong>¿Cómo cobrar?</strong> Solicita tu pago enviando un email a 
-          <a href="mailto:pagos@valoralocal.cl" style="color: #3B82F6;">pagos@valoralocal.cl</a> 
+          <a href="mailto:contacto.valoralocal@gmail.com" style="color: #3B82F6;">contacto.valoralocal@gmail.com</a> 
           con tu código de referido y datos de transferencia.
         </p>
       </div>

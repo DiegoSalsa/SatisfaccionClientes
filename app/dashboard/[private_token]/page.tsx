@@ -862,7 +862,7 @@ export default function DashboardPage() {
                       <div className="absolute left-0 sm:left-auto sm:right-0 bottom-full mb-2 w-72 p-4 bg-white dark:bg-zinc-800 rounded-xl shadow-xl border border-gray-200 dark:border-zinc-700 z-50">
                         <p className="text-sm text-gray-700 dark:text-zinc-200 font-medium mb-2">¿Cómo recibo mi pago?</p>
                         <p className="text-xs text-gray-500 dark:text-zinc-400 leading-relaxed">
-                          El pago de tus referidos se efectuará al momento en que lo solicites mediante correo electrónico a <span className="text-amber-600 dark:text-amber-400 font-medium">pagos@valoralocal.cl</span>. Solo incluye tu código de referido y los datos de transferencia.
+                          El pago de tus referidos se efectuará al momento en que lo solicites mediante correo electrónico a <span className="text-amber-600 dark:text-amber-400 font-medium">contacto.valoralocal@gmail.com</span>. Solo incluye tu código de referido y los datos de transferencia.
                         </p>
                         <div className="mt-2 pt-2 border-t border-gray-100 dark:border-zinc-700">
                           <p className="text-xs text-gray-400 dark:text-zinc-500">Mínimo para solicitar: $2.000 CLP</p>

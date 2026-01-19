@@ -139,7 +139,7 @@ export default function Home() {
             <a href="#features" className="text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white transition-colors">Características</a>
             <a href="#pricing" className="text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white transition-colors">Precios</a>
             <a href="#faq" className="text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white transition-colors">FAQ</a>
-            <a href="#contact" className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-full font-medium transition-colors">
+            <a href="#pricing" className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-full font-medium transition-colors">
               Comenzar
             </a>
           </div>
@@ -185,7 +185,7 @@ export default function Home() {
               className="flex gap-4 justify-center flex-wrap"
             >
               <a 
-                href="#contact" 
+                href="#pricing" 
                 className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all hover:scale-105 shadow-lg shadow-blue-600/25"
               >
                 Comenzar ahora
@@ -239,7 +239,7 @@ export default function Home() {
         </section>
 
         {/* Features */}
-        <section id="features" className="max-w-6xl mx-auto px-6 py-20">
+        <section id="features" className="max-w-6xl mx-auto px-6 py-20 scroll-mt-24">
           <AnimatedSection className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
               Todo lo que necesitas
@@ -495,7 +495,7 @@ export default function Home() {
         </section>
 
         {/* Pricing */}
-        <section id="pricing" className="max-w-6xl mx-auto px-6 py-20">
+        <section id="pricing" className="max-w-6xl mx-auto px-6 py-20 scroll-mt-24">
           <AnimatedSection className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
               Planes simples y transparentes
@@ -638,7 +638,7 @@ export default function Home() {
         </section>
 
         {/* FAQ */}
-        <section id="faq" className="bg-gray-50 dark:bg-zinc-900/50 py-20">
+        <section id="faq" className="bg-gray-50 dark:bg-zinc-900/50 py-20 scroll-mt-24">
           <div className="max-w-3xl mx-auto px-6">
             <AnimatedSection className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
@@ -731,7 +731,7 @@ export default function Home() {
         </section>
 
         {/* Contact CTA */}
-        <section id="contact" className="max-w-6xl mx-auto px-6 py-20">
+        <section id="contact" className="max-w-6xl mx-auto px-6 py-20 scroll-mt-24">
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
