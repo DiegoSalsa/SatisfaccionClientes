@@ -132,19 +132,21 @@ export async function POST(request: NextRequest) {
     
     // Enviar emails
     try {
-      await sendWelcomeEmail(
-        email,
+      await sendWelcomeEmail({
         businessName,
-        `https://valoralocal.cl/dashboard/${privateToken}`
-      );
+        email,
+        surveyUrl: `https://valoralocal.cl/encuesta/${slug}`,
+        dashboardUrl: `https://valoralocal.cl/dashboard/${privateToken}`,
+        referralCode: businessData.own_referral_code,
+      });
       
-      await sendNewSubscriptionNotification(
+      await sendNewSubscriptionNotification({
         businessName,
         email,
-        planId === 'pro_anual' ? 'Pro Anual' : 'Pro Mensual',
-        planId === 'pro_anual' ? '$99.990 CLP' : '$9.990 CLP',
-        'PayPal'
-      );
+        plan: planId === 'pro_anual' ? 'Pro Anual' : 'Pro Mensual',
+        amount: planId === 'pro_anual' ? 99990 : 9990,
+        referralCode: referralCode || null,
+      });
     } catch (emailError) {
       console.error('Error sending emails:', emailError);
     }
