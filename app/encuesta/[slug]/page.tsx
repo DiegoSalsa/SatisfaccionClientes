@@ -138,6 +138,17 @@ export default function EncuestaPage() {
         timestamp: Timestamp.now(),
       });
       setRateLimitTimestamp(business.id);
+
+      // Notificar al dueño del negocio (no bloquea el flujo)
+      fetch('/api/notify-review', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          businessId: business.id,
+          rating: form.rating,
+          comment: form.comment || null,
+        }),
+      }).catch(console.error);
       
       // Si rating >= 4 y hay Google Maps URL, mostrar modal
       if (form.rating >= 4 && business.google_maps_url) {

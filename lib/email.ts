@@ -204,3 +204,107 @@ export async function sendReferralNotification(data: ReferralNotificationData) {
     return { success: false, error };
   }
 }
+
+// Email de notificación de nueva reseña
+interface NewReviewEmailData {
+  businessEmail: string;
+  businessName: string;
+  rating: number;
+  comment?: string;
+  dashboardUrl: string;
+}
+
+export async function sendNewReviewNotification(data: NewReviewEmailData) {
+  try {
+    const { businessEmail, businessName, rating, comment, dashboardUrl } = data;
+    const resend = getResend();
+
+    const stars = '★'.repeat(rating) + '☆'.repeat(5 - rating);
+    const isNegative = rating <= 2;
+    const headerColor = isNegative 
+      ? 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)'
+      : rating <= 3 
+        ? 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)'
+        : 'linear-gradient(135deg, #10B981 0%, #059669 100%)';
+    
+    const emoji = isNegative ? '⚠️' : rating <= 3 ? '📝' : '🌟';
+    const title = isNegative 
+      ? '¡Atención! Nueva reseña que requiere seguimiento'
+      : rating <= 3 
+        ? 'Nueva reseña recibida'
+        : '¡Excelente! Nueva reseña positiva';
+
+    const result = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: businessEmail,
+      subject: `${emoji} ${businessName}: Nueva reseña de ${rating} estrella${rating !== 1 ? 's' : ''}`,
+      html: `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f5f5f5;">
+  <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px;">
+    <div style="background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+      <!-- Header -->
+      <div style="background: ${headerColor}; padding: 40px 30px; text-align: center;">
+        <div style="font-size: 48px; margin-bottom: 10px;">${emoji}</div>
+        <h1 style="color: white; margin: 0; font-size: 22px; font-weight: 700;">${title}</h1>
+        <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0; font-size: 14px;">${businessName}</p>
+      </div>
+      
+      <!-- Content -->
+      <div style="padding: 40px 30px;">
+        <!-- Rating Stars -->
+        <div style="text-align: center; margin-bottom: 24px;">
+          <p style="color: #6B7280; font-size: 14px; margin: 0 0 8px;">Calificación recibida</p>
+          <p style="font-size: 36px; margin: 0; color: #FBBF24; letter-spacing: 4px;">${stars}</p>
+          <p style="color: #374151; font-size: 24px; font-weight: 700; margin: 8px 0 0;">${rating}/5</p>
+        </div>
+        
+        ${comment ? `
+        <!-- Comment -->
+        <div style="background: #F9FAFB; border-radius: 12px; padding: 20px; margin-bottom: 24px;">
+          <p style="color: #6B7280; font-size: 12px; font-weight: 600; margin: 0 0 8px; text-transform: uppercase;">Comentario del cliente</p>
+          <p style="color: #374151; font-size: 15px; line-height: 1.6; margin: 0; font-style: italic;">"${comment}"</p>
+        </div>
+        ` : ''}
+        
+        ${isNegative ? `
+        <!-- Alert for negative reviews -->
+        <div style="background: #FEF2F2; border: 1px solid #FECACA; border-radius: 12px; padding: 16px; margin-bottom: 24px;">
+          <p style="color: #991B1B; font-size: 14px; margin: 0; line-height: 1.5;">
+            <strong>💡 Consejo:</strong> Las reseñas negativas son oportunidades para mejorar. 
+            Considera contactar al cliente si dejó su email para resolver cualquier problema.
+          </p>
+        </div>
+        ` : ''}
+        
+        <!-- CTA Button -->
+        <a href="${dashboardUrl}" style="display: block; background: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%); color: white; text-decoration: none; text-align: center; padding: 16px 24px; border-radius: 12px; font-weight: 600; font-size: 16px;">
+          Ver en Dashboard →
+        </a>
+      </div>
+      
+      <!-- Footer -->
+      <div style="background: #F9FAFB; padding: 24px 30px; text-align: center; border-top: 1px solid #E5E7EB;">
+        <p style="color: #6B7280; font-size: 12px; margin: 0;">
+          © 2026 ValoraLocal · Notificación automática de nueva reseña
+        </p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+      `,
+    });
+
+    console.log('Email de nueva reseña enviado:', result);
+    return { success: true, id: result.data?.id };
+  } catch (error) {
+    console.error('Error enviando notificación de nueva reseña:', error);
+    return { success: false, error };
+  }
+}

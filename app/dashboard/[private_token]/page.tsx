@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useRef, useMemo } from "react";
+import { useEffect, useState, useRef, useMemo, useCallback } from "react";
 import { db } from "@/firebase/client";
 import { collection, query, where, getDocs, doc, updateDoc } from "firebase/firestore";
 import { useParams } from "next/navigation";
@@ -8,6 +8,8 @@ import { ThemeToggle } from "@/components/ThemeProvider";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts";
 import * as XLSX from "xlsx";
 import { motion } from "framer-motion";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
 interface Review {
   rating: number;
@@ -52,6 +54,8 @@ export default function DashboardPage() {
   const [logoSaved, setLogoSaved] = useState(false);
   const logoInputRef = useRef<HTMLInputElement>(null);
   const [showEmails, setShowEmails] = useState(false);
+  const [exportingPDF, setExportingPDF] = useState(false);
+  const reportRef = useRef<HTMLDivElement>(null);
   const reviewsPerPage = 15;
 
   useEffect(() => {
@@ -225,6 +229,129 @@ export default function DashboardPage() {
     setFilters({ dateFrom: "", dateTo: "", comuna: "", edadMin: "", edadMax: "", rating: "" });
     setCurrentPage(1);
   };
+
+  // Exportar a PDF
+  const exportToPDF = useCallback(async () => {
+    if (!reportRef.current || !business) return;
+    
+    setExportingPDF(true);
+    
+    try {
+      // Crear un contenedor temporal para el reporte
+      const reportContainer = document.createElement('div');
+      reportContainer.style.position = 'absolute';
+      reportContainer.style.left = '-9999px';
+      reportContainer.style.top = '0';
+      reportContainer.style.width = '800px';
+      reportContainer.style.padding = '40px';
+      reportContainer.style.backgroundColor = 'white';
+      reportContainer.style.fontFamily = 'Arial, sans-serif';
+      
+      const avg = reviews.length
+        ? (reviews.reduce((a, r) => a + (r.rating || 0), 0) / reviews.length).toFixed(1)
+        : "0.0";
+      
+      const ratingCounts = [5, 4, 3, 2, 1].map((star) => ({
+        star,
+        count: reviews.filter((r) => r.rating === star).length,
+        percent: reviews.length ? (reviews.filter((r) => r.rating === star).length / reviews.length) * 100 : 0,
+      }));
+
+      const today = new Date().toLocaleDateString('es-CL', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      });
+
+      reportContainer.innerHTML = `
+        <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #3B82F6; padding-bottom: 20px;">
+          <h1 style="color: #1F2937; margin: 0 0 8px; font-size: 28px;">Reporte de Satisfacción</h1>
+          <h2 style="color: #3B82F6; margin: 0 0 8px; font-size: 22px;">${business.name}</h2>
+          <p style="color: #6B7280; margin: 0; font-size: 14px;">Generado el ${today}</p>
+        </div>
+
+        <div style="display: flex; gap: 20px; margin-bottom: 30px;">
+          <div style="flex: 1; background: linear-gradient(135deg, #3B82F6, #8B5CF6); border-radius: 12px; padding: 24px; text-align: center; color: white;">
+            <p style="margin: 0 0 8px; font-size: 14px; opacity: 0.9;">Calificación Promedio</p>
+            <p style="margin: 0; font-size: 48px; font-weight: bold;">${avg}</p>
+            <p style="margin: 8px 0 0; font-size: 24px;">★★★★★</p>
+          </div>
+          <div style="flex: 1; background: #F3F4F6; border-radius: 12px; padding: 24px; text-align: center;">
+            <p style="color: #6B7280; margin: 0 0 8px; font-size: 14px;">Total de Opiniones</p>
+            <p style="color: #1F2937; margin: 0; font-size: 48px; font-weight: bold;">${reviews.length}</p>
+            <p style="color: #6B7280; margin: 8px 0 0; font-size: 14px;">reseñas recibidas</p>
+          </div>
+        </div>
+
+        <div style="background: #F9FAFB; border-radius: 12px; padding: 24px; margin-bottom: 30px;">
+          <h3 style="color: #1F2937; margin: 0 0 16px; font-size: 18px;">Distribución de Calificaciones</h3>
+          ${ratingCounts.map(({ star, count, percent }) => `
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+              <span style="width: 60px; color: #374151; font-size: 14px;">${star} estrellas</span>
+              <div style="flex: 1; height: 20px; background: #E5E7EB; border-radius: 10px; overflow: hidden;">
+                <div style="width: ${percent}%; height: 100%; background: linear-gradient(90deg, #FBBF24, #F59E0B); border-radius: 10px;"></div>
+              </div>
+              <span style="width: 80px; text-align: right; color: #6B7280; font-size: 14px;">${count} (${percent.toFixed(0)}%)</span>
+            </div>
+          `).join('')}
+        </div>
+
+        ${filteredReviews.slice(0, 10).length > 0 ? `
+        <div style="margin-bottom: 30px;">
+          <h3 style="color: #1F2937; margin: 0 0 16px; font-size: 18px;">Últimas Opiniones</h3>
+          ${filteredReviews.slice(0, 10).map(r => `
+            <div style="background: white; border: 1px solid #E5E7EB; border-radius: 8px; padding: 16px; margin-bottom: 12px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="color: #FBBF24; font-size: 18px;">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</span>
+                <span style="color: #9CA3AF; font-size: 12px;">${r.timestamp?.toDate?.()?.toLocaleDateString('es-CL') || ''}</span>
+              </div>
+              ${r.comment ? `<p style="color: #374151; margin: 0; font-size: 14px; line-height: 1.5;">"${r.comment}"</p>` : '<p style="color: #9CA3AF; margin: 0; font-size: 14px; font-style: italic;">Sin comentario</p>'}
+            </div>
+          `).join('')}
+        </div>
+        ` : ''}
+
+        <div style="text-align: center; padding-top: 20px; border-top: 1px solid #E5E7EB;">
+          <p style="color: #9CA3AF; font-size: 12px; margin: 0;">
+            Reporte generado por ValoraLocal · ${window.location.origin}/encuesta/${business.slug}
+          </p>
+        </div>
+      `;
+
+      document.body.appendChild(reportContainer);
+
+      const canvas = await html2canvas(reportContainer, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+      });
+
+      document.body.removeChild(reportContainer);
+
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4',
+      });
+
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+      const imgWidth = canvas.width;
+      const imgHeight = canvas.height;
+      const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+      const imgX = (pdfWidth - imgWidth * ratio) / 2;
+      const imgY = 0;
+
+      pdf.addImage(imgData, 'PNG', imgX, imgY, imgWidth * ratio, imgHeight * ratio);
+      pdf.save(`reporte-${business.slug}-${new Date().toISOString().split('T')[0]}.pdf`);
+    } catch (error) {
+      console.error('Error generando PDF:', error);
+      alert('Error al generar el PDF. Intenta de nuevo.');
+    }
+    
+    setExportingPDF(false);
+  }, [business, reviews, filteredReviews]);
 
   // Reset page when filters change
   useEffect(() => {
@@ -1056,6 +1183,25 @@ export default function DashboardPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                   </svg>
                   <span className="hidden sm:inline">CSV</span>
+                </button>
+                <button
+                  onClick={exportToPDF}
+                  disabled={exportingPDF}
+                  className="bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors flex items-center gap-1"
+                >
+                  {exportingPDF ? (
+                    <>
+                      <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                      <span className="hidden sm:inline">Generando...</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                      <span className="hidden sm:inline">PDF</span>
+                    </>
+                  )}
                 </button>
               </div>
             </div>
