@@ -80,7 +80,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Error al crear orden' }, { status: 500 });
     }
     
-    return NextResponse.json({ orderID: order.id });
+    // Encontrar el link de aprobación
+    const approveLink = order.links?.find((link: { rel: string; href: string }) => link.rel === 'approve');
+    
+    return NextResponse.json({ 
+      orderID: order.id,
+      approveUrl: approveLink?.href 
+    });
   } catch (error) {
     console.error('Error creating PayPal order:', error);
     return NextResponse.json({ error: 'Error interno' }, { status: 500 });

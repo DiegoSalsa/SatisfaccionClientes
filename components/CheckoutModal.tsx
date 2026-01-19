@@ -76,7 +76,12 @@ export function CheckoutModal({ isOpen, onClose, planId, planName, planPrice }: 
     setError('');
 
     try {
-      const response = await fetch('/api/paypal/create-subscription', {
+      // Anual = pago único, Mensual = suscripción recurrente
+      const endpoint = planId === 'pro_anual' 
+        ? '/api/paypal/create-order' 
+        : '/api/paypal/create-subscription';
+      
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -90,9 +95,10 @@ export function CheckoutModal({ isOpen, onClose, planId, planName, planPrice }: 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Error al crear la suscripción');
+        throw new Error(data.error || 'Error al procesar el pago');
       }
 
+      // Redirigir a PayPal
       if (data.approveUrl) {
         window.location.href = data.approveUrl;
       }
@@ -103,7 +109,7 @@ export function CheckoutModal({ isOpen, onClose, planId, planName, planPrice }: 
   };
 
   // Precio en USD para mostrar
-  const usdPrice = planId === 'pro_anual' ? '$99.99 USD' : '$9.99 USD';
+  const usdPrice = planId === 'pro_anual' ? '$99.99 USD' : '$9.99 USD/mes';
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
