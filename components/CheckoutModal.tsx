@@ -212,12 +212,12 @@ export function CheckoutModal({ isOpen, onClose, planId, planName, planPrice }: 
                     : 'border-gray-200 dark:border-zinc-700 hover:border-gray-300'
                 }`}
               >
-                <div className="flex items-center justify-center">
-                  <img 
-                    src="https://http2.mlstatic.com/frontend-assets/mp-web-navigation/ui-navigation/6.6.92/mercadopago/logo__large@2x.png" 
-                    alt="MercadoPago" 
-                    className="h-6"
-                  />
+                <div className="flex items-center justify-center gap-2">
+                  <svg className="w-6 h-6" viewBox="0 0 48 48" fill="none">
+                    <circle cx="24" cy="24" r="24" fill="#00bcff"/>
+                    <path d="M34.5 20.5c0-5.5-4.5-10-10-10s-10 4.5-10 10c0 3.5 1.8 6.5 4.5 8.3v8.7l5.5-3.5 5.5 3.5v-8.7c2.7-1.8 4.5-4.8 4.5-8.3z" fill="white"/>
+                  </svg>
+                  <span className="text-sm font-semibold text-gray-700 dark:text-white">Mercado Pago</span>
                 </div>
               </button>
               
