@@ -213,10 +213,11 @@ export function CheckoutModal({ isOpen, onClose, planId, planName, planPrice }: 
                 }`}
               >
                 <div className="flex items-center justify-center gap-2">
-                  <svg className="w-6 h-6" viewBox="0 0 48 48" fill="none">
-                    <circle cx="24" cy="24" r="24" fill="#00bcff"/>
-                    <path d="M34.5 20.5c0-5.5-4.5-10-10-10s-10 4.5-10 10c0 3.5 1.8 6.5 4.5 8.3v8.7l5.5-3.5 5.5 3.5v-8.7c2.7-1.8 4.5-4.8 4.5-8.3z" fill="white"/>
-                  </svg>
+                  <img 
+                    src="https://www.mercadopago.com/org-img/Manual/ManualMP/imgs/isologotipo-mercado-pago.png" 
+                    alt="Mercado Pago" 
+                    className="h-5 w-5 object-contain"
+                  />
                   <span className="text-sm font-semibold text-gray-700 dark:text-white">Mercado Pago</span>
                 </div>
               </button>
