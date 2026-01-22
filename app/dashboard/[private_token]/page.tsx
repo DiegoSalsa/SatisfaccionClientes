@@ -865,7 +865,7 @@ export default function DashboardPage() {
                           El pago de tus referidos se efectuará al momento en que lo solicites mediante correo electrónico a <span className="text-amber-600 dark:text-amber-400 font-medium">contacto.valoralocal@gmail.com</span>. Solo incluye tu código de referido y los datos de transferencia.
                         </p>
                         <div className="mt-2 pt-2 border-t border-gray-100 dark:border-zinc-700">
-                          <p className="text-xs text-gray-400 dark:text-zinc-500">Mínimo para solicitar: $2.000 CLP</p>
+                          <p className="text-xs text-gray-400 dark:text-zinc-500">Mínimo para solicitar: $3.000 CLP</p>
                         </div>
                       </div>
                     </>
@@ -873,7 +873,7 @@ export default function DashboardPage() {
                 </div>
               </div>
               <p className="text-gray-500 dark:text-zinc-400 text-sm mb-4">
-                Gana <span className="font-bold text-amber-600 dark:text-amber-400">$2.000 CLP</span> por cada negocio que se suscriba usando tu código.
+                Gana <span className="font-bold text-amber-600 dark:text-amber-400">$3.000 CLP</span> por cada negocio que se suscriba usando tu código.
               </p>
 
               {/* Código de referido */}

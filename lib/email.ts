@@ -87,7 +87,7 @@ export async function sendWelcomeEmail(data: WelcomeEmailData) {
           <p style="color: #92400E; font-size: 14px; font-weight: 600; margin: 0 0 8px;">🎁 Tu código de referido</p>
           <p style="color: #78350F; font-size: 28px; font-weight: 700; margin: 0; letter-spacing: 2px;">${referralCode}</p>
           <p style="color: #A16207; font-size: 12px; margin: 8px 0 0;">
-            Gana $2.000 CLP por cada negocio que se suscriba con tu código
+            Gana $3.000 CLP por cada negocio que se suscriba con tu código
           </p>
         </div>
         
@@ -161,7 +161,7 @@ export async function sendReferralNotification(data: ReferralNotificationData) {
         <!-- Reward Box -->
         <div style="background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%); border-radius: 12px; padding: 24px; margin-bottom: 24px; text-align: center;">
           <p style="color: #065F46; font-size: 14px; margin: 0 0 8px;">Se han agregado a tu saldo</p>
-          <p style="color: #047857; font-size: 36px; font-weight: 700; margin: 0;">+$2.000 CLP</p>
+          <p style="color: #047857; font-size: 36px; font-weight: 700; margin: 0;">+$3.000 CLP</p>
         </div>
         
         <!-- Stats -->
