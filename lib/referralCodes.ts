@@ -32,7 +32,7 @@ export function isValidReferralCodeFormat(code: string): boolean {
 
 // Constantes del sistema de referidos
 export const REFERRAL_CONFIG = {
-  REWARD_AMOUNT: 2000, // $2000 CLP por referido
-  MAX_REFERRALS: 10,   // Máximo 10 referidos por negocio
+  REWARD_AMOUNT: 3000, // $3000 CLP por referido
+  MAX_REFERRALS: 20,   // Máximo 20 referidos por negocio
   CURRENCY: 'CLP'
 };

@@ -902,12 +902,12 @@ export default function DashboardPage() {
                 <div className="bg-white dark:bg-zinc-900 rounded-xl p-4 border border-gray-200 dark:border-zinc-700">
                   <p className="text-xs text-gray-500 dark:text-zinc-500 mb-1">Referidos exitosos</p>
                   <p className="text-xl font-bold text-gray-800 dark:text-white">
-                    {business.referral_count || 0} <span className="text-sm font-normal text-gray-400 dark:text-zinc-500">/ 10</span>
+                    {business.referral_count || 0} <span className="text-sm font-normal text-gray-400 dark:text-zinc-500">/ 20</span>
                   </p>
                   <div className="mt-2 h-2 bg-gray-100 dark:bg-zinc-800 rounded-full overflow-hidden">
                     <div 
                       className="h-full bg-gradient-to-r from-amber-400 to-orange-500 rounded-full transition-all duration-500"
-                      style={{ width: `${Math.min(((business.referral_count || 0) / 10) * 100, 100)}%` }}
+                      style={{ width: `${Math.min(((business.referral_count || 0) / 20) * 100, 100)}%` }}
                     />
                   </div>
                 </div>
@@ -921,7 +921,7 @@ export default function DashboardPage() {
               </div>
 
               {/* Mensaje si llegó al límite */}
-              {(business.referral_count || 0) >= 10 && (
+              {(business.referral_count || 0) >= 20 && (
                 <div className="mt-4 p-3 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
                   <p className="text-sm text-amber-700 dark:text-amber-400 flex items-center gap-2">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

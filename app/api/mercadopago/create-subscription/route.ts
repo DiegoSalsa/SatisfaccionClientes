@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
       if (!referrerSnapshot.empty) {
         const referrerData = referrerSnapshot.docs[0].data();
         // Solo aceptar si no ha llegado al límite de 10 referidos
-        if ((referrerData.referral_count || 0) < 10) {
+        if ((referrerData.referral_count || 0) < 20) {
           validReferralCode = referralCode.toUpperCase().trim();
         }
       }

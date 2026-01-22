@@ -147,9 +147,9 @@ export async function GET(request: NextRequest) {
         const referrerDoc = referrerQuery.docs[0];
         const referrerData = referrerDoc.data();
         
-        if (referrerData.referral_count < 10) {
+        if (referrerData.referral_count < 20) {
           await referrerDoc.ref.update({
-            referral_balance: (referrerData.referral_balance || 0) + 2000,
+            referral_balance: (referrerData.referral_balance || 0) + 3000,
             referral_count: (referrerData.referral_count || 0) + 1,
           });
         }
