@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { MetaEvents } from '@/components/MetaPixel';
 
 type PlanId = 'pro_mensual' | 'pro_anual' | 'test_plan';
 
@@ -19,6 +20,14 @@ export function CheckoutModal({ isOpen, onClose, planId, planName, planPrice }: 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [paymentMethod, setPaymentMethod] = useState<'mercadopago' | 'paypal'>('mercadopago');
+
+  // Disparar evento InitiateCheckout cuando se abre el modal
+  useEffect(() => {
+    if (isOpen) {
+      const value = planId === 'pro_anual' ? 99990 : 9990;
+      MetaEvents.initiateCheckout(value, 'CLP');
+    }
+  }, [isOpen, planId]);
 
   if (!isOpen) return null;
 

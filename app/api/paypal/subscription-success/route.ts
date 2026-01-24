@@ -177,8 +177,11 @@ export async function GET(request: NextRequest) {
       console.error('Error sending emails:', emailError);
     }
     
-    // Redirigir al dashboard
-    return NextResponse.redirect(new URL(`/dashboard/${privateToken}`, request.url));
+    // Redirigir a página de éxito con parámetros para Meta Pixel
+    const amount = planId === 'pro_anual' ? 99990 : 9990;
+    return NextResponse.redirect(
+      new URL(`/pago-exitoso?token=${privateToken}&amount=${amount}&method=paypal`, request.url)
+    );
   } catch (error) {
     console.error('Error processing PayPal subscription success:', error);
     return NextResponse.redirect(new URL('/?error=processing_error', request.url));

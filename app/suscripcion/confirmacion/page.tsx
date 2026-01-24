@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useState, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { MetaEvents } from '@/components/MetaPixel';
 
 interface BusinessInfo {
   private_token: string;
@@ -42,11 +43,14 @@ function ConfirmacionContent() {
     // Determinar el estado basado en los parámetros de MercadoPago
     if (statusParam === 'authorized' || statusParam === 'active') {
       setStatus('success');
+      // Disparar evento de compra para Meta Pixel
+      MetaEvents.purchase(9990, 'CLP', 'ValoraLocal Pro');
     } else if (statusParam === 'pending') {
       setStatus('pending');
     } else if (preapproval_id) {
       // Si hay preapproval_id pero no status claro, asumir éxito
       setStatus('success');
+      MetaEvents.purchase(9990, 'CLP', 'ValoraLocal Pro');
     } else {
       setStatus('error');
     }
