@@ -691,6 +691,78 @@ export default function Home() {
           </motion.div>
         </section>
 
+        {/* Referral Program Banner */}
+        <section className="bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 py-16 relative overflow-hidden">
+          {/* Background decoration */}
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-0 left-0 w-72 h-72 bg-white rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
+            <div className="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />
+          </div>
+          
+          <div className="max-w-6xl mx-auto px-6 relative">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="flex flex-col md:flex-row items-center justify-between gap-8"
+            >
+              <div className="text-center md:text-left">
+                <motion.div
+                  initial={{ scale: 0 }}
+                  whileInView={{ scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ type: "spring", stiffness: 200, delay: 0.2 }}
+                  className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full text-white text-sm font-medium mb-4"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  Programa de Referidos
+                </motion.div>
+                <h2 className="text-3xl md:text-4xl font-bold text-white mb-3">
+                  ¡Gana hasta <span className="text-yellow-200">$60.000 CLP</span>!
+                </h2>
+                <p className="text-white/90 text-lg max-w-xl">
+                  Refiere negocios y gana <strong>$3.000 CLP</strong> por cada uno que se suscriba. 
+                  Hasta 20 referidos por cuenta.
+                </p>
+              </div>
+              
+              <motion.div
+                initial={{ opacity: 0, x: 30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                className="flex flex-col items-center"
+              >
+                <div className="bg-white rounded-2xl p-6 shadow-2xl text-center">
+                  <div className="flex items-center justify-center gap-4 mb-4">
+                    <div className="text-center">
+                      <div className="text-4xl font-bold text-amber-600">$3.000</div>
+                      <div className="text-sm text-gray-500">por referido</div>
+                    </div>
+                    <div className="text-3xl text-gray-300">×</div>
+                    <div className="text-center">
+                      <div className="text-4xl font-bold text-orange-600">20</div>
+                      <div className="text-sm text-gray-500">máximo</div>
+                    </div>
+                  </div>
+                  <div className="border-t border-gray-200 pt-4">
+                    <div className="text-sm text-gray-500 mb-1">Puedes ganar hasta</div>
+                    <div className="text-3xl font-bold bg-gradient-to-r from-amber-600 to-red-600 bg-clip-text text-transparent">
+                      $60.000 CLP
+                    </div>
+                  </div>
+                </div>
+                <p className="text-white/80 text-sm mt-4 text-center">
+                  Tu código de referido lo recibes al suscribirte
+                </p>
+              </motion.div>
+            </motion.div>
+          </div>
+        </section>
+
         {/* FAQ */}
         <section id="faq" className="bg-gray-50 dark:bg-zinc-900/50 py-20 scroll-mt-24">
           <div className="max-w-3xl mx-auto px-6">
