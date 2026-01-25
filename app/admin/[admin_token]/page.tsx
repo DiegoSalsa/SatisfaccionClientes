@@ -1,11 +1,14 @@
 "use client";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import { db } from "@/firebase/client";
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from "firebase/firestore";
 import { useParams } from "next/navigation";
 import { ThemeToggle } from "@/components/ThemeProvider";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
 const ADMIN_TOKEN = "super-admin-secreto-2026-xyz";
+const DEMO_SLUG = "valoralocal-prueba"; // Cuenta demo a excluir de stats
 
 interface Business {
   id: string;
@@ -58,6 +61,18 @@ export default function AdminPage() {
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState<TabType>('overview');
   const [sortBy, setSortBy] = useState<'name' | 'reviews' | 'rating' | 'referrals' | 'created'>('name');
+  const [generatingPDF, setGeneratingPDF] = useState(false);
+  const pdfRef = useRef<HTMLDivElement>(null);
+
+  // Helper: check if business is demo account
+  const isDemo = (b: Business) => b.slug === DEMO_SLUG;
+
+  // Filter out demo for stats
+  const realBusinesses = useMemo(() => businesses.filter(b => !isDemo(b)), [businesses]);
+  const realReviews = useMemo(() => {
+    const demoBusinessId = businesses.find(b => isDemo(b))?.id;
+    return reviews.filter(r => r.business_id !== demoBusinessId);
+  }, [businesses, reviews]);
 
   useEffect(() => {
     if (params.admin_token !== ADMIN_TOKEN) {
@@ -85,35 +100,37 @@ export default function AdminPage() {
     setLoading(false);
   }
 
+  // Stats use realBusinesses (excluding demo)
   const stats = useMemo((): Stats => {
     const now = new Date();
-    const activeBusinesses = businesses.filter(b => {
+    const activeBusinesses = realBusinesses.filter(b => {
       if (!b.expires_at) return true;
       const expiresAt = b.expires_at?.toDate?.() || new Date(b.expires_at);
       return expiresAt > now;
     });
 
-    const totalReferralBalance = businesses.reduce((sum, b) => sum + (b.referral_balance || 0), 0);
-    const totalReferrals = businesses.reduce((sum, b) => sum + (b.referral_count || 0), 0);
+    const totalReferralBalance = realBusinesses.reduce((sum, b) => sum + (b.referral_balance || 0), 0);
+    const totalReferrals = realBusinesses.reduce((sum, b) => sum + (b.referral_count || 0), 0);
 
-    const avgRating = reviews.length > 0 
-      ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length 
+    const avgRating = realReviews.length > 0 
+      ? realReviews.reduce((sum, r) => sum + r.rating, 0) / realReviews.length 
       : 0;
 
     const revenueEstimate = activeBusinesses.length * 8990;
 
     return {
-      totalBusinesses: businesses.length,
+      totalBusinesses: realBusinesses.length,
       activeBusinesses: activeBusinesses.length,
-      expiredBusinesses: businesses.length - activeBusinesses.length,
-      totalReviews: reviews.length,
+      expiredBusinesses: realBusinesses.length - activeBusinesses.length,
+      totalReviews: realReviews.length,
       averageRating: avgRating,
       totalReferralBalance,
       totalReferrals,
       revenueEstimate,
     };
-  }, [businesses, reviews]);
+  }, [realBusinesses, realReviews]);
 
+  // Business stats (include demo but mark it)
   const businessStats = useMemo(() => {
     return businesses.map(b => {
       const businessReviews = reviews.filter(r => r.business_id === b.id);
@@ -124,38 +141,78 @@ export default function AdminPage() {
         ...b,
         reviewCount: businessReviews.length,
         avgRating,
+        isDemo: isDemo(b),
       };
     });
   }, [businesses, reviews]);
 
+  // Rankings exclude demo
   const topByReviews = useMemo(() => {
     return [...businessStats]
+      .filter(b => !b.isDemo)
       .sort((a, b) => b.reviewCount - a.reviewCount)
       .slice(0, 10);
   }, [businessStats]);
 
   const topByRating = useMemo(() => {
     return [...businessStats]
-      .filter(b => b.reviewCount >= 5)
+      .filter(b => !b.isDemo && b.reviewCount >= 5)
       .sort((a, b) => b.avgRating - a.avgRating)
       .slice(0, 10);
   }, [businessStats]);
 
   const topReferrers = useMemo(() => {
-    return [...businesses]
+    return [...realBusinesses]
       .filter(b => (b.referral_count || 0) > 0)
       .sort((a, b) => (b.referral_count || 0) - (a.referral_count || 0))
       .slice(0, 10);
-  }, [businesses]);
+  }, [realBusinesses]);
 
   const referralNetwork = useMemo(() => {
-    return businesses
+    return realBusinesses
       .filter(b => b.referred_by)
       .map(b => {
         const referrer = businesses.find(ref => ref.referral_code === b.referred_by);
         return { business: b, referrer };
       });
-  }, [businesses]);
+  }, [realBusinesses, businesses]);
+
+  // Monthly top (current month)
+  const monthlyTop = useMemo(() => {
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+
+    const demoBusinessId = businesses.find(b => isDemo(b))?.id;
+    
+    const monthlyReviews = reviews.filter(r => {
+      if (r.business_id === demoBusinessId) return false;
+      const timestamp = r.timestamp?.toDate?.() || new Date(r.timestamp);
+      return timestamp >= startOfMonth && timestamp <= endOfMonth;
+    });
+
+    const businessReviewCounts: Record<string, { count: number; totalRating: number }> = {};
+    monthlyReviews.forEach(r => {
+      if (!businessReviewCounts[r.business_id]) {
+        businessReviewCounts[r.business_id] = { count: 0, totalRating: 0 };
+      }
+      businessReviewCounts[r.business_id].count++;
+      businessReviewCounts[r.business_id].totalRating += r.rating;
+    });
+
+    return Object.entries(businessReviewCounts)
+      .map(([businessId, data]) => {
+        const business = businesses.find(b => b.id === businessId);
+        return {
+          business,
+          reviewCount: data.count,
+          avgRating: data.totalRating / data.count,
+        };
+      })
+      .filter(item => item.business)
+      .sort((a, b) => b.reviewCount - a.reviewCount)
+      .slice(0, 10);
+  }, [businesses, reviews]);
 
   const generateUUID = () => {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
@@ -270,6 +327,112 @@ export default function AdminPage() {
     return expiresAt < new Date();
   };
 
+  const getMonthName = () => {
+    const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+    const now = new Date();
+    return `${months[now.getMonth()]} ${now.getFullYear()}`;
+  };
+
+  const generateMonthlyPDF = async () => {
+    setGeneratingPDF(true);
+    try {
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      
+      // Header
+      pdf.setFillColor(37, 99, 235); // Blue
+      pdf.rect(0, 0, pageWidth, 40, 'F');
+      
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(24);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('ValoraLocal', 20, 22);
+      
+      pdf.setFontSize(14);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text(`Top 10 Negocios - ${getMonthName()}`, 20, 32);
+      
+      // Stats summary
+      pdf.setTextColor(55, 65, 81);
+      pdf.setFontSize(11);
+      pdf.setFont('helvetica', 'normal');
+      
+      const totalMonthlyReviews = monthlyTop.reduce((sum, item) => sum + item.reviewCount, 0);
+      pdf.text(`Total reseñas del mes: ${totalMonthlyReviews}`, 20, 52);
+      pdf.text(`Negocios activos: ${stats.activeBusinesses}`, 20, 59);
+      
+      // Table header
+      let y = 75;
+      pdf.setFillColor(243, 244, 246);
+      pdf.rect(15, y - 6, pageWidth - 30, 12, 'F');
+      
+      pdf.setTextColor(55, 65, 81);
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('#', 20, y);
+      pdf.text('Negocio', 35, y);
+      pdf.text('Reseñas', 130, y);
+      pdf.text('Rating', 160, y);
+      
+      // Table rows
+      pdf.setFont('helvetica', 'normal');
+      y += 12;
+      
+      monthlyTop.forEach((item, index) => {
+        if (!item.business) return;
+        
+        // Alternate row colors
+        if (index % 2 === 0) {
+          pdf.setFillColor(249, 250, 251);
+          pdf.rect(15, y - 5, pageWidth - 30, 10, 'F');
+        }
+        
+        // Medal for top 3
+        pdf.setTextColor(55, 65, 81);
+        if (index === 0) {
+          pdf.setTextColor(234, 179, 8); // Gold
+          pdf.text('🥇', 18, y);
+        } else if (index === 1) {
+          pdf.setTextColor(156, 163, 175); // Silver
+          pdf.text('🥈', 18, y);
+        } else if (index === 2) {
+          pdf.setTextColor(180, 83, 9); // Bronze
+          pdf.text('🥉', 18, y);
+        } else {
+          pdf.text(`${index + 1}`, 20, y);
+        }
+        
+        pdf.setTextColor(55, 65, 81);
+        pdf.text(item.business.name.substring(0, 40), 35, y);
+        pdf.text(`${item.reviewCount}`, 135, y);
+        
+        // Stars representation
+        const stars = '★'.repeat(Math.round(item.avgRating)) + '☆'.repeat(5 - Math.round(item.avgRating));
+        pdf.setTextColor(234, 179, 8);
+        pdf.text(`${item.avgRating.toFixed(1)} ${stars}`, 155, y);
+        
+        y += 10;
+      });
+      
+      if (monthlyTop.length === 0) {
+        pdf.setTextColor(156, 163, 175);
+        pdf.text('No hay reseñas este mes', pageWidth / 2 - 25, y + 20);
+      }
+      
+      // Footer
+      pdf.setTextColor(156, 163, 175);
+      pdf.setFontSize(8);
+      pdf.text(`Generado el ${new Date().toLocaleDateString('es-CL')} - ValoraLocal.cl`, 20, 280);
+      
+      // Download
+      pdf.save(`ValoraLocal_Top10_${getMonthName().replace(' ', '_')}.pdf`);
+    } catch (err) {
+      console.error('Error generating PDF:', err);
+      alert('Error al generar el PDF');
+    }
+    setGeneratingPDF(false);
+  };
+
   if (!authorized) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-black flex items-center justify-center">
@@ -310,9 +473,15 @@ export default function AdminPage() {
               </h1>
               <p className="text-gray-500 dark:text-gray-400 text-sm">Panel de administración</p>
             </div>
-            <button onClick={() => { setShowAddForm(true); setEditingId(null); setForm({ name: "", slug: "", logo_url: "" }); setActiveTab('businesses'); }} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
-              + Agregar Negocio
-            </button>
+            <div className="flex gap-2">
+              <button onClick={generateMonthlyPDF} disabled={generatingPDF} className="bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2">
+                {generatingPDF ? <span className="animate-spin">⏳</span> : <span>📄</span>}
+                PDF Top 10
+              </button>
+              <button onClick={() => { setShowAddForm(true); setEditingId(null); setForm({ name: "", slug: "", logo_url: "" }); setActiveTab('businesses'); }} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                + Agregar Negocio
+              </button>
+            </div>
           </div>
         </div>
       </header>
@@ -341,6 +510,7 @@ export default function AdminPage() {
               <div className="bg-white dark:bg-zinc-900 rounded-xl p-6 border border-gray-200 dark:border-zinc-800">
                 <div className="text-3xl font-bold text-blue-600">{stats.totalBusinesses}</div>
                 <div className="text-gray-500 dark:text-gray-400 text-sm">Total Negocios</div>
+                <div className="text-xs text-gray-400 mt-1">Sin contar demo</div>
               </div>
               <div className="bg-white dark:bg-zinc-900 rounded-xl p-6 border border-gray-200 dark:border-zinc-800">
                 <div className="text-3xl font-bold text-green-600">{stats.activeBusinesses}</div>
@@ -356,6 +526,34 @@ export default function AdminPage() {
                 <div className="text-3xl font-bold text-amber-600">${stats.revenueEstimate.toLocaleString('es-CL')}</div>
                 <div className="text-gray-500 dark:text-gray-400 text-sm">Ingresos Est./mes</div>
               </div>
+            </div>
+
+            {/* Monthly Top Preview */}
+            <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-6 text-white">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-semibold text-lg flex items-center gap-2">🏆 Top del Mes - {getMonthName()}</h3>
+                <button onClick={generateMonthlyPDF} disabled={generatingPDF} className="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
+                  {generatingPDF ? '⏳ Generando...' : '📄 Descargar PDF'}
+                </button>
+              </div>
+              <div className="grid md:grid-cols-3 gap-4">
+                {monthlyTop.slice(0, 3).map((item, i) => (
+                  <div key={item.business?.id} className="bg-white/10 rounded-lg p-4">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xl ${i === 0 ? 'bg-yellow-400 text-yellow-900' : i === 1 ? 'bg-gray-300 text-gray-700' : 'bg-amber-600 text-amber-100'}`}>
+                        {i === 0 ? '🥇' : i === 1 ? '🥈' : '🥉'}
+                      </div>
+                      <div>
+                        <div className="font-medium">{item.business?.name}</div>
+                        <div className="text-sm text-white/70">{item.reviewCount} reseñas · ⭐ {item.avgRating.toFixed(1)}</div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {monthlyTop.length === 0 && (
+                <div className="text-center py-4 text-white/70">No hay reseñas este mes aún</div>
+              )}
             </div>
 
             <div className="grid md:grid-cols-2 gap-4">
@@ -378,7 +576,7 @@ export default function AdminPage() {
             <div className="bg-white dark:bg-zinc-900 rounded-xl p-6 border border-gray-200 dark:border-zinc-800">
               <h3 className="font-semibold mb-4">🕐 Últimos Negocios Registrados</h3>
               <div className="space-y-3">
-                {[...businesses].sort((a, b) => {
+                {[...realBusinesses].sort((a, b) => {
                   const dateA = a.created_at?.toDate?.() || new Date(0);
                   const dateB = b.created_at?.toDate?.() || new Date(0);
                   return dateB.getTime() - dateA.getTime();
@@ -429,7 +627,7 @@ export default function AdminPage() {
               </select>
             </div>
 
-            <div className="text-sm text-gray-500">Mostrando {filteredBusinesses.length} de {businesses.length} negocios</div>
+            <div className="text-sm text-gray-500">Mostrando {filteredBusinesses.length} negocios (incluye demo)</div>
 
             <div className="bg-white dark:bg-zinc-900 rounded-xl border border-gray-200 dark:border-zinc-800 overflow-x-auto">
               <table className="w-full">
@@ -447,7 +645,7 @@ export default function AdminPage() {
                 </thead>
                 <tbody className="divide-y divide-gray-200 dark:divide-zinc-800">
                   {filteredBusinesses.map((business) => (
-                    <tr key={business.id} className="hover:bg-gray-50 dark:hover:bg-zinc-800/50">
+                    <tr key={business.id} className={`hover:bg-gray-50 dark:hover:bg-zinc-800/50 ${business.isDemo ? 'bg-amber-50 dark:bg-amber-900/10' : ''}`}>
                       {editingId === business.id ? (
                         <>
                           <td className="px-4 py-4" colSpan={4}>
@@ -469,7 +667,13 @@ export default function AdminPage() {
                               <div className="w-10 h-10 bg-gray-100 dark:bg-zinc-800 rounded-lg flex items-center justify-center flex-shrink-0">
                                 {business.logo_url ? <img src={business.logo_url} alt="" className="w-8 h-8 rounded object-cover" /> : <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>}
                               </div>
-                              <div><div className="font-medium">{business.name}</div><div className="text-xs text-gray-500">{business.slug}</div></div>
+                              <div>
+                                <div className="font-medium flex items-center gap-2">
+                                  {business.name}
+                                  {business.isDemo && <span className="text-xs bg-amber-200 text-amber-800 px-2 py-0.5 rounded-full">DEMO</span>}
+                                </div>
+                                <div className="text-xs text-gray-500">{business.slug}</div>
+                              </div>
                             </div>
                           </td>
                           <td className="px-4 py-4 text-sm text-gray-500">{business.email || '-'}</td>
@@ -480,7 +684,15 @@ export default function AdminPage() {
                             {(business.referral_balance || 0) > 0 && <div className="text-xs text-amber-600">${(business.referral_balance || 0).toLocaleString('es-CL')}</div>}
                           </td>
                           <td className="px-4 py-4 text-center">
-                            {isExpired(business) ? <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">Expirado</span> : business.expires_at ? <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">Activo</span> : <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 dark:bg-zinc-800 dark:text-gray-400">Trial</span>}
+                            {business.isDemo ? (
+                              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">Demo</span>
+                            ) : isExpired(business) ? (
+                              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">Expirado</span>
+                            ) : business.expires_at ? (
+                              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">Activo</span>
+                            ) : (
+                              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 dark:bg-zinc-800 dark:text-gray-400">Trial</span>
+                            )}
                           </td>
                           <td className="px-4 py-4">
                             <div className="flex gap-2">
@@ -562,75 +774,105 @@ export default function AdminPage() {
         )}
 
         {activeTab === 'top' && (
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="bg-white dark:bg-zinc-900 rounded-xl p-6 border border-gray-200 dark:border-zinc-800">
-              <h3 className="text-lg font-semibold mb-4">📝 Top por Reseñas</h3>
-              {topByReviews.length > 0 ? (
-                <div className="space-y-3">
-                  {topByReviews.map((b, i) => (
-                    <div key={b.id} className="flex items-center justify-between py-2">
+          <div className="space-y-6">
+            {/* Monthly Top with PDF button */}
+            <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-6 text-white">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xl font-bold">🏆 Top 10 del Mes - {getMonthName()}</h3>
+                <button onClick={generateMonthlyPDF} disabled={generatingPDF} className="bg-white text-blue-600 hover:bg-gray-100 px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2">
+                  {generatingPDF ? '⏳ Generando...' : '📄 Descargar PDF'}
+                </button>
+              </div>
+              {monthlyTop.length > 0 ? (
+                <div className="space-y-2">
+                  {monthlyTop.map((item, i) => (
+                    <div key={item.business?.id} className="flex items-center justify-between bg-white/10 rounded-lg px-4 py-3">
                       <div className="flex items-center gap-3">
-                        <div className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold text-white ${i === 0 ? 'bg-amber-500' : i === 1 ? 'bg-gray-400' : i === 2 ? 'bg-amber-700' : 'bg-gray-600'}`}>{i + 1}</div>
-                        <span className="font-medium truncate max-w-[200px]">{b.name}</span>
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${i === 0 ? 'bg-yellow-400 text-yellow-900' : i === 1 ? 'bg-gray-300 text-gray-700' : i === 2 ? 'bg-amber-600 text-white' : 'bg-white/20 text-white'}`}>
+                          {i + 1}
+                        </div>
+                        <span className="font-medium">{item.business?.name}</span>
                       </div>
-                      <div className="font-bold text-blue-600">{b.reviewCount} reseñas</div>
+                      <div className="flex items-center gap-4">
+                        <span>{item.reviewCount} reseñas</span>
+                        <span>⭐ {item.avgRating.toFixed(1)}</span>
+                      </div>
                     </div>
                   ))}
                 </div>
-              ) : <div className="text-center py-8 text-gray-500">Sin datos</div>}
+              ) : <div className="text-center py-8 text-white/70">No hay reseñas este mes</div>}
             </div>
 
-            <div className="bg-white dark:bg-zinc-900 rounded-xl p-6 border border-gray-200 dark:border-zinc-800">
-              <h3 className="text-lg font-semibold mb-4">⭐ Top por Rating</h3>
-              <p className="text-xs text-gray-500 mb-4">(mínimo 5 reseñas)</p>
-              {topByRating.length > 0 ? (
-                <div className="space-y-3">
-                  {topByRating.map((b, i) => (
-                    <div key={b.id} className="flex items-center justify-between py-2">
-                      <div className="flex items-center gap-3">
-                        <div className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold text-white ${i === 0 ? 'bg-amber-500' : i === 1 ? 'bg-gray-400' : i === 2 ? 'bg-amber-700' : 'bg-gray-600'}`}>{i + 1}</div>
-                        <span className="font-medium truncate max-w-[200px]">{b.name}</span>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="bg-white dark:bg-zinc-900 rounded-xl p-6 border border-gray-200 dark:border-zinc-800">
+                <h3 className="text-lg font-semibold mb-4">📝 Top Histórico por Reseñas</h3>
+                {topByReviews.length > 0 ? (
+                  <div className="space-y-3">
+                    {topByReviews.map((b, i) => (
+                      <div key={b.id} className="flex items-center justify-between py-2">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold text-white ${i === 0 ? 'bg-amber-500' : i === 1 ? 'bg-gray-400' : i === 2 ? 'bg-amber-700' : 'bg-gray-600'}`}>{i + 1}</div>
+                          <span className="font-medium truncate max-w-[200px]">{b.name}</span>
+                        </div>
+                        <div className="font-bold text-blue-600">{b.reviewCount} reseñas</div>
                       </div>
-                      <div className="flex items-center gap-1"><span className="text-amber-500">⭐</span><span className="font-bold">{b.avgRating.toFixed(2)}</span><span className="text-gray-500 text-xs">({b.reviewCount})</span></div>
-                    </div>
-                  ))}
-                </div>
-              ) : <div className="text-center py-8 text-gray-500">Se requieren al menos 5 reseñas</div>}
-            </div>
+                    ))}
+                  </div>
+                ) : <div className="text-center py-8 text-gray-500">Sin datos</div>}
+              </div>
 
-            <div className="bg-white dark:bg-zinc-900 rounded-xl p-6 border border-gray-200 dark:border-zinc-800">
-              <h3 className="text-lg font-semibold mb-4">💰 Mayor Saldo por Referidos</h3>
-              {businesses.filter(b => (b.referral_balance || 0) > 0).length > 0 ? (
-                <div className="space-y-3">
-                  {[...businesses].filter(b => (b.referral_balance || 0) > 0).sort((a, b) => (b.referral_balance || 0) - (a.referral_balance || 0)).slice(0, 10).map((b, i) => (
-                    <div key={b.id} className="flex items-center justify-between py-2">
-                      <div className="flex items-center gap-3">
-                        <div className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold text-white ${i === 0 ? 'bg-green-500' : i === 1 ? 'bg-green-400' : i === 2 ? 'bg-green-600' : 'bg-gray-600'}`}>{i + 1}</div>
-                        <span className="font-medium truncate max-w-[200px]">{b.name}</span>
+              <div className="bg-white dark:bg-zinc-900 rounded-xl p-6 border border-gray-200 dark:border-zinc-800">
+                <h3 className="text-lg font-semibold mb-4">⭐ Top por Rating</h3>
+                <p className="text-xs text-gray-500 mb-4">(mínimo 5 reseñas)</p>
+                {topByRating.length > 0 ? (
+                  <div className="space-y-3">
+                    {topByRating.map((b, i) => (
+                      <div key={b.id} className="flex items-center justify-between py-2">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold text-white ${i === 0 ? 'bg-amber-500' : i === 1 ? 'bg-gray-400' : i === 2 ? 'bg-amber-700' : 'bg-gray-600'}`}>{i + 1}</div>
+                          <span className="font-medium truncate max-w-[200px]">{b.name}</span>
+                        </div>
+                        <div className="flex items-center gap-1"><span className="text-amber-500">⭐</span><span className="font-bold">{b.avgRating.toFixed(2)}</span><span className="text-gray-500 text-xs">({b.reviewCount})</span></div>
                       </div>
-                      <div className="font-bold text-green-600">${(b.referral_balance || 0).toLocaleString('es-CL')}</div>
-                    </div>
-                  ))}
-                </div>
-              ) : <div className="text-center py-8 text-gray-500">Sin saldos</div>}
-            </div>
+                    ))}
+                  </div>
+                ) : <div className="text-center py-8 text-gray-500">Se requieren al menos 5 reseñas</div>}
+              </div>
 
-            <div className="bg-white dark:bg-zinc-900 rounded-xl p-6 border border-gray-200 dark:border-zinc-800">
-              <h3 className="text-lg font-semibold mb-4">⚠️ Suscripciones Expiradas</h3>
-              {businesses.filter(isExpired).length > 0 ? (
-                <div className="space-y-3">
-                  {businesses.filter(isExpired).sort((a, b) => {
-                    const dateA = a.expires_at?.toDate?.() || new Date(0);
-                    const dateB = b.expires_at?.toDate?.() || new Date(0);
-                    return dateB.getTime() - dateA.getTime();
-                  }).slice(0, 10).map((b) => (
-                    <div key={b.id} className="flex items-center justify-between py-2">
-                      <div><div className="font-medium">{b.name}</div><div className="text-xs text-gray-500">{b.email || '-'}</div></div>
-                      <div className="text-right"><div className="text-sm text-red-600">Expiró</div><div className="text-xs text-gray-500">{formatDate(b.expires_at)}</div></div>
-                    </div>
-                  ))}
-                </div>
-              ) : <div className="text-center py-8 text-green-600">✓ No hay suscripciones expiradas</div>}
+              <div className="bg-white dark:bg-zinc-900 rounded-xl p-6 border border-gray-200 dark:border-zinc-800">
+                <h3 className="text-lg font-semibold mb-4">💰 Mayor Saldo por Referidos</h3>
+                {realBusinesses.filter(b => (b.referral_balance || 0) > 0).length > 0 ? (
+                  <div className="space-y-3">
+                    {[...realBusinesses].filter(b => (b.referral_balance || 0) > 0).sort((a, b) => (b.referral_balance || 0) - (a.referral_balance || 0)).slice(0, 10).map((b, i) => (
+                      <div key={b.id} className="flex items-center justify-between py-2">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold text-white ${i === 0 ? 'bg-green-500' : i === 1 ? 'bg-green-400' : i === 2 ? 'bg-green-600' : 'bg-gray-600'}`}>{i + 1}</div>
+                          <span className="font-medium truncate max-w-[200px]">{b.name}</span>
+                        </div>
+                        <div className="font-bold text-green-600">${(b.referral_balance || 0).toLocaleString('es-CL')}</div>
+                      </div>
+                    ))}
+                  </div>
+                ) : <div className="text-center py-8 text-gray-500">Sin saldos</div>}
+              </div>
+
+              <div className="bg-white dark:bg-zinc-900 rounded-xl p-6 border border-gray-200 dark:border-zinc-800">
+                <h3 className="text-lg font-semibold mb-4">⚠️ Suscripciones Expiradas</h3>
+                {realBusinesses.filter(isExpired).length > 0 ? (
+                  <div className="space-y-3">
+                    {realBusinesses.filter(isExpired).sort((a, b) => {
+                      const dateA = a.expires_at?.toDate?.() || new Date(0);
+                      const dateB = b.expires_at?.toDate?.() || new Date(0);
+                      return dateB.getTime() - dateA.getTime();
+                    }).slice(0, 10).map((b) => (
+                      <div key={b.id} className="flex items-center justify-between py-2">
+                        <div><div className="font-medium">{b.name}</div><div className="text-xs text-gray-500">{b.email || '-'}</div></div>
+                        <div className="text-right"><div className="text-sm text-red-600">Expiró</div><div className="text-xs text-gray-500">{formatDate(b.expires_at)}</div></div>
+                      </div>
+                    ))}
+                  </div>
+                ) : <div className="text-center py-8 text-green-600">✓ No hay suscripciones expiradas</div>}
+              </div>
             </div>
           </div>
         )}
