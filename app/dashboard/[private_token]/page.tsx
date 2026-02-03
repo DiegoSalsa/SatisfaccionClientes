@@ -471,36 +471,42 @@ export default function DashboardPage() {
     setMenuSaved(false);
 
     try {
-      // Obtener firma de Cloudinary
+      // Obtener firma de Cloudinary con folder correcto para menus
       const signRes = await fetch('/api/cloudinary/sign', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ public_id: `menu_${business.slug}` }),
+        body: JSON.stringify({ 
+          public_id: `menu_${business.slug}`,
+          folder: 'valoralocal/menus'
+        }),
       });
       
       if (!signRes.ok) throw new Error('Error al obtener firma');
       
-      const { signature, timestamp, cloudName, apiKey } = await signRes.json();
+      const { signature, timestamp, cloudName, apiKey, folder } = await signRes.json();
 
-      // Subir a Cloudinary
+      // Subir a Cloudinary (usando auto upload para PDFs)
       const formData = new FormData();
       formData.append('file', file);
       formData.append('signature', signature);
       formData.append('timestamp', timestamp.toString());
       formData.append('api_key', apiKey);
       formData.append('upload_preset', 'valoralocal_logos');
-      formData.append('folder', 'valoralocal/menus');
+      formData.append('folder', folder);
       formData.append('public_id', `menu_${business.slug}`);
-      formData.append('resource_type', 'raw');
 
       const uploadRes = await fetch(
-        `https://api.cloudinary.com/v1_1/${cloudName}/raw/upload`,
+        `https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`,
         { method: 'POST', body: formData }
       );
 
-      if (!uploadRes.ok) throw new Error('Error al subir archivo');
-
       const uploadData = await uploadRes.json();
+      
+      if (!uploadRes.ok) {
+        console.error('Cloudinary error:', uploadData);
+        throw new Error(uploadData.error?.message || 'Error al subir archivo');
+      }
+
       const menuUrl = uploadData.secure_url;
 
       // Guardar URL en Firestore
