@@ -284,16 +284,14 @@ export default function EncuestaPage() {
           {/* Options */}
           <div className="space-y-4">
             {/* Ver Carta */}
-            <motion.a
-              href={business.menu_pdf_url}
-              target="_blank"
-              rel="noopener noreferrer"
+            <motion.button
+              onClick={() => window.open(business.menu_pdf_url, '_blank', 'noopener,noreferrer')}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="block bg-white dark:bg-zinc-900 rounded-2xl shadow-lg p-6 border border-gray-100 dark:border-zinc-800 hover:border-amber-300 dark:hover:border-amber-600 transition-all cursor-pointer group"
+              className="w-full bg-white dark:bg-zinc-900 rounded-2xl shadow-lg p-6 border border-gray-100 dark:border-zinc-800 hover:border-amber-300 dark:hover:border-amber-600 transition-all cursor-pointer group text-left"
             >
               <div className="flex items-center gap-4">
                 <div className="w-16 h-16 bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg group-hover:shadow-xl transition-shadow">
@@ -309,7 +307,7 @@ export default function EncuestaPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                 </svg>
               </div>
-            </motion.a>
+            </motion.button>
 
             {/* Valorar */}
             <motion.button
