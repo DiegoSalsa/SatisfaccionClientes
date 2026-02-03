@@ -59,6 +59,10 @@ export default function DashboardPage() {
   const [newName, setNewName] = useState("");
   const [savingName, setSavingName] = useState(false);
   const [showPaymentInfo, setShowPaymentInfo] = useState(false);
+  const [uploadingMenu, setUploadingMenu] = useState(false);
+  const [menuSaved, setMenuSaved] = useState(false);
+  const [removingMenu, setRemovingMenu] = useState(false);
+  const menuInputRef = useRef<HTMLInputElement>(null);
   const reviewsPerPage = 15;
 
   useEffect(() => {
@@ -447,6 +451,90 @@ export default function DashboardPage() {
     if (logoInputRef.current) logoInputRef.current.value = '';
   };
 
+  const handleMenuUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !business?.id) return;
+
+    // Validar tipo de archivo (solo PDF)
+    if (file.type !== 'application/pdf') {
+      alert('Por favor selecciona un archivo PDF');
+      return;
+    }
+
+    // Validar tamaño (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      alert('El archivo no puede superar los 10MB');
+      return;
+    }
+
+    setUploadingMenu(true);
+    setMenuSaved(false);
+
+    try {
+      // Obtener firma de Cloudinary
+      const signRes = await fetch('/api/cloudinary/sign', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ public_id: `menu_${business.slug}` }),
+      });
+      
+      if (!signRes.ok) throw new Error('Error al obtener firma');
+      
+      const { signature, timestamp, cloudName, apiKey } = await signRes.json();
+
+      // Subir a Cloudinary
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('signature', signature);
+      formData.append('timestamp', timestamp.toString());
+      formData.append('api_key', apiKey);
+      formData.append('upload_preset', 'valoralocal_logos');
+      formData.append('folder', 'valoralocal/menus');
+      formData.append('public_id', `menu_${business.slug}`);
+      formData.append('resource_type', 'raw');
+
+      const uploadRes = await fetch(
+        `https://api.cloudinary.com/v1_1/${cloudName}/raw/upload`,
+        { method: 'POST', body: formData }
+      );
+
+      if (!uploadRes.ok) throw new Error('Error al subir archivo');
+
+      const uploadData = await uploadRes.json();
+      const menuUrl = uploadData.secure_url;
+
+      // Guardar URL en Firestore
+      const businessRef = doc(db, 'businesses', business.id);
+      await updateDoc(businessRef, { menu_pdf_url: menuUrl });
+
+      setBusiness({ ...business, menu_pdf_url: menuUrl });
+      setMenuSaved(true);
+      setTimeout(() => setMenuSaved(false), 3000);
+    } catch (err) {
+      console.error('Error subiendo carta:', err);
+      alert('Error al subir la carta. Intenta de nuevo.');
+    }
+
+    setUploadingMenu(false);
+    if (menuInputRef.current) menuInputRef.current.value = '';
+  };
+
+  const handleRemoveMenu = async () => {
+    if (!business?.id) return;
+    if (!confirm('¿Estás seguro de eliminar la carta? Los clientes ya no podrán verla al escanear el QR.')) return;
+    
+    setRemovingMenu(true);
+    try {
+      const businessRef = doc(db, 'businesses', business.id);
+      await updateDoc(businessRef, { menu_pdf_url: null });
+      setBusiness({ ...business, menu_pdf_url: null });
+    } catch (err) {
+      console.error('Error eliminando carta:', err);
+      alert('Error al eliminar la carta');
+    }
+    setRemovingMenu(false);
+  };
+
   const handleSaveName = async () => {
     if (!business?.id || !newName.trim()) return;
     setSavingName(true);
@@ -825,6 +913,126 @@ export default function DashboardPage() {
                   </p>
                 </div>
               </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Menu/Carta PDF Upload Section */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.47 }}
+          className="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm p-4 sm:p-6 border border-gray-100 dark:border-zinc-800 mb-6 sm:mb-8"
+        >
+          <div className="flex flex-col sm:flex-row sm:items-start gap-4">
+            <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/30 rounded-xl flex items-center justify-center flex-shrink-0">
+              <svg className="w-6 h-6 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+              </svg>
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-1">
+                <h3 className="font-semibold text-gray-800 dark:text-white">Carta / Menú</h3>
+                <span className="text-xs bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 px-2 py-0.5 rounded-full">Ideal para restaurantes</span>
+              </div>
+              <p className="text-gray-500 dark:text-zinc-400 text-sm mb-4">
+                Sube tu carta en PDF. Al escanear el QR, tus clientes podrán elegir entre ver la carta o dejar una valoración.
+              </p>
+              
+              {business.menu_pdf_url ? (
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-200 dark:border-green-800">
+                    <svg className="w-8 h-8 text-green-600 dark:text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-green-700 dark:text-green-400 font-medium text-sm">Carta activa</p>
+                      <p className="text-green-600 dark:text-green-500 text-xs truncate">Los clientes verán la opción al escanear el QR</p>
+                    </div>
+                    <a 
+                      href={business.menu_pdf_url} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-green-600 dark:text-green-400 hover:text-green-700 p-2"
+                      title="Ver carta"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                      </svg>
+                    </a>
+                  </div>
+                  <div className="flex gap-2">
+                    <label
+                      htmlFor="menu-upload"
+                      className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-medium transition-colors cursor-pointer text-sm"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                      </svg>
+                      Cambiar carta
+                    </label>
+                    <button
+                      onClick={handleRemoveMenu}
+                      disabled={removingMenu}
+                      className="px-4 py-2 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50 rounded-lg font-medium transition-colors text-sm disabled:opacity-50"
+                    >
+                      {removingMenu ? 'Eliminando...' : 'Eliminar'}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                  <div className="w-20 h-20 rounded-xl border-2 border-dashed border-amber-300 dark:border-amber-700 flex items-center justify-center overflow-hidden bg-amber-50 dark:bg-amber-900/20 flex-shrink-0">
+                    <svg className="w-8 h-8 text-amber-400 dark:text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                  </div>
+                  <div className="flex-1 w-full">
+                    <label
+                      htmlFor="menu-upload"
+                      className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-medium transition-colors cursor-pointer ${
+                        uploadingMenu
+                          ? 'bg-amber-400 text-white cursor-wait'
+                          : menuSaved
+                          ? 'bg-green-600 text-white'
+                          : 'bg-amber-600 hover:bg-amber-700 text-white'
+                      }`}
+                    >
+                      {uploadingMenu ? (
+                        <>
+                          <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                          Subiendo...
+                        </>
+                      ) : menuSaved ? (
+                        <>
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                          ¡Carta guardada!
+                        </>
+                      ) : (
+                        <>
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                          </svg>
+                          Subir carta PDF
+                        </>
+                      )}
+                    </label>
+                    <p className="text-xs text-gray-400 dark:text-zinc-500 mt-2">
+                      Solo archivos PDF. Máximo 10MB.
+                    </p>
+                  </div>
+                </div>
+              )}
+              <input
+                ref={menuInputRef}
+                type="file"
+                accept="application/pdf"
+                onChange={handleMenuUpload}
+                className="hidden"
+                id="menu-upload"
+              />
             </div>
           </div>
         </motion.div>

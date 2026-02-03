@@ -76,6 +76,7 @@ export default function EncuestaPage() {
   const [rateLimitError, setRateLimitError] = useState<string | null>(null);
   const [showMapsModal, setShowMapsModal] = useState(false);
   const [submittedRating, setSubmittedRating] = useState(0);
+  const [showMenuChoice, setShowMenuChoice] = useState(true); // Para mostrar opciones carta/valorar
 
   useEffect(() => {
     async function fetchBusiness() {
@@ -253,6 +254,97 @@ export default function EncuestaPage() {
             Enviar otra opinión
           </motion.button>
         </motion.div>
+      </div>
+    );
+  }
+
+  // Si el negocio tiene carta/menú y aún no ha elegido opción
+  if (business.menu_pdf_url && showMenuChoice) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-black dark:via-zinc-900 dark:to-black py-8 px-4 transition-colors">
+        <div className="fixed top-4 right-4 z-50">
+          <ThemeToggle />
+        </div>
+        <main className="max-w-lg mx-auto">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="w-24 h-24 bg-white dark:bg-zinc-800 rounded-2xl shadow-md flex items-center justify-center mx-auto mb-4 border dark:border-zinc-700">
+              {business.logo_url ? (
+                <img src={business.logo_url} alt={business.name} className="w-20 h-20 rounded-xl object-cover" />
+              ) : (
+                <svg className="w-12 h-12 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                </svg>
+              )}
+            </div>
+            <h1 className="text-2xl font-bold text-gray-800 dark:text-white">{business.name}</h1>
+            <p className="text-gray-500 dark:text-zinc-400 mt-1">¿Qué te gustaría hacer?</p>
+          </div>
+
+          {/* Options */}
+          <div className="space-y-4">
+            {/* Ver Carta */}
+            <motion.a
+              href={business.menu_pdf_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="block bg-white dark:bg-zinc-900 rounded-2xl shadow-lg p-6 border border-gray-100 dark:border-zinc-800 hover:border-amber-300 dark:hover:border-amber-600 transition-all cursor-pointer group"
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg group-hover:shadow-xl transition-shadow">
+                  <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                  </svg>
+                </div>
+                <div className="flex-1">
+                  <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-1">Ver Carta</h2>
+                  <p className="text-gray-500 dark:text-zinc-400 text-sm">Consulta nuestro menú completo</p>
+                </div>
+                <svg className="w-6 h-6 text-gray-400 dark:text-zinc-500 group-hover:text-amber-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </div>
+            </motion.a>
+
+            {/* Valorar */}
+            <motion.button
+              onClick={() => setShowMenuChoice(false)}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="w-full bg-white dark:bg-zinc-900 rounded-2xl shadow-lg p-6 border border-gray-100 dark:border-zinc-800 hover:border-blue-300 dark:hover:border-blue-600 transition-all cursor-pointer group text-left"
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg group-hover:shadow-xl transition-shadow">
+                  <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                  </svg>
+                </div>
+                <div className="flex-1">
+                  <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-1">Valorar</h2>
+                  <p className="text-gray-500 dark:text-zinc-400 text-sm">Cuéntanos tu experiencia</p>
+                </div>
+                <svg className="w-6 h-6 text-gray-400 dark:text-zinc-500 group-hover:text-blue-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+            </motion.button>
+          </div>
+
+          {/* Footer */}
+          <p className="text-center text-sm text-gray-400 dark:text-zinc-500 mt-8 flex items-center justify-center gap-2">
+            Powered by 
+            <img src="/logo-light.svg" alt="ValoraLocal" className="h-5 dark:hidden" />
+            <img src="/logo-dark.svg" alt="ValoraLocal" className="h-5 hidden dark:block" />
+          </p>
+        </main>
       </div>
     );
   }
