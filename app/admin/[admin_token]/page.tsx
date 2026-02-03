@@ -8,7 +8,7 @@ import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 
 const ADMIN_TOKEN = "super-admin-secreto-2026-xyz";
-const DEMO_SLUG = "valoralocal-prueba"; // Cuenta demo a excluir de stats
+const DEMO_SLUG = "ValoraLocal-Prueba"; // Cuenta demo a excluir de stats (case-sensitive)
 
 interface Business {
   id: string;
